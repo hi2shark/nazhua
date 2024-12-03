@@ -34,13 +34,13 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t ghcr.io/${{ github.repository }}/nazhua:$VERSION .
+        docker build -t ghcr.io/${{ github.repository }}:$VERSION .
 
     - name: Log in to GitHub Container Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Push Docker image
       run: |
-        docker push ghcr.io/${{ github.repository }}/nazhua:$VERSION
-        docker tag ghcr.io/${{ github.repository }}/nazhua:$VERSION ghcr.io/${{ github.repository }}/nazhua:latest
-        docker push ghcr.io/${{ github.repository }}/nazhua:latest
+        docker push ghcr.io/${{ github.repository }}:$VERSION
+        docker tag ghcr.io/${{ github.repository }}:$VERSION ghcr.io/${{ github.repository }}:latest
+        docker push ghcr.io/${{ github.repository }}:latest

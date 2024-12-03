@@ -1,0 +1,53 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - main  # 监听 main 分支的 push 操作
+  workflow_dispatch: # 手动触发支持
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20' # 根据项目需求调整版本
+
+    - name: Get version from package.json
+      id: get_version
+      run: echo "VERSION=$(node -p 'require("./package.json").version')" >> $GITHUB_ENV
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
+      run: npm run build
+
+    - name: Archive dist folder
+      run: |
+        zip -r nazhua-$VERSION.zip dist
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      with:
+        tag_name: ${{ github.ref_name }} # 使用当前推送的标签名
+        release_name: "Release ${{ github.ref_name }}"
+        body: |
+          $(git log -1 --pretty=format:%B)
+        draft: false
+        prerelease: false
+
+    - name: Upload release to GitHub
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./nazhua-$VERSION.zip
+        asset_name: nazhua-$VERSION.zip
+        asset_content_type: application/zip
