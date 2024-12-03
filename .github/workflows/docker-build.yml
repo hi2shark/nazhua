@@ -24,20 +24,23 @@ jobs:
 
     - name: Get version from package.json
       id: get_version
-      run: echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
+      run: echo "VERSION=$(node -p \"require(\\\"./package.json\\\").version\")" >> $GITHUB_ENV
+
+    - name: Print version
+      run: echo "Version is $VERSION"
 
     - name: Build project
       run: npm run build
 
     - name: Build Docker image
       run: |
-        docker build -t ghcr.io/${{ github.repository }}/nazhua:${{ env.VERSION }} .
+        docker build -t ghcr.io/${{ github.repository }}/nazhua:$VERSION .
 
     - name: Log in to GitHub Container Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Push Docker image
       run: |
-        docker push ghcr.io/${{ github.repository }}/nazhua:${{ env.VERSION }}
-        docker tag ghcr.io/${{ github.repository }}/nazhua:${{ env.VERSION }} ghcr.io/${{ github.repository }}/nazhua:latest
+        docker push ghcr.io/${{ github.repository }}/nazhua:$VERSION
+        docker tag ghcr.io/${{ github.repository }}/nazhua:$VERSION ghcr.io/${{ github.repository }}/nazhua:latest
         docker push ghcr.io/${{ github.repository }}/nazhua:latest
