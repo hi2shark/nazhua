@@ -1,0 +1,3 @@
+build/*.js
+public
+dist

@@ -1,0 +1,41 @@
+// 原生CSS变量 -- 顶级作用域
+:root {
+  --layout-header-height: 60px;
+  --layout-main-height: calc(100vh - var(--layout-header-height));
+
+  --list-container-width: 1300px;
+
+  --detail-container-width: 900px;
+
+  --layout-main-bg-color: rgba(20, 30, 40, 0.75);
+  
+  --layout-bg-color: #252748;
+  --world-map-point-color: #fff143;
+  --list-item-price-color: #eee;
+  --list-item-buy-link-color: #ffc300;
+
+  // 针对1440px以下的屏幕
+  @media screen and (max-width: 1440px) {
+    --list-container-width: 1120px;
+  }
+
+  // 针对1280px以下的屏幕
+  @media screen and (max-width: 1280px) {
+    --list-container-width: 1024px;
+  }
+
+  @media screen and (max-width: 1024px) {
+    --list-container-width: 800px;
+    --detail-container-width: 800px;
+  }
+
+  @media screen and (max-width: 800px) {
+    --list-container-width: 720px;
+    --detail-container-width: 720px;
+  }
+
+  @media screen and (max-width: 720px) {
+    --list-container-width: 100vw;
+    --detail-container-width: 100vw;
+  }
+}

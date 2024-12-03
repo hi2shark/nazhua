@@ -1,0 +1,164 @@
+@use "./variables.scss";
+
+body {
+  line-height: 1.8;
+  font-size: 14px;
+  font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'HanHei SC', 'Helvetica Neue', 'Helvetica', 'STHeitiSC-Light', 'Arial', sans-serif;
+  color: #555;
+  background: #fff;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+ul,
+ul li {
+  list-style: none;
+}
+
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+li,
+ol,
+blockquote,
+pre,
+p,
+table,
+tbody,
+th,
+td,
+tr,
+span {
+  margin: 0;
+  padding: 0;
+  border-radius: 0px;
+}
+
+img {
+  border: none;
+  outline: none;
+}
+
+input[type="text"],
+input[type="text"]:focus,
+input[type="text"]:active,
+input[type="email"],
+input[type="email"]:focus,
+input[type="email"]:active,
+input[type="number"],
+input[type="number"]:focus,
+input[type="number"]:active,
+input[type="password"],
+input[type="password"]:focus,
+input[type="password"]:active,
+textarea,
+textarea:active,
+textarea:focus,
+button,
+button:active,
+button:focus,
+button:invalid,
+a:active,
+a:visited,
+a:link {
+  outline: 0;
+  outline-color: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+input[type="number"] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+a:link,
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  color: #08a;
+}
+
+a {
+  color: #369;
+  transition: color 150ms linear;
+  cursor: pointer;
+}
+
+// 默认盒模型为border-box
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal;
+}
+
+.fl {
+  float: left;
+}
+
+.fr {
+  float: right;
+}
+
+.clear,
+.clear::before,
+.clear::after {
+  clear: both;
+}
+
+.clear::before,
+.clear::after {
+  content: '';
+  display: table;
+}
+
+div:focus {
+  outline: none;
+}
+
+@font-face {
+  font-family: "Sarasa Term SC";
+  src: url("../fonts/SarasaTermSC-SemiBold.woff2") format("woff2"),
+    url("../fonts/SarasaTermSC-SemiBold.woff2") format("woff");
+  font-display: swap;
+}
+
+body {
+  font-family:
+    "Sarasa Term SC",
+    'Microsoft YaHei',
+    '微软雅黑',
+    'PingFang SC',
+    'HanHei SC',
+    'Helvetica Neue',
+    'Helvetica',
+    'STHeitiSC-Light',
+    'Arial',
+    sans-serif;
+}
