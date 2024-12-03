@@ -7,6 +7,31 @@
 2. 本主题是一个纯前端项目，需要解决跨域问题，通常需要一个nginx或者caddy反代请求解决跨域问题。  
 3. 我不会提供任何技术支持，如果你有问题，可以提issue，但是我不保证会回答，可能询问GPT会更快。  
 
+## 关于点阵地图  
+点阵地图是一个失真的地图，地图边际与城市位置都不是真实的经纬度坐标，因此无法通过经纬度来定位城市。  
+需要在是[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)中，拾取点阵地图上的坐标，然后在`config.js`中配置`customCodeMap`来自定义地图点信息。  
+如何指定节点的地理位置？  
+在哪吒监控后台，给节点的公开备注对象中，添加一个`customData`对象，并指定`location`的代码； 
+关于都有哪些内置的地理位置代码，需要在[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)中查看。  
+示例
+```json
+{
+  "customData": {
+    "location": "HKG"
+  }
+}
+```
+同时，这个`customData`中还可以添加一项`slogan`和`orderLink`字符串，分别用于显示节点的标语和购买链接。
+```json
+{
+  "customData": {
+    "location": "HKG",
+    "slogan": "这是一个香港节点",
+    "orderLink": "https://buy.hkvps.com"
+  }
+}
+```
+
 ## 数据来源
 1. 公开的全量配置，其中包括“公开备注”（PublicNote），来着探针主页上暴露的服务器节点列表配置信息。此处是根据正则匹配的方式，获取到的节点列表。在主题项目中，默认将访问`/nezha/`的指向此处。  
 2. 实时数据，来着公开的ws服务接口，`/ws`。  
