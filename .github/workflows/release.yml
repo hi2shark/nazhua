@@ -2,7 +2,7 @@ name: Build and Release
 
 on:
   push:
-    tags:
+    branches:
       - main  # 监听 main 分支的 push 操作
   workflow_dispatch: # 手动触发支持
 
@@ -36,11 +36,11 @@ jobs:
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref_name }} # 使用当前推送的标签名
-        release_name: "Release ${{ github.ref_name }}"
-        body: |
-          $(git log -1 --pretty=format:%B)
+        tag_name: $VERSION
+        release_name: "Release $VERSION"
         draft: false
         prerelease: false
 
