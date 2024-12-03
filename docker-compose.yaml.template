@@ -1,0 +1,16 @@
+services:
+  nazhua:
+    image: ghcr.io/hi2shark/nazhua:latest
+    container_name: nazhua
+    restart: unless-stopped
+    environment:
+      # - DOMAIN=_ # 监听的域名，默认为_（监听所有）
+      - NEZHA=http://nezha-dashboard/
+    # volumes:
+      # - ./favicon.ico:/home/wwwroot/html/favicon.ico:ro # 自定义favicon图标
+      # - ./config.js:/home/wwwroot/html/config.js:ro # 自定义配置文件
+      # - ./style.css:/home/wwwroot/html/style.css:ro # 自定义样式文件
+    expose:
+      - 80
+    # ports:
+    #   - 80:80

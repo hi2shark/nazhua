@@ -11,7 +11,7 @@
 点阵地图是一个失真的地图，地图边际与城市位置都不是真实的经纬度坐标，因此无法通过经纬度来定位城市。  
 需要在是[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)中，拾取点阵地图上的坐标，然后在`config.js`中配置`customCodeMap`来自定义地图点信息。  
 如何指定节点的地理位置？  
-在哪吒监控后台，给节点的公开备注对象中，添加一个`customData`对象，并指定`location`的代码； 
+在哪吒监控后台，给节点的公开备注对象中，添加一个`customData`对象，并指定`location`的代码；  
 关于都有哪些内置的地理位置代码，需要在[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)中查看。  
 示例
 ```json
@@ -21,6 +21,9 @@
   }
 }
 ```
+对于几个我常见的国别位置，添加了默认映射位置，会自动显示在地图上。（美国太大了，就默认显示在最常买的位置：洛杉矶）
+
+## 关于节点slogan和购买链接
 同时，这个`customData`中还可以添加一项`slogan`和`orderLink`字符串，分别用于显示节点的标语和购买链接。
 ```json
 {
@@ -40,6 +43,26 @@
 ## 部署
 Nazhua主题是一个纯前端项目，可以部署在纯静态服务器上，但需要解决`/api/v1/monitor/${id}`监控数据、`/ws`WS服务和`/`主页的跨域访问。  
 通常来说，你需要一个nginx或者caddy反代请求解决跨域问题。  
+
+### Docker Compose + Cloudflare Tunnels部署
+**请关注备注中的提示内容**
+```yaml
+services:
+  nazhua:
+    image: ghcr.io/hi2shark/nazhua:latest
+    container_name: nazhua
+    ports:
+      - 80:80
+    volumes:
+      # - ./favicon.ico:/home/wwwroot/html/favicon.ico:ro # 自定义favicon图标
+      # - ./config.js:/home/wwwroot/html/config.js:ro # 自定义配置文件
+      # - ./style.css:/home/wwwroot/html/style.css:ro # 自定义样式文件
+    environment:
+      - DOMAIN=_ # 监听的域名，默认为_（监听所有）
+      - NEZHA=http://nezha-dashboard.example.com/ # 可以被反代nezha主页地址
+    restart: unless-stopped
+```
+建议通过docker-compose部署服务，然后通过cloudflare的tunnels向外提供服务，可以不用自己配置https证书。
 
 ### Nginx配置示例
 ```nginx
@@ -81,8 +104,8 @@ server {
 
 
 ## 自定义配置
-可以通过修改`config.js`文件来自定义配置  
-例如：
+可以通过修改根目录下的`config.js`文件来自定义配置  
+例如：(*参考内容在文档上不一定是最新，具体参考public/config.js或者[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)*)
 ```javascript
 window.$$nazhuaConfig = {
   title: '哪吒监控', // 网站标题
@@ -103,7 +126,7 @@ window.$$nazhuaConfig = {
   routeMode: 'h5', // 路由模式 h5 | hash
 };
 ```
-可以通过修改`style.css`文件来自定义样式  
+可以通过修改根目录下的`style.css`文件来自定义样式  
 例如：
 ```css
 :root {
