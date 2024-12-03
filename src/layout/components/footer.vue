@@ -10,10 +10,12 @@
         >哪吒监控</a>
       </span>
       <span class="text">
-        Theme By <span
+        Theme By <a
+          ref="nofollow"
           class="nazhua"
-          title="公开版本还在搓，Coming Soon ~"
-        >Nazhua</span>
+          href="https://github.com/hi2shark/nazhua"
+          target="_blank"
+        >Nazhua</a>
         {{ version }}
       </span>
     </div>
@@ -25,7 +27,7 @@
  * Footer
  */
 
-const version = import.meta.env.VITE_VERSION;
+const version = import.meta.env.VITE_APP_VERSION;
 </script>
 
 <style lang="scss" scoped>
@@ -42,11 +44,16 @@ const version = import.meta.env.VITE_VERSION;
 
   .nazhua {
     color: #fa0;
-    cursor: default;
+    &:hover {
+      color: #fff;
+    }
   }
 
   a {
     color: #fff;
+    &:hover {
+      color: #08f;
+    }
   }
 }
 </style>

@@ -4,10 +4,12 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import babel from 'vite-plugin-babel';
 import eslintPlugin from 'vite-plugin-eslint';
+import packageJson from './package';
 
 dotenv.config({
   path: '.env.development.local',
 });
+process.env.VITE_APP_VERSION = packageJson.version;
 
 // https://vite.dev/config/
 export default defineConfig({
