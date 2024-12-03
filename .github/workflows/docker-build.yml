@@ -24,7 +24,7 @@ jobs:
 
     - name: Get version from package.json
       id: get_version
-      run: echo "VERSION=$(node -p \"require(\\\"./package.json\\\").version\")" >> $GITHUB_ENV
+      run: echo "VERSION=$(node -p 'require("./package.json").version')" >> $GITHUB_ENV
 
     - name: Print version
       run: echo "Version is $VERSION"
