@@ -142,24 +142,24 @@ export function calcTransfer(bytes) {
   const stats = calcBinary(bytes);
   const result = {
     value: '',
-    symbol: '',
+    unit: '',
     stats,
   };
   if (stats.t > 1) {
     result.value = (stats.t).toFixed(2) * 1;
-    result.symbol = 'T';
+    result.unit = 'T';
   } else if (stats.g > 1) {
     result.value = (stats.g).toFixed(2) * 1;
-    result.symbol = 'G';
+    result.unit = 'G';
   } else if (stats.m > 1) {
     result.value = (stats.m).toFixed(1) * 1;
-    result.symbol = 'M';
+    result.unit = 'M';
   } else if (stats.p > 0) {
     result.value = (stats.p).toFixed(1) * 1;
-    result.symbol = 'P';
+    result.unit = 'P';
   } else {
     result.value = (stats.k).toFixed(1) * 1;
-    result.symbol = 'K';
+    result.unit = 'K';
   }
   return result;
 }

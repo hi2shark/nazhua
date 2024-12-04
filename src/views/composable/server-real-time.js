@@ -25,24 +25,24 @@ export default (params) => {
       if (data.days > 0) {
         return {
           value: data.days,
-          symbol: data.$symbol.day,
+          unit: data.$unit.day,
         };
       }
       if (data.hours > 0) {
         return {
           value: data.hours,
-          symbol: data.$symbol.hour,
+          unit: data.$unit.hour,
         };
       }
       if (data.minutes > 0) {
         return {
           value: data.minutes,
-          symbol: data.$symbol.minute,
+          unit: data.$unit.minute,
         };
       }
       return {
         value: data.seconds,
-        symbol: data.$symbol.second,
+        unit: data.$unit.second,
       };
     }
     return null;
@@ -70,7 +70,7 @@ export default (params) => {
 
     const result = {
       value: 0,
-      symbol: '',
+      unit: '',
       statType: '',
       statTypeLabel: '',
       stats,
@@ -108,16 +108,16 @@ export default (params) => {
     const ruleStats = hostUtils.calcBinary(ruleStat);
     if (ruleStats.t > 1) {
       result.value = (ruleStats.t).toFixed(2) * 1;
-      result.symbol = 'T';
+      result.unit = 'T';
     } else if (ruleStats.g > 1) {
       result.value = (ruleStats.g).toFixed(2) * 1;
-      result.symbol = 'G';
+      result.unit = 'G';
     } else if (ruleStats.m > 1) {
       result.value = (ruleStats.m).toFixed(1) * 1;
-      result.symbol = 'M';
+      result.unit = 'M';
     } else {
       result.value = (ruleStats.k).toFixed(1) * 1;
-      result.symbol = 'K';
+      result.unit = 'K';
     }
     return result;
   });
@@ -129,17 +129,17 @@ export default (params) => {
     const inSpeed = hostUtils.calcBinary(props.info?.State?.NetInSpeed || 0);
     const result = {
       value: 0,
-      symbol: '',
+      unit: '',
     };
     if (inSpeed.g > 1) {
       result.value = (inSpeed.g).toFixed(1) * 1;
-      result.symbol = 'G';
+      result.unit = 'G';
     } else if (inSpeed.m > 1) {
       result.value = (inSpeed.m).toFixed(1) * 1;
-      result.symbol = 'M';
+      result.unit = 'M';
     } else {
       result.value = (inSpeed.k).toFixed(1) * 1;
-      result.symbol = 'K';
+      result.unit = 'K';
     }
     return result;
   });
@@ -151,17 +151,17 @@ export default (params) => {
     const outSpeed = hostUtils.calcBinary(props.info?.State?.NetOutSpeed || 0);
     const result = {
       value: 0,
-      symbol: '',
+      unit: '',
     };
     if (outSpeed.g > 1) {
       result.value = (outSpeed.g).toFixed(1) * 1;
-      result.symbol = 'G';
+      result.unit = 'G';
     } else if (outSpeed.m > 1) {
       result.value = (outSpeed.m).toFixed(1) * 1;
-      result.symbol = 'M';
+      result.unit = 'M';
     } else {
       result.value = (outSpeed.k).toFixed(1) * 1;
-      result.symbol = 'K';
+      result.unit = 'K';
     }
     return result;
   });
@@ -173,28 +173,28 @@ export default (params) => {
           key,
           label: '在线',
           value: duration.value?.value,
-          symbol: duration.value?.symbol,
+          unit: duration.value?.unit,
         };
       case 'transfer':
         return {
           key,
           label: `${transfer.value.statTypeLabel}流量`,
           value: transfer.value?.value,
-          symbol: transfer.value?.symbol,
+          unit: transfer.value?.unit,
         };
       case 'inSpeed':
         return {
           key,
           label: '入网',
           value: netInSpeed.value?.value,
-          symbol: netInSpeed.value?.symbol,
+          unit: netInSpeed.value?.unit,
         };
       case 'outSpeed':
         return {
           key,
           label: '出网',
           value: netOutSpeed.value?.value,
-          symbol: netOutSpeed.value?.symbol,
+          unit: netOutSpeed.value?.unit,
         };
       default:
     }

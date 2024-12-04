@@ -8,7 +8,7 @@
     >
       <div class="item-content">
         <span class="item-value">{{ item?.value || '-' }}</span>
-        <span class="item-symbol item-text">{{ item?.value ? item?.symbol : '' }}</span>
+        <span class="item-unit item-text">{{ item?.value ? item?.unit : '' }}</span>
       </div>
       <span class="item-label">{{ item.label }}</span>
     </div>

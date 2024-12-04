@@ -72,11 +72,11 @@
         <span class="server-info-item-group">
           <span class="server-info-item transfer--in">
             <span class="server-info-item-label">入网</span>
-            <span class="server-info-item-value">{{ transfer?.in?.value }}{{ transfer?.in?.symbol }}</span>
+            <span class="server-info-item-value">{{ transfer?.in?.value }}{{ transfer?.in?.unit }}</span>
           </span>
           <span class="server-info-item transfer--out">
             <span class="server-info-item-label">出网</span>
-            <span class="server-info-item-value">{{ transfer?.out?.value }}{{ transfer?.out?.symbol }}</span>
+            <span class="server-info-item-value">{{ transfer?.out?.value }}{{ transfer?.out?.unit }}</span>
           </span>
         </span>
       </div>

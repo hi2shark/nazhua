@@ -63,7 +63,7 @@ export const duration2 = (startDate, endDate) => {
     hours: Math.floor(diff / hour) % 24,
     minutes: Math.floor(diff / minute) % 60,
     seconds: Math.floor(diff / second) % 60,
-    $symbol: {
+    $unit: {
       day: '天',
       hour: '小时',
       minute: '分钟',
