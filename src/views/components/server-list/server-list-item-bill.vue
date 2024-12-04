@@ -88,7 +88,8 @@ const buyBtnText = config.nazhua.buyBtnText || '购买';
 const showBuyBtn = computed(() => !!props.info?.PublicNote?.customData?.orderLink);
 
 function toBuy() {
-  window.open(props.info?.PublicNote?.customData?.orderLink);
+  const decodeUrl = decodeURIComponent(props.info?.PublicNote?.customData?.orderLink);
+  window.open(decodeUrl, '_blank');
 }
 
 const tagList = computed(() => {
