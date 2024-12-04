@@ -1,5 +1,8 @@
 <template>
-  <div class="server-list-item-bill">
+  <div
+    v-if="show"
+    class="server-list-item-bill"
+  >
     <div class="left-box">
       <div
         v-if="billAndPlan.remainingTime"
@@ -102,6 +105,15 @@ const tagList = computed(() => {
     list.push(...props.info.PublicNote.planDataMod.extra.split(','));
   }
   return list;
+});
+
+const show = computed(() => {
+  const checks = [
+    billAndPlan.value.remainingTime,
+    tagList.value.length > 0,
+    showBuyBtn.value,
+  ];
+  return checks.some((item) => item);
 });
 </script>
 
