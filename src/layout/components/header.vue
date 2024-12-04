@@ -1,6 +1,7 @@
 <template>
   <div
     class="layout-header"
+    :class="headerClass"
     :style="headerStyle"
   >
     <div class="layer-header-container">
@@ -232,6 +233,20 @@ const serverStat = computed(() => {
 
 const title = ref(config.nazhua.title);
 
+const headerClass = computed(() => {
+  const classes = [];
+  if (route.name === 'ServerDetail') {
+    classes.push('layout-header--detail');
+  }
+  if (showServerStat) {
+    classes.push('layout-header--show-server-stat');
+  }
+  if (showServerCount) {
+    classes.push('layout-header--show-server-count');
+  }
+  return classes;
+});
+
 function toHome() {
   if (route.name !== 'Home') {
     router.push({
@@ -256,6 +271,12 @@ onMounted(() => {
   background-size: 3px 3px;
   backdrop-filter: saturate(50%) blur(3px);
   box-shadow: 0 2px 4px rgba(#000, 0.2);
+
+  &--show-server-stat {
+    @media screen and (max-width: 450px) {
+      padding-top: 10px;
+    }
+  }
 
   .site-name {
     line-height: calc(var(--layout-header-height) - 20px);
@@ -316,6 +337,27 @@ onMounted(() => {
 
   .server-stat-group {
     min-width: 160px;
+
+    @media screen and (max-width: 450px) {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 28px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      flex-direction: row-reverse;
+      gap: 10px;
+
+      .server-stat-label {
+        display: none;
+      }
+
+      .server-stat-content {
+        gap: 10px;
+      }
+    }
   }
 
   .server-stat {
