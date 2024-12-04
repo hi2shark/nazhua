@@ -129,7 +129,7 @@ const tipsContentStyle = computed(() => {
   } else {
     style.bottom = '10px';
     style.left = '50%';
-    style.transform = 'translate(-50%, -50%)';
+    style.transform = 'translate(-50%, 0)';
   }
   return style;
 });
