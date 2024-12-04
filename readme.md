@@ -30,10 +30,13 @@
   "customData": {
     "location": "HKG",
     "slogan": "这是一个香港节点",
-    "orderLink": "https://buy.hkvps.com"
+    "orderLink": "https://buy.example.com"
   }
 }
 ```
+Tips:   
+由于配置数据获取的方式特殊，无法正常解析符号`&`，建议在[https://www.bejson.com/enc/urlencode/](https://www.bejson.com/enc/urlencode/)进行编码后，将encodeURIComponent编码内容添加到orderLink中。  
+当然，你也可以通过浏览器的console（控制台），执行`encodeURIComponent('链接内容')`，获取编码后的内容。  
 
 ## 数据来源
 1. 公开的全量配置，其中包括“公开备注”（PublicNote），来着探针主页上暴露的服务器节点列表配置信息。此处是根据正则匹配的方式，获取到的节点列表。在主题项目中，默认将访问`/nezha/`的指向此处。  
