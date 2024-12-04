@@ -97,6 +97,9 @@ const tagList = computed(() => {
   if (props?.info?.PublicNote?.planDataMod?.networkRoute) {
     list.push(...props.info.PublicNote.planDataMod.networkRoute.split(','));
   }
+  if (props?.info?.PublicNote?.planDataMod?.extra) {
+    list.push(...props.info.PublicNote.planDataMod.extra.split(','));
+  }
   return list;
 });
 </script>
@@ -106,6 +109,7 @@ const tagList = computed(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 20px;
   height: 40px;
   border-bottom-left-radius: var(--list-item-border-radius);
   border-bottom-right-radius: var(--list-item-border-radius);
@@ -143,14 +147,17 @@ const tagList = computed(() => {
   .tag-list {
     display: flex;
     gap: 6px;
+    // 折行隐藏
+    height: 18px;
+    overflow: hidden;
 
     .tag-item {
       height: 18px;
       padding: 0 4px;
-      line-height: 18px;
+      line-height: 20px;
       font-size: 12px;
-      color: #ddd;
-      background-color: #294a66;
+      color: var(--public-note-tag-color);
+      background-color: var(--public-note-tag-bg);
       border-radius: 4px;
     }
   }

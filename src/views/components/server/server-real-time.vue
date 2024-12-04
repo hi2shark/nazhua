@@ -81,22 +81,22 @@ const {
 
   .server-real-time--duration {
     .item-value {
-      color: #cbf1f5;
+      color: var(--duration-color);
     }
   }
   .server-real-time--transfer {
     .item-value {
-      color: #ffc300;
+      color: var(--transfer-color);
     }
   }
   .server-real-time--inSpeed {
     .item-value {
-      color: #46cdcf;
+      color: var(--net-speed-in-color);
     }
   }
   .server-real-time--outSpeed {
     .item-value {
-      color: #abedd8;
+      color: var(--net-speed-out-color);
     }
   }
 }

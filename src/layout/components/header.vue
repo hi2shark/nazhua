@@ -20,20 +20,20 @@
             <span class="value">{{ serverCount.total }}</span>
             <span class="text">台服务器</span>
           </span>
-          <span
-            v-if="serverCount.online !== serverCount.total"
-            class="server-count server-count--online"
-          >
-            <span class="text">在线</span>
-            <span class="value">{{ serverCount.online }}</span>
-          </span>
-          <span
-            v-if="serverCount.offline"
-            class="server-count server-count--offline"
-          >
-            <span class="text">离线</span>
-            <span class="value">{{ serverCount.offline }}</span>
-          </span>
+          <template v-if="serverCount.online !== serverCount.total">
+            <span
+              class="server-count server-count--online"
+            >
+              <span class="text">在线</span>
+              <span class="value">{{ serverCount.online }}</span>
+            </span>
+            <span
+              class="server-count server-count--offline"
+            >
+              <span class="text">离线</span>
+              <span class="value">{{ serverCount.offline }}</span>
+            </span>
+          </template>
         </div>
         <div
           v-if="serverStat && showServerStat"
@@ -268,28 +268,28 @@ onMounted(() => {
   .server-count-group {
     display: flex;
     gap: 10px;
-    line-height: 30px;
-  }
 
-  .server-count {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    color: #ddd;
+    .server-count {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      color: #ddd;
+      line-height: 30px;
 
-    &.server-count--total {
-      .value {
-        color: #70f3ff;
+      &.server-count--total {
+        .value {
+          color: #70f3ff;
+        }
       }
-    }
-    &.server-count--online {
-      .value {
-        color: #0f0;
+      &.server-count--online {
+        .value {
+          color: #0f0;
+        }
       }
-    }
-    &.server-count--offline {
-      .value {
-        color: #f00;
+      &.server-count--offline {
+        .value {
+          color: #f00;
+        }
       }
     }
   }
@@ -308,8 +308,9 @@ onMounted(() => {
 
   .right-box {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 20px;
+    gap: 0 20px;
     color: #ddd;
   }
 
@@ -331,16 +332,31 @@ onMounted(() => {
     .server-stat-item {
       flex: 1;
     }
-
+  }
+  .server-stat--transfer {
     .server-stat-item--in {
       .text-value {
-        color: #ffc93c;
+        color: var(--transfer-in-color);
       }
     }
 
     .server-stat-item--out {
       .text-value {
-        color: #90f2ff;
+        color: var(--transfer-out-color);
+      }
+    }
+  }
+
+  .server-stat--net-speed {
+    .server-stat-item--in {
+      .text-value {
+        color: var(--net-speed-in-color);
+      }
+    }
+
+    .server-stat-item--out {
+      .text-value {
+        color: var(--net-speed-out-color);
       }
     }
   }

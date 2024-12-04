@@ -72,11 +72,17 @@
         <span class="server-info-item-group">
           <span class="server-info-item transfer--in">
             <span class="server-info-item-label">入网</span>
-            <span class="server-info-item-value">{{ transfer?.in?.value }}{{ transfer?.in?.unit }}</span>
+            <span class="server-info-item-value">
+              <span class="text-value">{{ transfer?.in?.value }}</span>
+              <span class="text-unit">{{ transfer?.in?.unit }}</span>
+            </span>
           </span>
           <span class="server-info-item transfer--out">
             <span class="server-info-item-label">出网</span>
-            <span class="server-info-item-value">{{ transfer?.out?.value }}{{ transfer?.out?.unit }}</span>
+            <span class="server-info-item-value">
+              <span class="text-value">{{ transfer?.out?.value }}</span>
+              <span class="text-unit">{{ transfer?.out?.unit }}</span>
+            </span>
           </span>
         </span>
       </div>
@@ -119,25 +125,6 @@
       </div>
     </div>
     <div
-      v-if="tagList?.length"
-      class="server-info-group server-info--tag-list"
-    >
-      <div class="server-info-label">
-        标签
-      </div>
-      <div class="server-info-content">
-        <div class="server-info-tag-list">
-          <span
-            v-for="(tag, index) in tagList"
-            :key="`${tag}_${index}`"
-            class="server-info-tag-item"
-          >
-            {{ tag }}
-          </span>
-        </div>
-      </div>
-    </div>
-    <div
       v-if="billPlanData.length"
       class="server-info-group server-info--biil-plan"
     >
@@ -157,17 +144,42 @@
             >{{ item.label }}</span>
             <span class="server-info-item-value">{{ item.value }}</span>
           </span>
-          <div
-            v-if="showBuyBtn"
-            class="buy-btn"
-            @click.stop="toBuy"
-          >
-            <span class="icon">
-              <span class="ri-shopping-bag-3-line" />
-            </span>
-            <span class="text">{{ buyBtnText }}</span>
-          </div>
         </span>
+      </div>
+    </div>
+    <div
+      v-if="tagList?.length"
+      class="server-info-group server-info--tag-list"
+    >
+      <div class="server-info-label">
+        标签
+      </div>
+      <div class="server-info-content">
+        <div class="server-info-tag-list">
+          <span
+            v-for="(tag, index) in tagList"
+            :key="`${tag}_${index}`"
+            class="server-info-tag-item"
+          >
+            {{ tag }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      v-if="showBuyBtn"
+      class="server-info-group server-info--order-link"
+    >
+      <div class="server-info-content">
+        <div
+          class="buy-btn"
+          @click.stop="toBuy"
+        >
+          <span class="icon">
+            <span class="ri-shopping-bag-3-line" />
+          </span>
+          <span class="text">{{ buyBtnText }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -340,27 +352,58 @@ const processCount = computed(() => props.info?.State?.ProcessCount);
   }
 
   .server-info-item-value {
-    color: #a1eafb;
+    color: #00fff0;
   }
 
-  .transfer--total {
+  .transfer--in {
     .server-info-item-value {
-      color: #fdfdfd;
+      color: #ddd;
+    }
+    .text-value {
+      color: var(--transfer-in-color);
     }
   }
 
+  .transfer--out {
+    .server-info-item-value {
+      color: #ddd;
+    }
+    .text-value {
+      color: var(--transfer-out-color);
+    }
+  }
+
+  .server-info--order-link {
+    padding: 10px 0 0;
+  }
   .buy-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    line-height: 18px;
+    height: 36px;
+    padding: 0 10px;
+    gap: 5px;
+    line-height: 1;
     font-weight: bold;
     color: var(--list-item-buy-link-color);
+    border: 2px solid var(--list-item-buy-link-color);
+    border-radius: 8px;
+    transition: all 150ms ease;
     cursor: pointer;
+
+    &:hover {
+      color: #111;
+      border-color: var(--list-item-buy-link-color);
+      background-color: var(--list-item-buy-link-color);
+    }
 
     @media screen and (max-width: 768px) {
       cursor: default;
+    }
+
+    .icon {
+      font-size: 18px;
+      font-weight: normal;
     }
   }
 
@@ -370,11 +413,11 @@ const processCount = computed(() => props.info?.State?.ProcessCount);
 
     .server-info-tag-item {
       height: 18px;
-      padding: 0 4px;
-      line-height: 18px;
+      padding: 0 5px 0 6px;
+      line-height: 20px;
       font-size: 12px;
-      color: #ddd;
-      background-color: #294a66;
+      color: var(--public-note-tag-color);
+      background-color: var(--public-note-tag-bg);
       border-radius: 4px;
     }
   }

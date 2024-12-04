@@ -8,11 +8,21 @@
   --detail-container-width: 900px;
 
   --layout-main-bg-color: rgba(20, 30, 40, 0.75);
-  
   --layout-bg-color: #252748;
+  
   --world-map-point-color: #fff143;
+
+  --duration-color: #cbf1f5;
+  --transfer-color: #f9ed69;
+  --transfer-in-color: var(--transfer-color);
+  --transfer-out-color: #90f2ff;
+  --net-speed-in-color: #f5b199;
+  --net-speed-out-color: #89c3eb;
+
   --list-item-price-color: #eee;
   --list-item-buy-link-color: #ffc300;
+  --public-note-tag-color: #ddd;
+  --public-note-tag-bg: #6a7efc;
 
   // 针对1440px以下的屏幕
   @media screen and (max-width: 1440px) {
