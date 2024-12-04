@@ -1,6 +1,6 @@
 # Nazhua
-基于哪吒监控(nezha.wiki)v0版本构建的前端主题，目前暂不支持v1版本，关于v1支持需要等待后续版本。
-主题有点重，因为内置了`SarasaTermSC-SemiBold`字体。
+基于哪吒监控(nezha.wiki)v0版本构建的前端主题，目前暂不支持v1版本，关于v1支持需要等待后续版本。  
+主题有点**重**，因为内置了一个带中文的`SarasaTermSC-SemiBold`字体。  
 
 ## 劝退指南 用前必读
 1. 本主题是基于哪吒监控v0版本构建的，不支持v1版本。*未来根据情况可能会支持v1版本*  
@@ -97,6 +97,7 @@ server {
   }
 
   location / {
+    try_files $uri $uri/ /index.html;
     root /home/wwwroot/html;
   }
 }
