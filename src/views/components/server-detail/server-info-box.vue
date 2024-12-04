@@ -1,41 +1,8 @@
 <template>
   <div class="server-info-box">
-    <div
-      v-if="billPlanData.length"
-      class="server-info-group server-info--biil-plan"
-    >
-      <div class="server-info-label">
-        套餐
-      </div>
-      <div class="server-info-content">
-        <span class="server-info-item-group">
-          <span
-            v-for="item in billPlanData"
-            :key="item.label"
-            class="server-info-item"
-          >
-            <span
-              v-if="item.label"
-              class="server-info-item-label"
-            >{{ item.label }}</span>
-            <span class="server-info-item-value">{{ item.value }}</span>
-          </span>
-          <div
-            v-if="showBuyBtn"
-            class="buy-btn"
-            @click.stop="toBuy"
-          >
-            <span class="icon">
-              <span class="ri-shopping-bag-3-line" />
-            </span>
-            <span class="text">{{ buyBtnText }}</span>
-          </div>
-        </span>
-      </div>
-    </div>
     <div class="server-info-group server-info--cpu">
       <div class="server-info-label">
-        平台
+        CPU
       </div>
       <div class="server-info-content">
         <span
@@ -43,6 +10,22 @@
           :title="info?.Host?.CPU?.[0]"
         >
           <span>{{ info?.Host?.CPU?.[0] }}</span>
+        </span>
+      </div>
+    </div>
+    <div
+      v-if="info?.Host?.GPU?.[0]"
+      class="server-info-group server-info--gpu"
+    >
+      <div class="server-info-label">
+        GPU
+      </div>
+      <div class="server-info-content">
+        <span
+          class="cpu-info"
+          :title="info?.Host?.GPU?.[0]"
+        >
+          <span>{{ info?.Host?.GPU?.[0] }}</span>
         </span>
       </div>
     </div>
@@ -152,6 +135,39 @@
             {{ tag }}
           </span>
         </div>
+      </div>
+    </div>
+    <div
+      v-if="billPlanData.length"
+      class="server-info-group server-info--biil-plan"
+    >
+      <div class="server-info-label">
+        套餐
+      </div>
+      <div class="server-info-content">
+        <span class="server-info-item-group">
+          <span
+            v-for="item in billPlanData"
+            :key="item.label"
+            class="server-info-item"
+          >
+            <span
+              v-if="item.label"
+              class="server-info-item-label"
+            >{{ item.label }}</span>
+            <span class="server-info-item-value">{{ item.value }}</span>
+          </span>
+          <div
+            v-if="showBuyBtn"
+            class="buy-btn"
+            @click.stop="toBuy"
+          >
+            <span class="icon">
+              <span class="ri-shopping-bag-3-line" />
+            </span>
+            <span class="text">{{ buyBtnText }}</span>
+          </div>
+        </span>
       </div>
     </div>
   </div>
@@ -293,6 +309,8 @@ const processCount = computed(() => props.info?.State?.ProcessCount);
     font-size: 14px;
 
     .server-info-label {
+      width: 2.4em;
+      text-align: center;
       line-height: var(--server-info-item-size);
       color: #ccc;
     }
