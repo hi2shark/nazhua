@@ -21,6 +21,18 @@
           <span class="text-item value-text">{{ billAndPlan.remainingTime.value }}</span>
         </span>
       </template>
+      <div
+        v-else-if="tagList"
+        class="tag-list"
+      >
+        <span
+          v-for="(tagItem, index) in tagList"
+          :key="`${tagItem}_${index}`"
+          class="tag-item"
+        >
+          {{ tagItem }}
+        </span>
+      </div>
     </div>
     <div class="billing-and-order-link">
       <div
@@ -78,6 +90,14 @@ const showBuyBtn = computed(() => !!props.info?.PublicNote?.customData?.orderLin
 function toBuy() {
   window.open(props.info?.PublicNote?.customData?.orderLink);
 }
+
+const tagList = computed(() => {
+  const list = [];
+  if (props?.info?.PublicNote?.planDataMod?.networkRoute) {
+    list.push(...props.info.PublicNote.planDataMod.networkRoute.split(','));
+  }
+  return list;
+});
 </script>
 
 <style lang="scss" scoped>
@@ -116,6 +136,21 @@ function toBuy() {
 
     .value-text {
       color: #74dbef;
+    }
+  }
+
+  .tag-list {
+    display: flex;
+    gap: 6px;
+
+    .tag-item {
+      height: 18px;
+      padding: 0 4px;
+      line-height: 18px;
+      font-size: 12px;
+      color: #ddd;
+      background-color: #294a66;
+      border-radius: 4px;
     }
   }
 

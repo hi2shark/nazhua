@@ -372,8 +372,8 @@ const processCount = computed(() => props.info?.State?.ProcessCount);
       padding: 0 4px;
       line-height: 18px;
       font-size: 12px;
-      color: #111;
-      background-color: rgba(#fff, 0.8);
+      color: #ddd;
+      background-color: #294a66;
       border-radius: 4px;
     }
   }
