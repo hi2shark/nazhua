@@ -88,8 +88,8 @@ function toBuy() {
   height: 40px;
   border-bottom-left-radius: var(--list-item-border-radius);
   border-bottom-right-radius: var(--list-item-border-radius);
-  background: rgba(#000, 0.4);
-  box-shadow: 0 2px 4px rgba(#000, 0.5);
+  background: rgba(#000, 0.3);
+  box-shadow: 0 -2px 4px rgba(#000, 0.5);
 
   .remaining-time-info {
     display: flex;

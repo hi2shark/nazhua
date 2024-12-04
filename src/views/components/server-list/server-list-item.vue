@@ -33,11 +33,16 @@
         </div>
       </div>
     </div>
-    <div class="server-list-item-main">
+    <div
+      v-if="showStatus || showStatus"
+      class="server-list-item-main"
+    >
       <server-list-item-status
+        v-if="showStatus"
         :info="info"
       />
       <server-real-time
+        v-if="showStat"
         :info="info"
       />
     </div>
@@ -89,6 +94,8 @@ function openDetail() {
   });
 }
 
+const showStatus = config.nazhua.hideListItemStatusDonut !== true;
+const showStat = config.nazhua.hideListItemStat !== true;
 const showBill = config.nazhua.hideListItemBill !== true;
 </script>
 
