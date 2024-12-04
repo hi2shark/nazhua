@@ -63,7 +63,7 @@ export default (params) => {
       case 'cpu':
         return {
           type: 'cpu',
-          used: Math.max(props.info.State.CPU, 1),
+          used: (props.info.State.CPU).toFixed(1) * 1,
           colors: {
             used: '#0088ff',
             total: 'rgba(255, 255, 255, 0.2)',
@@ -85,7 +85,7 @@ export default (params) => {
         }
         return {
           type: 'mem',
-          used: Math.max(useMemAndTotalMem.value.usePercent, 1),
+          used: useMemAndTotalMem.value.usePercent,
           colors: {
             used: '#0aa344',
             total: 'rgba(255, 255, 255, 0.2)',
@@ -111,7 +111,7 @@ export default (params) => {
         }
         return {
           type: 'swap',
-          used: Math.max(useSwapAndTotalSwap.value.usePercent, 1),
+          used: useSwapAndTotalSwap.value.usePercent,
           colors: {
             used: '#ff8c00',
             total: 'rgba(255, 255, 255, 0.2)',
@@ -134,7 +134,7 @@ export default (params) => {
         }
         return {
           type: 'disk',
-          used: Math.max(useDiskAndTotalDisk.value.usePercent, 1),
+          used: useDiskAndTotalDisk.value.usePercent,
           colors: {
             used: '#70f3ff',
             total: 'rgba(255, 255, 255, 0.2)',

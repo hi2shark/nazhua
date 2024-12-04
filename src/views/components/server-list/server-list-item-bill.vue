@@ -1,8 +1,9 @@
 <template>
   <div class="server-list-item-bill">
-    <div class="remaining-time-info">
-      <template
+    <div class="left-box">
+      <div
         v-if="billAndPlan.remainingTime"
+        class="remaining-time-info"
       >
         <span class="icon">
           <span class="ri-hourglass-fill" />
@@ -20,7 +21,7 @@
         >
           <span class="text-item value-text">{{ billAndPlan.remainingTime.value }}</span>
         </span>
-      </template>
+      </div>
       <div
         v-else-if="tagList"
         class="tag-list"
@@ -116,6 +117,10 @@ const tagList = computed(() => {
   background: rgba(#000, 0.3);
   box-shadow: 0 -2px 4px rgba(#000, 0.5);
 
+  .left-box {
+    display: flex;
+  }
+
   .remaining-time-info {
     display: flex;
     align-items: center;
@@ -147,6 +152,7 @@ const tagList = computed(() => {
   .tag-list {
     display: flex;
     gap: 6px;
+    padding-left: 15px;
     // 折行隐藏
     height: 18px;
     overflow: hidden;
@@ -166,7 +172,7 @@ const tagList = computed(() => {
     display: flex;
     align-items: center;
     height: 40px;
-    padding: 0 15px;
+    padding-right: 15px;
     gap: 10px;
 
     .billing-info {

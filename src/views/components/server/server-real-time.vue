@@ -54,6 +54,7 @@ const {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    cursor: default;
 
     .item-value {
       line-height: 1em;

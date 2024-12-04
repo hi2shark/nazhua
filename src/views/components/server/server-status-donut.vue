@@ -6,7 +6,7 @@
     <div class="server-status-donut">
       <chart-donut
         :size="size"
-        :used="used"
+        :used="Math.min(Math.max(used, 1), 100)"
         :item-colors="colors"
       >
         <template #default>

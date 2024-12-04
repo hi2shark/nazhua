@@ -2,9 +2,10 @@
   <div class="server-status-and-real-time">
     <div
       class="server-status-group"
-      :class="'status-list--' + serverStatusList.length"
+      :class="'type--' + componentName + ' status-list--' + serverStatusList.length"
     >
-      <server-status-item
+      <component
+        :is="componentMaps[componentName]"
         v-for="item in serverStatusList"
         :key="item.type"
         :type="item.type"
@@ -23,10 +24,14 @@
 /**
  * 服务器状态组
  */
+
+import config from '@/config';
+
 import handleServerStatus from '@/views/composable/server-status';
 
-import ServerStatusItem from '@/views/components/server/server-status.vue';
 import ServerListItemRealTime from '@/views/components/server/server-real-time.vue';
+import ServerStatusDonut from '@/views/components/server/server-status-donut.vue';
+import ServerStatusProgress from '@/views/components/server/server-status-progress.vue';
 
 const props = defineProps({
   info: {
@@ -34,6 +39,16 @@ const props = defineProps({
     default: () => ({}),
   },
 });
+
+const componentMaps = {
+  donut: ServerStatusDonut,
+  progress: ServerStatusProgress,
+};
+
+const componentName = [
+  'donut',
+  'progress',
+].includes(config.nazhua.detailServerStatusType) ? config.nazhua.detailServerStatusType : 'donut';
 
 const {
   serverStatusList,
@@ -87,72 +102,85 @@ const {
   display: flex;
   flex-wrap: wrap;
 
-  &.status-list--3 {
-    --server-status-size: 200px;
-    --server-status-val-text-font-size: 32px;
-    --server-status-label-font-size: 18px;
-    --server-status-content-font-size: 16px;
-  }
-
-  &.status-list--4 {
-    --server-status-size: 180px;
-    --server-status-val-text-font-size: 28px;
-    --server-status-label-font-size: 16px;
-    --server-status-content-font-size: 16px;
-  }
-
-  @media screen and (max-width: 800px) {
-    // gap: 10px 20px;
-
-    &.status-list--4 {
-      --server-status-size: 160px;
-      --server-status-val-text-font-size: 26px;
-      --server-status-label-font-size: 15px;
-      --server-status-content-font-size: 14px;
-    }
-  }
-
-  @media screen and (max-width: 720px) {
-    gap: 0;
-  }
-
-  @media screen and (max-width: 480px) {
+  &.type--donut {
     &.status-list--3 {
-      --server-status-size: 100px;
-      --server-status-val-text-font-size: 14px;
-      --server-status-label-font-size: 12px;
-      --server-status-content-font-size: 12px;
+      --server-status-size: 200px;
+      --server-status-val-text-font-size: 32px;
+      --server-status-label-font-size: 18px;
+      --server-status-content-font-size: 16px;
     }
 
     &.status-list--4 {
-      padding: 0 10px;
-      gap: 10px 0;
-      --server-status-size: 120px;
-      --server-status-val-text-font-size: 16px;
-      --server-status-label-font-size: 14px;
-      --server-status-content-font-size: 14px;
+      --server-status-size: 180px;
+      --server-status-val-text-font-size: 28px;
+      --server-status-label-font-size: 16px;
+      --server-status-content-font-size: 16px;
+    }
+
+    @media screen and (max-width: 800px) {
+      // gap: 10px 20px;
+
+      &.status-list--4 {
+        --server-status-size: 160px;
+        --server-status-val-text-font-size: 26px;
+        --server-status-label-font-size: 15px;
+        --server-status-content-font-size: 14px;
+      }
+    }
+
+    @media screen and (max-width: 720px) {
+      gap: 0;
+    }
+
+    @media screen and (max-width: 480px) {
+      &.status-list--3 {
+        --server-status-size: 100px;
+        --server-status-val-text-font-size: 14px;
+        --server-status-label-font-size: 12px;
+        --server-status-content-font-size: 12px;
+      }
+
+      &.status-list--4 {
+        padding: 0 10px;
+        gap: 10px 0;
+        --server-status-size: 120px;
+        --server-status-val-text-font-size: 16px;
+        --server-status-label-font-size: 14px;
+        --server-status-content-font-size: 14px;
+      }
+    }
+
+    @media screen and (max-width: 400px) {
+      &.status-list--3 {
+        --server-status-size: 90px;
+        --server-status-val-text-font-size: 12px;
+        --server-status-label-font-size: 12px;
+        --server-status-content-font-size: 12px;
+      }
+    }
+
+    @media screen and (max-width: 320px) {
+      &.status-list--3 {
+        --server-status-size: 90px;
+      }
+      &.status-list--4 {
+        padding: 0;
+        --server-status-size: 100px;
+        --server-status-val-text-font-size: 14px;
+        --server-status-label-font-size: 12px;
+        --server-status-content-font-size: 12px;
+      }
     }
   }
 
-  @media screen and (max-width: 400px) {
-    &.status-list--3 {
-      --server-status-size: 90px;
-      --server-status-val-text-font-size: 12px;
-      --server-status-label-font-size: 12px;
-      --server-status-content-font-size: 12px;
-    }
-  }
+  &.type--progress {
+    padding: 0 5px;
+    gap: 10px;
 
-  @media screen and (max-width: 320px) {
-    &.status-list--3 {
-      --server-status-size: 90px;
-    }
-    &.status-list--4 {
-      padding: 0;
-      --server-status-size: 100px;
-      --server-status-val-text-font-size: 14px;
-      --server-status-label-font-size: 12px;
-      --server-status-content-font-size: 12px;
+    --progress-bar-height: 24px;
+
+    @media screen and (max-width: 350px) {
+      --progress-bar-height: 16px;
     }
   }
 }

@@ -3,6 +3,8 @@ window.$$nazhuaConfig = {
   // freeAmount: '白嫖', // 免费服务的费用名称
   // infinityCycle: '无限', // 无限周期名称
   // buyBtnText: '购买', // 购买按钮文案
+  // listServerStatusType: 'progress', // 服务器状态类型--列表
+  // detailServerStatusType: 'progress', // 服务器状态类型--详情页
   // hideNavbarServerCount: false, // 隐藏服务器数量
   // hideNavbarServerStat: false, // 隐藏服务器统计
   // hideListItemStatusDonut: true, // 隐藏列表项的饼图

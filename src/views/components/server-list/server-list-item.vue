@@ -4,9 +4,11 @@
     :class="{
       'server-list-item--offline': info.online === -1,
     }"
-    @click="openDetail"
   >
-    <div class="server-info-group server-list-item-head">
+    <div
+      class="server-info-group server-list-item-head"
+      @click="openDetail"
+    >
       <div class="server-name-group left-box">
         <span
           class="server-flag"
@@ -36,6 +38,7 @@
     <div
       v-if="showStatus || showStatus"
       class="server-list-item-main"
+      @click="openDetail"
     >
       <server-list-item-status
         v-if="showStatus"
@@ -128,6 +131,11 @@ const showBill = config.nazhua.hideListItemBill !== true;
     border-top-right-radius: var(--list-item-border-radius);
     background: rgba(#000, 0.3);
     box-shadow: 0 2px 4px rgba(#000, 0.5);
+    cursor: pointer;
+
+    @media screen and (max-width: 768px) {
+      cursor: default;
+    }
 
     &.server-list-item-head {
       flex-wrap: wrap;

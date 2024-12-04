@@ -39,7 +39,7 @@ import LayoutFooter from './components/footer.vue';
     bottom: 0;
     left: 0;
     z-index: 1;
-    background: var(--layout-bg-color) url('~@/assets/images/bg.webp') no-repeat 50% 0%;
+    background: var(--layout-bg-color) url('~@/assets/images/bg.webp') no-repeat 50% 100%;
     background-size: 100% auto;
   }
 }
