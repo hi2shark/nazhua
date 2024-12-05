@@ -10,7 +10,13 @@ const unescaped = (str) => {
   return str2;
 };
 export default async () => fetch(config.nazhua.nezhaPath).then((res) => res.text()).then((res) => {
-  const resMatch = res?.match?.(configReg(config.nazhua.nezhaV0ConfigType));
+  let resMatch = res?.match?.(configReg(config.nazhua.nezhaV0ConfigType));
+  // 尝试兼容不同的nezha前台主题
+  if (!resMatch) {
+    resMatch = res?.match?.(configReg(
+      config.nazhua.nezhaV1ConfigType === 'servers' ? 'initData' : 'servers',
+    ));
+  }
   const configStr = resMatch?.[1];
   if (!configStr) {
     return null;
