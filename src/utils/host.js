@@ -35,7 +35,7 @@ export function getCPUInfo(text) {
   const companyReg = /Intel|AMD|ARM|Qualcomm|Apple|Samsung|IBM|NVIDIA/;
   // eslint-disable-next-line max-len, vue/max-len
   const modelReg = /Xeon|Threadripper|Athlon|Pentium|Celeron|Opteron|Phenom|Turion|Sempron|FX|A-Series|R-Series|EPYC|Ryzen/;
-  const coresReg = /(\d+) (Virtual|Physics) Core/;
+  const coresReg = /(\d+) (Virtual|Physics|Physical) Core/;
   const companyMatch = text.match(companyReg);
   const modelMatch = text.match(modelReg);
   const coresMatch = text.match(coresReg);
