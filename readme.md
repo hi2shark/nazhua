@@ -38,6 +38,30 @@ Tips:
 由于配置数据获取的方式特殊，无法正常解析符号`&`，建议在[https://www.bejson.com/enc/urlencode/](https://www.bejson.com/enc/urlencode/)进行编码后，将encodeURIComponent编码内容添加到orderLink中。  
 当然，你也可以通过浏览器的console（控制台），执行`encodeURIComponent('链接内容')`，获取编码后的内容。  
 
+## 对于公开备注的支持
+在哪吒的主题ServerStatus迭代中，nap0o增加了一个公开备注的功能，可以给节点添加额外的展示信息  
+具体字段定义参考 [https://github.com/nezhahq/nezha/pull/425](https://github.com/nezhahq/nezha/pull/425)  
+Nazhua对这个支持大概在90%左右，参与数据处理了的字段如下：  
+```json
+{
+   "billingDataMod": {
+       "startDate": "2024-10-01T00:00:00+08:00",
+       "endDate": "2024-11-01T00:00:00+08:00",
+       "autoRenewal": "1",
+       "cycle": "月",
+       "amount": "$3.99"
+   },
+   "planDataMod": {
+       "bandwidth": "30Mbps",
+       "trafficVol": "1TB/月",
+       "trafficType": "1",
+       "networkRoute": "CN2,GIA",
+       "extra": "传家宝,AS9929"
+   }
+}
+```
+其中IPv4、IPv6暂未参与到处理中，后续可能会支持。  
+
 ## 数据来源
 1. 公开的全量配置，其中包括“公开备注”（PublicNote），来着探针主页上暴露的服务器节点列表配置信息。此处是根据正则匹配的方式，获取到的节点列表。在主题项目中，默认将访问`/nezha/`的指向此处。  
 2. 实时数据，来着公开的ws服务接口，`/ws`。  
