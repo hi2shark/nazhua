@@ -177,7 +177,7 @@ const serverStat = computed(() => {
   }
   const calcInTransfer = hostUtils.calcBinary(transfer.in);
   if (calcInTransfer.t > 1) {
-    transfer.inData.value = (calcInTransfer.g).toFixed(1) * 1;
+    transfer.inData.value = (calcInTransfer.t).toFixed(1) * 1;
     transfer.inData.unit = 'T';
   } else if (calcInTransfer.g > 1) {
     transfer.inData.value = (calcInTransfer.g).toFixed(1) * 1;
@@ -191,7 +191,7 @@ const serverStat = computed(() => {
   }
   const calcOutTransfer = hostUtils.calcBinary(transfer.out);
   if (calcOutTransfer.t > 1) {
-    transfer.outData.value = (calcOutTransfer.g).toFixed(1) * 1;
+    transfer.outData.value = (calcOutTransfer.t).toFixed(1) * 1;
     transfer.outData.unit = 'T';
   } else if (calcOutTransfer.g > 1) {
     transfer.outData.value = (calcOutTransfer.g).toFixed(1) * 1;
@@ -204,7 +204,10 @@ const serverStat = computed(() => {
     transfer.outData.unit = 'K';
   }
   const calcNetInSpeed = hostUtils.calcBinary(netSpeed.in);
-  if (calcNetInSpeed.g > 1) {
+  if (calcNetInSpeed.t > 1) {
+    netSpeed.inData.value = (calcNetInSpeed.t).toFixed(1) * 1;
+    netSpeed.inData.unit = 'T';
+  } else if (calcNetInSpeed.g > 1) {
     netSpeed.inData.value = (calcNetInSpeed.g).toFixed(1) * 1;
     netSpeed.inData.unit = 'G';
   } else if (calcNetInSpeed.m > 1) {
@@ -215,7 +218,10 @@ const serverStat = computed(() => {
     netSpeed.inData.unit = 'K';
   }
   const calcNetOutSpeed = hostUtils.calcBinary(netSpeed.out);
-  if (calcNetOutSpeed.g > 1) {
+  if (calcNetOutSpeed.t > 1) {
+    netSpeed.outData.value = (calcNetOutSpeed.t).toFixed(1) * 1;
+    netSpeed.outData.unit = 'T';
+  } else if (calcNetOutSpeed.g > 1) {
     netSpeed.outData.value = (calcNetOutSpeed.g).toFixed(1) * 1;
     netSpeed.outData.unit = 'G';
   } else if (calcNetOutSpeed.m > 1) {

@@ -77,6 +77,12 @@ export default (params) => {
         };
       case 'mem':
       {
+        let usedVal;
+        if (useMemAndTotalMem.value.used.g >= 10 && useMemAndTotalMem.value.total.g >= 10) {
+          usedVal = `${(useMemAndTotalMem.value.used.g).toFixed(1) * 1}G`;
+        } else {
+          usedVal = `${Math.ceil(useMemAndTotalMem.value.used.m)}M`;
+        }
         let contentVal;
         if (useMemAndTotalMem.value.total.g > 4) {
           contentVal = `${(useMemAndTotalMem.value.total.g).toFixed(1) * 1}G`;
@@ -90,7 +96,7 @@ export default (params) => {
             used: '#0aa344',
             total: 'rgba(255, 255, 255, 0.2)',
           },
-          valText: `${Math.ceil(useMemAndTotalMem.value.used.m)}M`,
+          valText: usedVal,
           label: '内存',
           content: {
             default: `运行内存${contentVal}`,
@@ -102,6 +108,12 @@ export default (params) => {
       {
         if (!useSwapAndTotalSwap.value) {
           return null;
+        }
+        let usedVal;
+        if (useSwapAndTotalSwap.value.used.g >= 10 && useSwapAndTotalSwap.value.total.g >= 10) {
+          usedVal = `${(useSwapAndTotalSwap.value.used.g).toFixed(1) * 1}G`;
+        } else {
+          usedVal = `${Math.ceil(useSwapAndTotalSwap.value.used.m)}M`;
         }
         let contentVal;
         if (useSwapAndTotalSwap.value.total.g > 4) {
@@ -116,7 +128,7 @@ export default (params) => {
             used: '#ff8c00',
             total: 'rgba(255, 255, 255, 0.2)',
           },
-          valText: `${Math.ceil(useSwapAndTotalSwap.value.used.m)}M`,
+          valText: usedVal,
           label: '交换',
           content: {
             default: `交换内存${contentVal}`,
@@ -127,7 +139,7 @@ export default (params) => {
       case 'disk':
       {
         let contentValue;
-        if (useDiskAndTotalDisk.value.total.t >= 2) {
+        if (useDiskAndTotalDisk.value.total.t >= 1) {
           contentValue = `${(useDiskAndTotalDisk.value.total.t).toFixed(1) * 1}T`;
         } else {
           contentValue = `${Math.ceil(useDiskAndTotalDisk.value.total.g)}G`;

@@ -231,6 +231,7 @@ export const countryCodeMapping = {
   DE: 'FRA',
   NL: 'AMS',
   UK: 'LON',
+  GB: 'LON',
   AU: 'SYD',
   US: 'LAX',
 };

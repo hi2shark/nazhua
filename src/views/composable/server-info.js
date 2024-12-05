@@ -32,7 +32,11 @@ export default (params) => {
       }
     }
     if (distInfo) {
-      text.push(`${Math.ceil(distInfo.g)}G`);
+      if (distInfo.g > 900) {
+        text.push(`${Math.round(distInfo.t)}T`);
+      } else {
+        text.push(`${Math.ceil(distInfo.g)}G`);
+      }
     }
     return text.join('');
   });

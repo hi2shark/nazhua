@@ -10,7 +10,10 @@
         :item-colors="colors"
       >
         <template #default>
-          <div class="chart-donut-label">
+          <div
+            class="chart-donut-label"
+            :title="`${(used).toFixed(1) * 1}%`"
+          >
             <div class="server-status-val-text">
               <span>{{ valText }}</span>
             </div>
@@ -100,6 +103,7 @@ defineProps({
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
   }
 
   .server-status-val-text {
