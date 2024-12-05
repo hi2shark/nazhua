@@ -17,7 +17,7 @@ export default async () => fetch(config.nazhua.nezhaPath).then((res) => res.text
   }
   const remoteConfig = JSON.parse(unescaped(configStr));
   if (remoteConfig?.servers) {
-    return remoteConfig.servers.map((i) => {
+    remoteConfig.servers = remoteConfig.servers.map((i) => {
       const item = {
         ...i,
       };
@@ -28,6 +28,7 @@ export default async () => fetch(config.nazhua.nezhaPath).then((res) => res.text
       }
       return item;
     });
+    return remoteConfig;
   }
   return null;
 }).catch(() => null);

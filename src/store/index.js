@@ -18,9 +18,9 @@ const defaultState = () => ({
   },
 });
 
-function isOnline(LastActive) {
+function isOnline(LastActive, currentTime = Date.now()) {
   const lastActiveTime = dayjs(LastActive)?.valueOf?.() || 0;
-  if (Date.now() - lastActiveTime > 10 * 1000) {
+  if (currentTime - lastActiveTime > 10 * 1000) {
     return -1;
   }
   return 1;
@@ -75,18 +75,18 @@ const store = createStore({
      * 加载服务器列表
      */
     async loadServers({ commit }) {
-      const serverConfig = await loadNezhaConfig();
-      if (!serverConfig) {
+      const serverResult = await loadNezhaConfig();
+      if (!serverResult) {
         console.error('load server config failed');
         return;
       }
-      const servers = serverConfig.map((i) => {
+      const servers = serverResult.servers?.map?.((i) => {
         const item = {
           ...i,
-          online: isOnline(i.LastActive),
+          online: isOnline(i.LastActive, serverResult.now),
         };
         return item;
-      });
+      }) || [];
       commit('SET_SERVERS', servers);
     },
     /**
@@ -97,13 +97,13 @@ const store = createStore({
     }) {
       msg.on('servers', (res) => {
         if (res) {
-          const servers = res.map((i) => {
+          const servers = res.servers?.map?.((i) => {
             const item = {
               ...i,
-              online: isOnline(i.LastActive),
+              online: isOnline(i.LastActive, res.now),
             };
             return item;
-          });
+          }) || [];
           commit('UPDATE_SERVERS', servers);
         }
       });

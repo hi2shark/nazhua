@@ -16,7 +16,7 @@ const wsService = new WSService({
   },
   onMessage: (data) => {
     if (data?.now) {
-      msg.emit('servers', data?.servers);
+      msg.emit('servers', data);
     } else {
       msg.emit('message', data);
     }
