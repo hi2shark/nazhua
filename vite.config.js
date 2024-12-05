@@ -9,7 +9,7 @@ import packageJson from './package';
 dotenv.config({
   path: '.env.development.local',
 });
-process.env.VITE_APP_VERSION = packageJson.version;
+process.env.VITE_APP_VERSION = process.env.VERSION || packageJson.version;
 
 // https://vite.dev/config/
 export default defineConfig({
