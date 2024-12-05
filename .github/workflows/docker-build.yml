@@ -1,10 +1,11 @@
 name: Build and Push Docker Image
 
 on:
-  push:
-    branches:
-      - main  # 监听 main 分支的 push 操作
-  workflow_dispatch:  # 手动触发
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to use for the Docker image'
+        required: false
 
 jobs:
   build:
@@ -22,9 +23,14 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Get version from package.json
-      id: get_version
-      run: echo "VERSION=$(node -p 'require("./package.json").version')" >> $GITHUB_ENV
+    - name: Determine version
+      id: determine_version
+      run: |
+        if [ -z "${{ github.event.inputs.version }}" ]; then
+          echo "VERSION=$(node -p 'require("./package.json").version')" >> $GITHUB_ENV
+        else
+          echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+        fi
 
     - name: Print version
       run: echo "Version is $VERSION"
