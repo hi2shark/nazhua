@@ -87,35 +87,10 @@ const serverList = computed(() => store.state.serverList);
 // 服务器总数
 const serverCount = computed(() => store.state.serverCount);
 
-/**
- * 解构数据
- */
-const serverListData = computed(() => {
-  const tagMap = {};
-  serverList.value.forEach((i) => {
-    if (i.Tag) {
-      if (!tagMap[i.Tag]) {
-        tagMap[i.Tag] = 0;
-      }
-      tagMap[i.Tag] += 1;
-    }
-  });
-  const tags = [];
-  Object.entries(tagMap).forEach(([tag, count]) => {
-    tags.push({
-      tag,
-      count,
-    });
-  });
-  return {
-    tags,
-  };
-});
-
-const tagOptions = computed(() => (serverListData.value?.tags || []).map((i) => ({
+const tagOptions = computed(() => store.state.serverGroup.map((i) => ({
   key: uuid(),
-  label: i.tag,
-  value: i.tag,
+  label: i.name,
+  value: i.name,
 })));
 
 const onlineOptions = computed(() => {

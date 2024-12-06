@@ -12,10 +12,14 @@ const config = {
   },
   nazhua: {
     title: '哪吒监控',
+    nezhaVersion: 'v0',
     apiMonitorPath: '/api/v1/monitor/{id}',
     wsPath: '/ws',
     nezhaPath: '/nezha/',
     nezhaV0ConfigType: 'servers',
+    v1ApiMonitorPath: '/api/v1/service/{id}',
+    v1WsPath: '/api/v1/ws/server',
+    v1GroupPath: '/api/v1/server-group',
     // 解构载入自定义配置
     ...(window.$$nazhuaConfig || {}),
   },

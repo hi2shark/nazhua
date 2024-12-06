@@ -29,6 +29,11 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
       },
+      '/api/v1/ws/server': {
+        target: process.env.WS_HOST,
+        changeOrigin: true,
+        ws: true,
+      },
       '/nezha/': {
         target: process.env.NEZHA_HOST,
         changeOrigin: true,

@@ -2,7 +2,13 @@ import {
   createStore,
 } from 'vuex';
 import dayjs from 'dayjs';
-import loadNezhaConfig from '@/utils/load-nezha-config';
+import config from '@/config';
+import loadNezhaV0Config, {
+  loadServerGroup as loadNezhaV0ServerGroup,
+} from '@/utils/load-nezha-v0-config';
+import {
+  loadServerGroup as loadNezhaV1ServerGroup,
+} from '@/utils/load-nezha-v1-config';
 
 import {
   msg,
@@ -10,6 +16,7 @@ import {
 
 const defaultState = () => ({
   init: false,
+  serverGroup: [],
   serverList: [],
   serverCount: {
     total: 0,
@@ -35,9 +42,13 @@ function handleServerCount(servers) {
   return counts;
 }
 
+let firstSetServers = true;
 const store = createStore({
   state: defaultState(),
   mutations: {
+    SET_SERVER_GROUP(state, serverGroup) {
+      state.serverGroup = serverGroup;
+    },
     SET_SERVERS(state, servers) {
       const newServers = [...servers];
       newServers.sort((a, b) => b.DisplayIndex - a.DisplayIndex);
@@ -58,8 +69,6 @@ const store = createStore({
         };
         if (oldItem?.PublicNote) {
           serverItem.PublicNote = oldItem.PublicNote;
-        } else {
-          serverItem.PublicNote = {};
         }
         return serverItem;
       });
@@ -74,8 +83,20 @@ const store = createStore({
     /**
      * 加载服务器列表
      */
-    async loadServers({ commit }) {
-      const serverResult = await loadNezhaConfig();
+    async initServerInfo({ commit }) {
+      firstSetServers = true;
+      // 如果是v1版本的话，加载v1版本的数据
+      if (config.nazhua.nezhaVersion === 'v1') {
+        loadNezhaV1ServerGroup().then((res) => {
+          if (res) {
+            commit('SET_SERVER_GROUP', res);
+          }
+        });
+        return;
+      }
+      // 如果是v0版本的话，加载v0版本的数据
+      // 加载初始化的服务器列表，需要其中的公开备注字段
+      const serverResult = await loadNezhaV0Config();
       if (!serverResult) {
         console.error('load server config failed');
         return;
@@ -87,6 +108,11 @@ const store = createStore({
         };
         return item;
       }) || [];
+      const res = loadNezhaV0ServerGroup(servers);
+      if (res) {
+        commit('SET_SERVER_GROUP', res);
+      }
+      firstSetServers = false;
       commit('SET_SERVERS', servers);
     },
     /**
@@ -104,7 +130,12 @@ const store = createStore({
             };
             return item;
           }) || [];
-          commit('UPDATE_SERVERS', servers);
+          if (firstSetServers) {
+            firstSetServers = false;
+            commit('SET_SERVERS', servers);
+          } else {
+            commit('UPDATE_SERVERS', servers);
+          }
         }
       });
     },

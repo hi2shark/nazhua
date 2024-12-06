@@ -63,12 +63,12 @@ export default (params) => {
       case 'cpu':
         return {
           type: 'cpu',
-          used: (props.info.State.CPU).toFixed(1) * 1,
+          used: (props.info.State?.CPU || 0).toFixed(1) * 1,
           colors: {
             used: '#0088ff',
             total: 'rgba(255, 255, 255, 0.2)',
           },
-          valText: `${(props.info.State.CPU).toFixed(1) * 1}%`,
+          valText: `${(props.info.State?.CPU || 0).toFixed(1) * 1}%`,
           label: 'CPU',
           content: {
             default: cpuInfo.value?.core,

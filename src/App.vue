@@ -55,7 +55,7 @@ async function wsReconnect() {
 onMounted(async () => {
   handleSystem();
   refreshTime();
-  await store.dispatch('loadServers');
+  await store.dispatch('initServerInfo');
   msg.on('close', () => {
     console.log('ws closed');
     wsReconnect();

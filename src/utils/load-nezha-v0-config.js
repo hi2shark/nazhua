@@ -38,3 +38,30 @@ export default async () => fetch(config.nazhua.nezhaPath).then((res) => res.text
   }
   return null;
 }).catch(() => null);
+
+/**
+ * 获取标签列表
+ */
+export const loadServerGroup = (services) => {
+  const tagMap = {};
+  services.forEach((i) => {
+    if (i.Tag) {
+      if (!tagMap[i.Tag]) {
+        tagMap[i.Tag] = [];
+      }
+      tagMap[i.Tag].push(i);
+    }
+  });
+  const tagList = [];
+  Object.entries(tagMap).forEach(([tag, serviceIds]) => {
+    tagList.push({
+      name: tag,
+      count: serviceIds.length,
+      servers: serviceIds,
+      group: {
+        name: tag,
+      },
+    });
+  });
+  return tagList;
+};

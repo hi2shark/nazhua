@@ -64,6 +64,7 @@ export default (params) => {
         }
       }
       if (validate.isSet(billingDataMod?.amount)) {
+        let isFree = false;
         let amountValue = billingDataMod.amount;
         let label;
         if (billingDataMod.amount.toString() === '-1') {
@@ -71,6 +72,7 @@ export default (params) => {
           label = `每${cycleLabel}`;
         } else if (billingDataMod.amount.toString() === '0') {
           amountValue = config.nazhua.freeAmount || '免费';
+          isFree = true;
         } else {
           label = `${cycleLabel}付`;
         }
@@ -79,6 +81,7 @@ export default (params) => {
           value: amountValue,
           cycleLabel,
           months,
+          isFree,
         };
       }
       // 剩余时间

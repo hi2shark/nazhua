@@ -16,9 +16,13 @@ window.$$nazhuaConfig = {
   // hideFilter: false, // 隐藏筛选
   // hideTag: false, // 隐藏标签
   // customCodeMap: {}, // 自定义的地图点信息
+  // nezhaVersion: 'v1', // 哪吒版本
   // apiMonitorPath: '/api/v1/monitor/{id}',
   // wsPath: '/ws',
   // nezhaPath: '/nezha/',
   // nezhaV0ConfigType: 'servers', // 哪吒v0数据读取类型
+  // v1ApiMonitorPath: '/api/v1/service/{id}',
+  // v1WsPath: '/api/v1/ws/server',
+  // v1GroupPath: '/api/v1/server-group',
   // routeMode: 'h5', // 路由模式
 };

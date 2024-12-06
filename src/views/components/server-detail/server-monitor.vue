@@ -131,10 +131,13 @@ function switchPeakShaving() {
 
 async function loadMonitor() {
   await request({
-    url: config.nazhua.apiMonitorPath.replace('{id}', props.info.ID),
+    url: (
+      config.nazhua.nezhaVersion === 'v1' ? config.nazhua.v1ApiMonitorPath : config.nazhua.apiMonitorPath
+    ).replace('{id}', props.info.ID),
   }).then((res) => {
-    if (Array.isArray(res)) {
-      monitorData.value = res;
+    const list = config.nazhua.nezhaVersion === 'v1' ? res.data?.data : res.data?.result;
+    if (Array.isArray(list)) {
+      monitorData.value = list;
     }
   }).catch((err) => {
     console.error(err);

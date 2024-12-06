@@ -1,39 +1,21 @@
 import axios from 'axios';
 import uuid from '@/utils/uuid';
-import validate from '@/utils/validate';
 
-import config from '@/config';
 import CustomError from './custom-error';
 
-const {
-  codeField,
-  dataField,
-  msgField,
-  okCode,
-  limit = 10,
-} = config.request;
+const limit = 10;
 
 const requestTagMap = {};
 
 /**
  * axios请求
  * @param {object} options 请求参数
- * @param {boolean} noFormat 不进行返回数据的格式化处理 网络状态200即为成功
  * @return {Promise}
  */
-async function axiosRequest(options, noFormat) {
+async function axiosRequest(options) {
   return axios(options).then((res) => {
     if (res.status === 200) {
-      if (noFormat) {
-        return res;
-      }
-      if (validate.isSet(res.data[codeField]) && `${res.data[codeField]}` === `${okCode}`) {
-        return res.data[dataField];
-      }
-      if (typeof res.data[codeField] !== 'undefined') {
-        throw new CustomError(res.data[msgField], res.data[codeField]);
-      }
-      throw new CustomError('服务器返回内容不规范', -99);
+      return res;
     }
     throw new CustomError(`网络错误${res.status}`, res.status);
   });
@@ -69,7 +51,6 @@ class NetworkRequest {
    * @param {string} type 请求的Method
    * @param {object} headers Header请求参数
    * @param {object} data 请求参数
-   * @param {boolean} noFormat 不进行返回数据的格式化处理 网络状态200即为成功
    * @param {boolean} defaultContentType 默认的请求方式
    * @param {Boolean} priority 优先调用请求
    *
@@ -85,7 +66,6 @@ class NetworkRequest {
       type,
       headers,
       data,
-      noFormat = false,
       defaultContentType = true,
       requestTag = undefined,
       responseType,
@@ -100,9 +80,7 @@ class NetworkRequest {
     }
 
     return new Promise((resolve, reject) => {
-      const defaultHeaders = {
-        ...config.request.headers,
-      };
+      const defaultHeaders = {};
       if (defaultContentType === false) {
         if (NetworkRequest.FormRequest(defaultHeaders)) {
           defaultHeaders['content-type'] = 'application/json';
@@ -122,7 +100,6 @@ class NetworkRequest {
           signal: abortController?.signal ?? undefined,
           responseType,
         },
-        noFormat,
         (res) => {
           resolve(res);
         },
@@ -153,13 +130,13 @@ class NetworkRequest {
     if (this.tasks.length === 0) {
       return;
     }
-    const [options, onFormat, success, fail, tag] = this.tasks.pop();
+    const [options, success, fail, tag] = this.tasks.pop();
     // 请求未执行已被中止
     if (options?.signal?.aborted) {
       this.overTask();
       return;
     }
-    requestTagMap[tag] = axiosRequest(options, onFormat);
+    requestTagMap[tag] = axiosRequest(options);
     requestTagMap[tag].finally(() => {
       this.overTask();
       // 一秒内请求不重复

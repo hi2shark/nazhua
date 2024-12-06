@@ -1,10 +1,20 @@
 import config from '@/config';
 import MessageSubscribe from '@/utils/subscribe';
+import {
+  handelV1toV0,
+} from '@/utils/load-nezha-v1-config';
 import WSService from './service';
+
+function getWsApiPath() {
+  if (config.nazhua.nezhaVersion === 'v1') {
+    return config.nazhua.v1WsPath;
+  }
+  return config.nazhua.wsPath;
+}
 
 const msg = new MessageSubscribe();
 const wsService = new WSService({
-  wsUrl: config?.nazhua?.wsPath,
+  wsUrl: getWsApiPath(),
   onConnect: () => {
     msg.emit('connect');
   },
@@ -16,7 +26,17 @@ const wsService = new WSService({
   },
   onMessage: (data) => {
     if (data?.now) {
-      msg.emit('servers', data);
+      if (config.nazhua.nezhaVersion === 'v1') {
+        msg.emit('servers', {
+          now: data.now,
+          servers: data?.servers?.map?.((server) => {
+            const item = handelV1toV0(server);
+            return item;
+          }) || [],
+        });
+      } else {
+        msg.emit('servers', data);
+      }
     } else {
       msg.emit('message', data);
     }

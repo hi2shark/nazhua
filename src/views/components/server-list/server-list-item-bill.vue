@@ -45,8 +45,10 @@
       >
         <span class="text">
           <span class="text-item value-text">{{ billAndPlan.billing.value }}</span>
-          <span class="text-item">/</span>
-          <span class="text-item label-text">{{ billAndPlan.billing.cycleLabel }}</span>
+          <template v-if="!billAndPlan.billing.isFree">
+            <span class="text-item">/</span>
+            <span class="text-item label-text">{{ billAndPlan.billing.cycleLabel }}</span>
+          </template>
         </span>
       </div>
       <div
