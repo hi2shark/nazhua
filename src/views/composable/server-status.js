@@ -13,7 +13,7 @@ export default (params) => {
     return {};
   }
   const cpuInfo = computed(() => {
-    if (props.info?.Host?.CPU) {
+    if (props.info?.Host?.CPU?.[0]) {
       return hostUtils.getCPUInfo(props.info.Host.CPU[0]);
     }
     return {};
@@ -61,6 +61,8 @@ export default (params) => {
   const serverStatusList = computed(() => statusListTpl.split(',').map((i) => {
     switch (i) {
       case 'cpu':
+      {
+        const CoresVal = cpuInfo.value?.cores ? `${cpuInfo.value?.cores}C` : '-';
         return {
           type: 'cpu',
           used: (props.info.State?.CPU || 0).toFixed(1) * 1,
@@ -71,10 +73,11 @@ export default (params) => {
           valText: `${(props.info.State?.CPU || 0).toFixed(1) * 1}%`,
           label: 'CPU',
           content: {
-            default: cpuInfo.value?.core,
-            mobile: `${cpuInfo.value?.cores}C`,
+            default: cpuInfo.value?.core || CoresVal,
+            mobile: CoresVal,
           },
         };
+      }
       case 'mem':
       {
         let usedVal;

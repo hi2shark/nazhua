@@ -24,7 +24,7 @@
  *  - {string} core CPU核心信息
  *  - {string} cores CPU核心数
  */
-export function getCPUInfo(text) {
+export function getCPUInfo(text = '') {
   const cpuInfo = {
     company: '',
     model: '',

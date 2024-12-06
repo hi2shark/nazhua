@@ -87,7 +87,7 @@ const { cpuAndMemAndDisk } = handleServerInfo({
 });
 
 const slogan = computed(() => props.info?.PublicNote?.customData?.slogan);
-const cpuInfo = computed(() => hostUtils.getCPUInfo(props.info.Host.CPU[0]));
+const cpuInfo = computed(() => hostUtils.getCPUInfo(props.info?.Host?.CPU?.[0]));
 </script>
 
 <style lang="scss" scoped>
