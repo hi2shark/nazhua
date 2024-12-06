@@ -50,16 +50,35 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Package build output
+    - name: Package first build output
       run: |
-        zip -r build-v${{ steps.determine_version.outputs.version }}.zip dist
-  
-    - name: Upload Release Asset
+        zip -r v0-${{ steps.determine_version.outputs.version }}.zip dist
+
+    - name: Build project with VITE_NEZHA_VERSION
+      run: |
+        export VITE_NEZHA_VERSION=v1
+        npm run build
+
+    - name: Package second build output
+      run: |
+        zip -r dist.zip dist
+
+    - name: Upload Release Asset - First Build
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./build-v${{ steps.determine_version.outputs.version }}.zip
-        asset_name: build-v${{ steps.determine_version.outputs.version }}.zip
+        asset_path: ./v0-${{ steps.determine_version.outputs.version }}.zip
+        asset_name: v0-${{ steps.determine_version.outputs.version }}.zip
+        asset_content_type: application/zip
+
+    - name: Upload Release Asset - Second Build
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist.zip
+        asset_name: dist.zip
         asset_content_type: application/zip
