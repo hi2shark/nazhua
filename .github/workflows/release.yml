@@ -82,3 +82,11 @@ jobs:
         asset_path: ./dist.zip
         asset_name: dist.zip
         asset_content_type: application/zip
+
+    - name: Add release notes
+      run: |
+        gh release view v${{ steps.determine_version.outputs.version }} --json body -q .body > body.txt
+        echo -e "哪吒V1请下载dist.zip\n哪吒V0请下载v0-${{ steps.determine_version.outputs.version }}.zip" >> body.txt
+        gh release edit v${{ steps.determine_version.outputs.version }} --notes-file body.txt
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
