@@ -97,6 +97,25 @@
             </div>
           </div>
         </div>
+        <div
+          v-if="showDashboardBtn"
+          class="nezha-user-info-group"
+        >
+          <a
+            :href="dashboardUrl"
+            class="dashboard-url"
+            :title="userLogin ? '访问管理后台' : '登录管理后台'"
+            target="_blank"
+          >
+            <span
+              :class="{
+                'ri-dashboard-3-line': userLogin,
+                'ri-user-line': !userLogin,
+              }"
+            />
+            <span>{{ userLogin ? '管理后台' : '登录' }}</span>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -107,7 +126,6 @@
  * LayoutHeader
  */
 import {
-  ref,
   computed,
   onMounted,
 } from 'vue';
@@ -237,7 +255,15 @@ const serverStat = computed(() => {
   };
 });
 
-const title = ref(config.nazhua.title);
+const title = computed(() => {
+  if (window.$$nazhuaConfig?.title) {
+    return window.$$nazhuaConfig.title;
+  }
+  if (store.state.setting?.site_name) {
+    return store.state.setting.site_name;
+  }
+  return config.nazhua.title;
+});
 
 const headerClass = computed(() => {
   const classes = [];
@@ -260,6 +286,13 @@ function toHome() {
     });
   }
 }
+
+const showDashboardBtn = [
+  config.nazhua.nezhaVersion === 'v1',
+  config.nazhua.v1HideNezhaDashboardBtn !== false,
+].every((item) => item);
+const userLogin = computed(() => store.state.profile?.username);
+const dashboardUrl = config.nazhua.v1DashboardUrl || '/dashboard';
 
 onMounted(() => {
   title.value = config.nazhua.title;
@@ -405,6 +438,24 @@ onMounted(() => {
     .server-stat-item--out {
       .text-value {
         color: var(--net-speed-out-color);
+      }
+    }
+  }
+
+  .nezha-user-info-group {
+    display: flex;
+    align-items: center;
+    gap: 0 20px;
+
+    .login-link {
+      display: flex;
+      align-items: center;
+      gap: 0 5px;
+      color: #ddd;
+      cursor: pointer;
+
+      &:hover {
+        color: #fff;
       }
     }
   }

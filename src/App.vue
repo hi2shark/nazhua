@@ -11,6 +11,8 @@ import {
   onMounted,
 } from 'vue';
 import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
+import config from '@/config';
 import sleep from '@/utils/sleep';
 import LayoutMain from './layout/main.vue';
 
@@ -21,6 +23,7 @@ import activeWebsocketService, {
 } from './ws';
 
 const store = useStore();
+const route = useRoute();
 
 const currentTime = ref(0);
 
@@ -36,11 +39,15 @@ function refreshTime() {
   }, 1000);
 }
 
-function handleSystem() {
-  const isWindows = /windows|win32/i.test(navigator.userAgent);
-  if (isWindows) {
-    document.body.classList.add('windows');
-  }
+// 是否为Windows系统
+const isWindows = /windows|win32/i.test(navigator.userAgent);
+if (isWindows) {
+  document.body.classList.add('windows');
+}
+// 是否加载Sarasa Term SC字体
+const loadSarasaTermSC = config.nazhua.disableSarasaTermSC !== true;
+if (loadSarasaTermSC) {
+  document.body.classList.add('sarasa-term-sc');
 }
 
 /**
@@ -59,13 +66,14 @@ async function wsReconnect() {
 }
 
 onMounted(async () => {
-  handleSystem();
   refreshTime();
 
   /**
    * 初始化服务器信息
    */
-  await store.dispatch('initServerInfo');
+  await store.dispatch('initServerInfo', {
+    route,
+  });
 
   /**
    * 初始化WS重连维护

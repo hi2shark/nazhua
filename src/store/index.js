@@ -8,6 +8,8 @@ import loadNezhaV0Config, {
 } from '@/utils/load-nezha-v0-config';
 import {
   loadServerGroup as loadNezhaV1ServerGroup,
+  loadSetting as loadNezhaV1Setting,
+  loadProfile as loadNezhaV1Profile,
 } from '@/utils/load-nezha-v1-config';
 
 import {
@@ -23,6 +25,8 @@ const defaultState = () => ({
     online: 0,
     offline: 0,
   },
+  profile: {},
+  setting: {},
 });
 
 function isOnline(LastActive, currentTime = Date.now()) {
@@ -78,18 +82,44 @@ const store = createStore({
       state.serverCount = handleServerCount(newServers);
       state.init = true;
     },
+    SET_PROFILE(state, profile) {
+      state.profile = profile;
+    },
+    SET_SETTING(state, setting) {
+      state.setting = setting;
+    },
   },
   actions: {
     /**
      * 加载服务器列表
      */
-    async initServerInfo({ commit }) {
+    async initServerInfo({ commit }, params) {
       firstSetServers = true;
       // 如果是v1版本的话，加载v1版本的数据
       if (config.nazhua.nezhaVersion === 'v1') {
+        const {
+          route,
+        } = params || {};
         loadNezhaV1ServerGroup().then((res) => {
           if (res) {
             commit('SET_SERVER_GROUP', res);
+          }
+        });
+        loadNezhaV1Setting().then((res) => {
+          if (res) {
+            commit('SET_SETTING', res);
+            // 如果自定义配置没有设置title，使用站点名称
+            if (!window.$$nazhuaConfig.title) {
+              config.nazhua.title = res.site_name;
+              if (route?.name === 'Home' || !route) {
+                document.title = config.nazhua.title;
+              }
+            }
+          }
+        });
+        loadNezhaV1Profile().then((res) => {
+          if (res) {
+            commit('SET_PROFILE', res);
           }
         });
         return;
