@@ -8,8 +8,12 @@
 3. 我不会提供任何技术支持，如果你有问题，可以提issue，但是我不保证会回答，可能询问GPT会更快。  
 
 ## V0/V1的使用区别  
-V1必须在`config.js`中指定`nezhaVersion`的版本为`v1`，**大小写敏感*  
-默认的数据是基于V0
+### Docker版本的nazhua
+使用V1必须在`config.js`中指定`nezhaVersion`的版本为`v1`，**大小写敏感*  
+默认的数据是基于V0  
+### Release版本的nazhua
+V1下载最新版本[Releases](https://github.com/hi2shark/nazhua/releases)的`dist.zip`；  
+V0下载最新版本[Releases](https://github.com/hi2shark/nazhua/releases)的`v0-X.X.X.zip`;  
 
 ## 关于点阵地图  
 点阵地图是一个失真的地图，地图边际与城市位置都不是真实的经纬度坐标，因此无法通过经纬度来定位城市。  
@@ -175,6 +179,7 @@ window.$$nazhuaConfig = {
   hideListItemBill: false, // 隐藏列表项的账单信息
   hideFilter: false, // 隐藏筛选
   hideTag: false, // 隐藏标签
+  hideDotBG: false, // 隐藏框框里面的点点背景
   customCodeMap: {}, // 自定义的地图点信息
   nezhaVersion: 'v1', // 哪吒版本
   apiMonitorPath: '/api/v1/monitor/{id}',
@@ -187,11 +192,13 @@ window.$$nazhuaConfig = {
   v1ApiSettingPath: '/api/v1/setting',
   v1ApiProfilePath: '/api/v1/profile',
   v1DashboardUrl: '/dashboard', // v1版本控制台地址
-  v1HideNezhaDashboardBtn: true, // v1版本导航栏控制台入口/登录按钮 在nezhaVersion为v1时有效
+  v1HideNezhaDashboardBtn: false, // v1版本导航栏控制台入口/登录按钮 在nezhaVersion为v1时有效
   routeMode: 'h5', // 路由模式
 };
 ```
-可以通过修改根目录下的`style.css`文件来自定义样式  
+可以通过[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)快速生成config.js配置文件
+
+通过修改根目录下的`style.css`文件来自定义样式  
 例如：
 ```css
 :root {
@@ -204,7 +211,20 @@ window.$$nazhuaConfig = {
   --list-item-buy-link-color: #f00;
 }
 ```
-可以通过[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)快速生成config.js配置文件
+自定义背景图的实例：
+```css
+:root {
+  /* 图片太亮了，需要图片前面的前景色（也是背景色）更暗一些 */
+  --layout-main-bg-color: rgba(0, 0, 0, 0.75);
+}
+/* 自定义背景图 */
+.layout-group .layout-bg {
+  /* 添加important强制背景图替换，此处的替换设计不是很优雅，后期会改进 */
+  background: url(./bg.jpg) no-repeat 50% 50% !important;
+  background-size: cover;
+}
+```
+`./bg.jpg` 这个是图片地址，可以替换为外链图片；也可以把背景图片放到项目里面去，通常是docker的volumes映射，根据你自己的实际情况来。  
 
 
 ## 二次开发提示
