@@ -26,6 +26,9 @@ const currentTime = ref(0);
 
 provide('currentTime', currentTime);
 
+/**
+ * 刷新当前时间
+ */
 function refreshTime() {
   currentTime.value = Date.now();
   setTimeout(() => {
@@ -40,6 +43,9 @@ function handleSystem() {
   }
 }
 
+/**
+ * websocket断连的自动重连
+ */
 let stopReconnect = false;
 async function wsReconnect() {
   if (stopReconnect) {
@@ -55,7 +61,15 @@ async function wsReconnect() {
 onMounted(async () => {
   handleSystem();
   refreshTime();
+
+  /**
+   * 初始化服务器信息
+   */
   await store.dispatch('initServerInfo');
+
+  /**
+   * 初始化WS重连维护
+   */
   msg.on('close', () => {
     console.log('ws closed');
     wsReconnect();
@@ -68,14 +82,17 @@ onMounted(async () => {
     console.log('ws connected');
     store.dispatch('watchWsMsg');
   });
-  activeWebsocketService();
-
-  // 监听窗口重新获得焦点
   window.addEventListener('focus', () => {
-    if (wsService.connected !== 1) {
+    // ws在离开焦点后出现断连，尝试重新连接
+    // 暂定仅针对-1状态进行重连
+    if ([-1].includes(wsService.connected)) {
       restart();
     }
   });
+  /**
+   * 激活websocket服务
+   */
+  activeWebsocketService();
 });
 
 window.addEventListener('unhandledrejection', (event) => {
