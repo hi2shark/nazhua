@@ -19,6 +19,10 @@
         {{ version }}
       </span>
     </div>
+    <div
+      ref="dynamicContentRef"
+      v-html="dynamicContent"
+    />
   </div>
 </template>
 
@@ -27,7 +31,56 @@
  * Footer
  */
 
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  nextTick,
+} from 'vue';
+import { useStore } from 'vuex';
+
 const version = import.meta.env.VITE_APP_VERSION;
+const store = useStore();
+const dynamicContentRef = ref();
+
+const dynamicContent = computed(() => {
+  if (store.state.setting?.custom_code) {
+    return store.state.setting.custom_code;
+  }
+  return '';
+});
+
+// 执行动态脚本的方法
+const executeScripts = () => {
+  nextTick(() => {
+    if (!dynamicContentRef.value) return;
+    const scripts = dynamicContentRef.value.querySelectorAll('script');
+    scripts.forEach((script) => {
+      const newScript = document.createElement('script');
+      newScript.type = 'text/javascript';
+      if (script.src) {
+        newScript.src = script.src; // 拷贝外部脚本的 src
+      } else {
+        newScript.textContent = script.textContent; // 拷贝内联脚本
+      }
+      document.body.appendChild(newScript);
+      document.body.removeChild(newScript); // 可选：移除以保持整洁
+    });
+  });
+};
+
+watch(dynamicContent, () => {
+  if (dynamicContent.value) {
+    executeScripts();
+  }
+});
+
+onMounted(() => {
+  if (dynamicContent.value) {
+    executeScripts();
+  }
+});
 </script>
 
 <style lang="scss" scoped>

@@ -255,15 +255,7 @@ const serverStat = computed(() => {
   };
 });
 
-const title = computed(() => {
-  if (window.$$nazhuaConfig?.title) {
-    return window.$$nazhuaConfig.title;
-  }
-  if (store.state.setting?.site_name) {
-    return store.state.setting.site_name;
-  }
-  return config.nazhua.title;
-});
+const title = computed(() => config.nazhua.title);
 
 const headerClass = computed(() => {
   const classes = [];
@@ -447,7 +439,7 @@ onMounted(() => {
     align-items: center;
     gap: 0 20px;
 
-    .login-link {
+    .dashboard-url {
       display: flex;
       align-items: center;
       gap: 0 5px;
@@ -455,7 +447,7 @@ onMounted(() => {
       cursor: pointer;
 
       &:hover {
-        color: #fff;
+        color: #ff9a00;
       }
     }
   }

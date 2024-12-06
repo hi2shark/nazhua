@@ -2,6 +2,9 @@
   <div
     v-if="show"
     class="server-list-item-bill"
+    :class="{
+      'dot-dot-box--hide': $config.nazhua?.hideDotBG === true,
+    }"
   >
     <div class="left-box">
       <div
@@ -130,6 +133,11 @@ const show = computed(() => {
   border-bottom-right-radius: var(--list-item-border-radius);
   background: rgba(#000, 0.3);
   box-shadow: 0 -2px 4px rgba(#000, 0.5);
+
+  &.dot-dot-box--hide {
+    box-shadow: none;
+    border-top: 1px solid rgba(#ddd, 0.1);
+  }
 
   .left-box {
     display: flex;

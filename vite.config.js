@@ -28,11 +28,23 @@ export default defineConfig({
         target: process.env.WS_HOST,
         changeOrigin: true,
         ws: true,
+        rewrite: (e) => {
+          if (process.env.REWRITE_WS_HOST) {
+            return `/proxy?wsPath=${process.env.REWRITE_WS_HOST}`;
+          }
+          return e;
+        },
       },
       '/api/v1/ws/server': {
         target: process.env.WS_HOST,
         changeOrigin: true,
         ws: true,
+        rewrite: (e) => {
+          if (process.env.REWRITE_WS_HOST) {
+            return `/proxy?wsPath=${process.env.REWRITE_WS_HOST}`;
+          }
+          return e;
+        },
       },
       '/nezha/': {
         target: process.env.NEZHA_HOST,

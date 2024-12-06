@@ -16,6 +16,7 @@ window.$$nazhuaConfig = {
   // hideListItemBill: false, // 隐藏列表项的账单信息
   // hideFilter: false, // 隐藏筛选
   // hideTag: false, // 隐藏标签
+  // hideDotBG: true, // 隐藏框框里面的点点背景
   // customCodeMap: {}, // 自定义的地图点信息
   // nezhaVersion: 'v1', // 哪吒版本
   // apiMonitorPath: '/api/v1/monitor/{id}',

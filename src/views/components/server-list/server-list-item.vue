@@ -1,5 +1,7 @@
 <template>
-  <div
+  <dot-dot-box
+    border-radius="var(--list-item-border-radius)"
+    :padding="0"
     class="server-list-item"
     :class="{
       'server-list-item--offline': info.online === -1,
@@ -7,6 +9,9 @@
   >
     <div
       class="server-info-group server-list-item-head"
+      :class="{
+        'dot-dot-box--hide': $config.nazhua?.hideDotBG === true,
+      }"
       @click="openDetail"
     >
       <div class="server-name-group left-box">
@@ -53,7 +58,7 @@
       v-if="showBill"
       :info="info"
     />
-  </div>
+  </dot-dot-box>
 </template>
 
 <script setup>
@@ -107,18 +112,7 @@ const showBill = config.nazhua.hideListItemBill !== true;
   --list-item-border-radius: 12px;
   width: var(--list-item-width);
   color: #fff;
-  background-image: radial-gradient(transparent 1px, rgba(#000, 0.6) 1px);
-  background-size: 3px 3px;
-  backdrop-filter: saturate(50%) blur(3px);
-  border-radius: var(--list-item-border-radius);
   transition: 0.3s;
-  box-shadow: 2px 4px 6px rgba(#000, 0.4);
-
-  @media screen and (max-width: 768px) {
-    background-color: rgba(#000, 0.8);
-    background-image: none;
-    backdrop-filter: none;
-  }
 
   .server-info-group {
     display: flex;
@@ -135,6 +129,11 @@ const showBill = config.nazhua.hideListItemBill !== true;
 
     @media screen and (max-width: 768px) {
       cursor: default;
+    }
+
+    &.dot-dot-box--hide {
+      box-shadow: none;
+      border-bottom: 1px solid rgba(#ddd, 0.1);
     }
 
     &.server-list-item-head {

@@ -1,5 +1,8 @@
 <template>
-  <div class="server-head">
+  <dot-dot-box
+    class="server-head"
+    padding="16px"
+  >
     <div class="server-flag">
       <div class="server-flag-font">
         <span
@@ -59,7 +62,7 @@
         </span>
       </div>
     </div>
-  </div>
+  </dot-dot-box>
 </template>
 
 <script setup>
@@ -94,13 +97,7 @@ const cpuInfo = computed(() => hostUtils.getCPUInfo(props.info?.Host?.CPU?.[0]))
 .server-head {
   display: flex;
   gap: 12px;
-  padding: 16px;
-  border-radius: 12px;
-  background-image: radial-gradient(transparent 1px, rgba(#000, 0.8) 1px);
-  background-size: 3px 3px;
-  backdrop-filter: saturate(50%) blur(3px);
   transition: 0.3s;
-  box-shadow: 2px 4px 6px rgba(#000, 0.4);
 
   .server-flag {
     --flag-size: 72px;

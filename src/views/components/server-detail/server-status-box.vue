@@ -1,5 +1,11 @@
 <template>
-  <div class="server-status-and-real-time">
+  <dot-dot-box
+    padding="15px"
+    class="server-status-and-real-time"
+    :class="{
+      'status-type--progress': componentName === 'progress',
+    }"
+  >
     <div
       class="server-status-group"
       :class="'type--' + componentName + ' status-list--' + serverStatusList.length"
@@ -17,7 +23,7 @@
       />
     </div>
     <server-list-item-real-time :info="info" />
-  </div>
+  </dot-dot-box>
 </template>
 
 <script setup>
@@ -64,25 +70,23 @@ const {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 15px;
-  border-radius: 12px;
-  background-image: radial-gradient(transparent 1px, rgba(#000, 0.6) 1px);
-  background-size: 3px 3px;
-  backdrop-filter: saturate(50%) blur(3px);
-  box-shadow: 2px 4px 6px rgba(#000, 0.4);
 
   --real-time-value-font-size: 36px;
   --real-time-text-font-size: 16px;
   --real-time-label-font-size: 16px;
 
-  @media screen and (max-width: 1024px) {
-    --real-time-value-font-size: 30px;
+  &.status-type--progress {
+    --real-time-value-font-size: 24px;
+    --real-time-text-font-size: 14px;
+    --real-time-label-font-size: 14px;
+
+    @media screen and (max-width: 1024px) {
+      --real-time-value-font-size: 24px;
+    }
   }
 
-  @media screen and  (max-width: 768px) {
-    background-color: rgba(#000, 0.8);
-    background-image: none;
-    backdrop-filter: none;
+  @media screen and (max-width: 1024px) {
+    --real-time-value-font-size: 30px;
   }
 
   @media screen and (max-width: 720px) {

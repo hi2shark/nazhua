@@ -1,7 +1,8 @@
 <template>
-  <div
+  <dot-dot-box
     v-if="monitorData.length"
     class="server-monitor-group"
+    padding="16px 20px"
   >
     <div class="module-head-group">
       <div class="left-box">
@@ -32,7 +33,7 @@
       :date-list="monitorChartData.dateList"
       :value-list="monitorChartData.valueList"
     />
-  </div>
+  </dot-dot-box>
 </template>
 
 <script setup>
@@ -168,20 +169,7 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .server-monitor-group {
-  padding: 16px 20px;
-  border-radius: 12px;
-  background-image: radial-gradient(transparent 1px, rgba(#000, 0.6) 1px);
-  background-size: 3px 3px;
-  backdrop-filter: saturate(50%) blur(3px);
-  box-shadow: 2px 4px 6px rgba(#000, 0.4);
-
   --line-chart-size: 270px;
-
-  @media screen and (max-width: 768px) {
-    background-color: rgba(#000, 0.8);
-    background-image: none;
-    backdrop-filter: none;
-  }
 }
 
 .module-head-group {

@@ -1,5 +1,5 @@
 <template>
-  <div class="server-info-box">
+  <dot-dot-box class="server-info-box">
     <div class="server-info-group server-info--cpu">
       <div class="server-info-label">
         CPU
@@ -182,7 +182,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </dot-dot-box>
 </template>
 
 <script setup>
@@ -296,19 +296,6 @@ const processCount = computed(() => props.info?.State?.ProcessCount);
 .server-info-box {
   --server-info-item-size: 24px;
 
-  padding: 20px;
-  color: #eee;
-  border-radius: 12px;
-  background-image: radial-gradient(transparent 1px, rgba(#000, 0.6) 1px);
-  background-size: 3px 3px;
-  backdrop-filter: saturate(50%) blur(3px);
-  box-shadow: 2px 4px 6px rgba(#000, 0.4);
-
-  @media screen and (max-width: 768px) {
-    background-color: rgba(#000, 0.8);
-    background-image: none;
-    backdrop-filter: none;
-  }
   @media screen and (max-width: 480px) {
     --server-info-item-size: 30px;
   }
