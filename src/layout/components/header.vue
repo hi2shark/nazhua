@@ -278,10 +278,10 @@ function toHome() {
   }
 }
 
-const showDashboardBtn = [
+const showDashboardBtn = computed(() => [
   config.nazhua.nezhaVersion === 'v1',
-  config.nazhua.v1HideNezhaDashboardBtn !== false,
-].every((item) => item);
+  config.nazhua.v1HideNezhaDashboardBtn !== true,
+].every((item) => item));
 const userLogin = computed(() => store.state.profile?.username);
 const dashboardUrl = computed(() => config.nazhua.v1DashboardUrl || '/dashboard');
 </script>
