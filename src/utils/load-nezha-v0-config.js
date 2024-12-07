@@ -53,11 +53,11 @@ export const loadServerGroup = (services) => {
     }
   });
   const tagList = [];
-  Object.entries(tagMap).forEach(([tag, serviceIds]) => {
+  Object.entries(tagMap).forEach(([tag, serviceList]) => {
     tagList.push({
       name: tag,
-      count: serviceIds.length,
-      servers: serviceIds,
+      count: serviceList.length,
+      servers: serviceList.map((i) => i.ID),
       group: {
         name: tag,
       },

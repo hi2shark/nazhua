@@ -120,7 +120,8 @@ const onlineOptions = computed(() => {
 const filterServerList = computed(() => serverList.value.filter((i) => {
   const isFilterArr = [];
   if (filterFormData.value.tag) {
-    isFilterArr.push(i.Tag === filterFormData.value.tag);
+    const group = store.state.serverGroup.find((o) => o.name === filterFormData.value.tag);
+    isFilterArr.push((group?.servers || []).includes(i.ID));
   }
   if (filterFormData.value.online) {
     isFilterArr.push(i.online === (filterFormData.value.online * 1));

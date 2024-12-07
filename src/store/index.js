@@ -163,6 +163,14 @@ const store = createStore({
           if (firstSetServers) {
             firstSetServers = false;
             commit('SET_SERVERS', servers);
+
+            // 在v0没抓页面配置的情况下，从服务器列表中分离出标签列表
+            if (config.nazhua.nezhaVersion !== 'v1') {
+              const group = loadNezhaV0ServerGroup(servers);
+              if (group) {
+                commit('SET_SERVER_GROUP', group);
+              }
+            }
           } else {
             commit('UPDATE_SERVERS', servers);
           }
