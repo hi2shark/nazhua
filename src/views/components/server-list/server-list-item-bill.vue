@@ -93,7 +93,7 @@ const {
   props,
 });
 
-const buyBtnText = config.nazhua.buyBtnText || '购买';
+const buyBtnText = computed(() => config.nazhua.buyBtnText || '购买');
 const showBuyBtn = computed(() => !!props.info?.PublicNote?.customData?.orderLink);
 
 function toBuy() {

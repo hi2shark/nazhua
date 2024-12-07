@@ -41,21 +41,21 @@
       </div>
     </div>
     <div
-      v-if="showStatus || showStatus"
+      v-if="$config.nazhua.hideListItemStatusDonut !== true && $config.nazhua.hideListItemStat !== true"
       class="server-list-item-main"
       @click="openDetail"
     >
       <server-list-item-status
-        v-if="showStatus"
+        v-if="$config.nazhua.hideListItemStatusDonut !== true"
         :info="info"
       />
       <server-real-time
-        v-if="showStat"
+        v-if="$config.nazhua.hideListItemStat !== true"
         :info="info"
       />
     </div>
     <server-list-item-bill
-      v-if="showBill"
+      v-if="$config.nazhua.hideListItemBill !== true"
       :info="info"
     />
   </dot-dot-box>
@@ -69,8 +69,6 @@
 import {
   useRouter,
 } from 'vue-router';
-
-import config from '@/config';
 
 import handleServerInfo from '@/views/composable/server-info';
 import ServerRealTime from '@/views/components/server/server-real-time.vue';
@@ -101,10 +99,6 @@ function openDetail() {
     },
   });
 }
-
-const showStatus = config.nazhua.hideListItemStatusDonut !== true;
-const showStat = config.nazhua.hideListItemStat !== true;
-const showBill = config.nazhua.hideListItemBill !== true;
 </script>
 
 <style lang="scss" scoped>

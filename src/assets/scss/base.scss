@@ -4,8 +4,8 @@ body {
   line-height: 1.8;
   font-size: 14px;
   font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'HanHei SC', 'Helvetica Neue', 'Helvetica', 'STHeitiSC-Light', 'Arial', sans-serif;
-  color: #555;
-  background: #fff;
+  color: var(--global-text-color);
+  background: var(--global-background-color);
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
 }
@@ -97,7 +97,7 @@ a:hover {
 }
 
 a {
-  color: #369;
+  color: var(--global-link-color);
   transition: color 150ms linear;
   cursor: pointer;
 }
@@ -140,25 +140,4 @@ h6 {
 
 div:focus {
   outline: none;
-}
-
-@font-face {
-  font-family: "Sarasa Term SC";
-  src: url("../fonts/SarasaTermSC-SemiBold.woff2") format("woff2"),
-    url("../fonts/SarasaTermSC-SemiBold.woff2") format("woff");
-  font-display: swap;
-}
-
-body.sarasa-term-sc {
-  font-family:
-    "Sarasa Term SC",
-    'Microsoft YaHei',
-    '微软雅黑',
-    'PingFang SC',
-    'HanHei SC',
-    'Helvetica Neue',
-    'Helvetica',
-    'STHeitiSC-Light',
-    'Arial',
-    sans-serif;
 }

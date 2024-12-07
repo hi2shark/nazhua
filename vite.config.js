@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import babel from 'vite-plugin-babel';
 import eslintPlugin from 'vite-plugin-eslint';
+import svgLoader from 'vite-svg-loader';
 import packageJson from './package';
 
 dotenv.config({
@@ -25,23 +26,23 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/ws': {
-        target: process.env.WS_HOST,
+        target: process.env.PROXY_WS_HOST || process.env.WS_HOST,
         changeOrigin: true,
         ws: true,
         rewrite: (e) => {
-          if (process.env.REWRITE_WS_HOST) {
-            return `/proxy?wsPath=${process.env.REWRITE_WS_HOST}`;
+          if (process.env.PROXY_WS_HOST) {
+            return `/proxy?wsPath=${process.env.WS_HOST}`;
           }
           return e;
         },
       },
       '/api/v1/ws/server': {
-        target: process.env.WS_HOST,
+        target: process.env.PROXY_WS_HOST || process.env.WS_HOST,
         changeOrigin: true,
         ws: true,
         rewrite: (e) => {
-          if (process.env.REWRITE_WS_HOST) {
-            return `/proxy?wsPath=${process.env.REWRITE_WS_HOST}`;
+          if (process.env.PROXY_WS_HOST) {
+            return `/proxy?wsPath=${process.env.WS_HOST}`;
           }
           return e;
         },
@@ -75,11 +76,31 @@ export default defineConfig({
     eslintPlugin({
       include: ['src/**/*.js', 'src/**/*.vue', 'src/*.js', 'src/*.vue'],
     }),
+    svgLoader(),
   ],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src/'),
-      '~@': path.resolve(__dirname, './src/'),
+  build: {
+    assetsInlineLimit: 8192, // 8KB 以下的资源会被内联
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+          if (id.includes('.svg')) {
+            return 'svg';
+          }
+          return 'default';
+        },
+      },
     },
+  },
+  resolve: {
+    alias: (() => {
+      const maps = {
+        '@': path.resolve(__dirname, './src/'),
+        '~@': path.resolve(__dirname, './src/'),
+      };
+      return maps;
+    })(),
   },
 });

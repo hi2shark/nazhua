@@ -1,6 +1,9 @@
 name: Build and Release
 
 on:
+  push:
+    tags:
+      - 'v*.*.*'
   workflow_dispatch:
     inputs:
       version:
@@ -14,6 +17,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 2  # 获取最近的两次提交
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
@@ -22,9 +27,6 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-
-    - name: Build project
-      run: npm run build
 
     - name: Get version from package.json
       id: get_version
@@ -50,30 +52,74 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Package first build output
-      run: |
-        zip -r v0-${{ steps.determine_version.outputs.version }}.zip dist
+    - name: 构建v0版本 - 完整引用版本
+      run: npm run build
 
-    - name: Build project with VITE_NEZHA_VERSION
-      run: |
-        export VITE_NEZHA_VERSION=v1
-        npm run build
+    - name: 打包v0-${{ steps.determine_version.outputs.version }}-all.zip
+      run: zip -r v0-${{ steps.determine_version.outputs.version }}-all.zip dist
 
-    - name: Package second build output
-      run: |
-        zip -r dist.zip dist
+    - name: 构建v0版本 - JSDeliver引用版本
+      env:
+        VITE_SARASA_TERM_SC_USE_CDN: '1'
+        VITE_USE_CDN: '1'
+        VITE_CDN_LIB_TYPE: 'jsdelivr'
+      run: npm run build
 
-    - name: Upload Release Asset - First Build
+    - name: 打包v0-${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip
+      run: zip -r v0-${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip dist
+
+    - name: 构建v0版本 - loli(CDNJS)引用版本
+      env:
+        VITE_SARASA_TERM_SC_USE_CDN: '1'
+        VITE_USE_CDN: '1'
+        VITE_CDN_LIB_TYPE: 'loli'
+      run: npm run build
+
+    - name: 打包v0-${{ steps.determine_version.outputs.version }}-cdn-loli.zip
+      run: zip -r v0-${{ steps.determine_version.outputs.version }}-cdn-loli.zip dist
+
+    - name: 构建哪吒v1内置版本
+      env:
+        VITE_NEZHA_VERSION: 'v1'
+        VITE_SARASA_TERM_SC_USE_CDN: '1'
+        VITE_USE_CDN: '1'
+        VITE_CDN_LIB_TYPE: 'jsdelivr'
+      run: npm run build
+
+    - name: 打包dist.zip
+      run: zip -r dist.zip dist
+
+    - name: Upload v0-${{ steps.determine_version.outputs.version }}-all.zip
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./v0-${{ steps.determine_version.outputs.version }}.zip
-        asset_name: v0-${{ steps.determine_version.outputs.version }}.zip
+        asset_path: ./v0-${{ steps.determine_version.outputs.version }}-all.zip
+        asset_name: v0-${{ steps.determine_version.outputs.version }}-all.zip
         asset_content_type: application/zip
 
-    - name: Upload Release Asset - Second Build
+    - name: Upload v0-${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./v0-${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip
+        asset_name: v0-${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip
+        asset_content_type: application/zip
+
+    - name: Upload v0-${{ steps.determine_version.outputs.version }}-cdn-loli.zip
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./v0-${{ steps.determine_version.outputs.version }}-cdn-loli.zip
+        asset_name: v0-${{ steps.determine_version.outputs.version }}-cdn-loli.zip
+        asset_content_type: application/zip
+
+    - name: Upload dist.zip
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -85,8 +131,20 @@ jobs:
 
     - name: Add release notes
       run: |
+        # 获取最近一次提交的变更内容
+        git diff HEAD^ HEAD --name-only > changes.txt
+
+        # 获取现有的发布说明
         gh release view v${{ steps.determine_version.outputs.version }} --json body -q .body > body.txt
-        echo -e "哪吒V1请下载dist.zip\n哪吒V0请下载v0-${{ steps.determine_version.outputs.version }}.zip" >> body.txt
+
+        # 将变更内容添加到发布说明中
+        echo -e "### Changes in this release\n" >> body.txt
+        cat changes.txt >> body.txt
+
+        # 添加其他发布说明
+        echo -e "\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-${{ steps.determine_version.outputs.version }}-all.zip\n至于all是全量的，cdn-jsdelivr是jsdelivr引用版，cdn-loli是cdnjs引用版\nv0版本构建物通过修改./config.js指定nezhaVersion版本可以正常在v1中使用" >> body.txt
+
+        # 更新发布说明
         gh release edit v${{ steps.determine_version.outputs.version }} --notes-file body.txt
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

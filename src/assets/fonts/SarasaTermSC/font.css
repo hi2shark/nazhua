@@ -1,0 +1,6 @@
+@font-face {
+  font-family: "Sarasa Term SC";
+  src: url("./SarasaTermSC-SemiBold.woff2") format("woff2"),
+    url("./SarasaTermSC-SemiBold.woff") format("woff");
+  font-display: swap;
+}

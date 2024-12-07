@@ -127,7 +127,6 @@
  */
 import {
   computed,
-  onMounted,
 } from 'vue';
 import {
   useStore,
@@ -154,10 +153,10 @@ const headerStyle = computed(() => {
   return style;
 });
 
-const showServerCount = config.nazhua.hideNavbarServerCount !== true;
+const showServerCount = computed(() => config.nazhua.hideNavbarServerCount !== true);
 const serverCount = computed(() => store.state.serverCount);
 
-const showServerStat = config.nazhua.hideNavbarServerStat !== true;
+const showServerStat = computed(() => config.nazhua.hideNavbarServerStat !== true);
 const serverStat = computed(() => {
   const transfer = {
     in: 0,
@@ -262,10 +261,10 @@ const headerClass = computed(() => {
   if (route.name === 'ServerDetail') {
     classes.push('layout-header--detail');
   }
-  if (showServerStat) {
+  if (showServerStat.value) {
     classes.push('layout-header--show-server-stat');
   }
-  if (showServerCount) {
+  if (showServerCount.value) {
     classes.push('layout-header--show-server-count');
   }
   return classes;
@@ -284,11 +283,7 @@ const showDashboardBtn = [
   config.nazhua.v1HideNezhaDashboardBtn !== false,
 ].every((item) => item);
 const userLogin = computed(() => store.state.profile?.username);
-const dashboardUrl = config.nazhua.v1DashboardUrl || '/dashboard';
-
-onMounted(() => {
-  title.value = config.nazhua.title;
-});
+const dashboardUrl = computed(() => config.nazhua.v1DashboardUrl || '/dashboard');
 </script>
 
 <style lang="scss" scoped>

@@ -1,6 +1,9 @@
 name: Build and Push Docker Image
 
 on:
+  push:
+    tags:
+      - 'v*.*.*'
   workflow_dispatch:
     inputs:
       version:
@@ -35,12 +38,23 @@ jobs:
     - name: Print version
       run: echo "Version is $VERSION"
 
-    - name: Build project
+    - name: 构建完整引用版本
       run: npm run build
 
-    - name: Build Docker image
+    - name: 构建完整引用版本的Docker镜像
       run: |
         docker build -t ghcr.io/${{ github.repository }}:$VERSION .
+
+    - name: 构建CDN引用版本
+      env:
+        VITE_SARASA_TERM_SC_USE_CDN: '1'
+        VITE_USE_CDN: '1'
+        VITE_CDN_LIB_TYPE: 'jsdelivr'
+      run: npm run build
+
+    - name: 构建CDN引用版本的Docker镜像
+      run: |
+        docker build -t ghcr.io/${{ github.repository }}:$VERSION-cdn .
 
     - name: Log in to GitHub Container Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
@@ -50,3 +64,9 @@ jobs:
         docker push ghcr.io/${{ github.repository }}:$VERSION
         docker tag ghcr.io/${{ github.repository }}:$VERSION ghcr.io/${{ github.repository }}:latest
         docker push ghcr.io/${{ github.repository }}:latest
+
+    - name: Push CDN Docker image
+      run: |
+        docker push ghcr.io/${{ github.repository }}:$VERSION-cdn
+        docker tag ghcr.io/${{ github.repository }}:$VERSION-cdn ghcr.io/${{ github.repository }}:cdn
+        docker push ghcr.io/${{ github.repository }}:cdn

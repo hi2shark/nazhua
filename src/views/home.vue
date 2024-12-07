@@ -74,13 +74,22 @@ import ServerItem from './components/server-list/server-list-item.vue';
 const store = useStore();
 const worldMapWidth = ref();
 
-const showFilter = config.nazhua.hideFilter !== true;
+const showFilter = computed(() => config.nazhua.hideFilter !== true);
 const filterFormData = ref({
   tag: '',
   online: '',
 });
 // 是否显示标签
-const showTag = config.nazhua.hideTag !== true;
+const showTag = computed(() => {
+  if (config.nazhua.hideGroup === true) {
+    return false;
+  }
+  // hideTag与hideGroup是相同的配置，兼容旧版
+  if (config.nazhua.hideTag === true) {
+    return false;
+  }
+  return true;
+});
 
 // 服务器列表
 const serverList = computed(() => store.state.serverList);

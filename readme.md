@@ -1,6 +1,7 @@
 # Nazhua
 基于哪吒监控(nezha.wiki)v0版本构建的前端主题，目前兼容与v0相同数据结构的v1版本。  
-主题有点**重**，因为内置了一个带中文的`SarasaTermSC-SemiBold`字体。  
+~~主题有点**重**，因为内置了一个带中文的`SarasaTermSC-SemiBold`字体。~~  
+根据不同场景，可以选择是否打包带入或者是否加载这个字体。  
 
 ## 劝退指南 用前必读
 1. 本主题是基于哪吒监控v0版本构建的，不确定能否完美v1版本。*20241206的版本已适配*  
@@ -11,9 +12,9 @@
 ### Docker版本的nazhua
 使用V1必须在`config.js`中指定`nezhaVersion`的版本为`v1`，**大小写敏感*  
 默认的数据是基于V0  
-### Release版本的nazhua
+### Release版本的nazhua  
 V1下载最新版本[Releases](https://github.com/hi2shark/nazhua/releases)的`dist.zip`；  
-V0下载最新版本[Releases](https://github.com/hi2shark/nazhua/releases)的`v0-X.X.X.zip`;  
+V0下载最新版本[Releases](https://github.com/hi2shark/nazhua/releases)的`v0-{版本}-all.zip`或`v0-{版本}.zip`;  
 
 ## 关于点阵地图  
 点阵地图是一个失真的地图，地图边际与城市位置都不是真实的经纬度坐标，因此无法通过经纬度来定位城市。  
@@ -103,9 +104,16 @@ services:
 ```
 建议通过docker-compose部署服务，然后通过cloudflare的tunnels向外提供服务，可以不用自己配置https证书。  
 **再次提示，哪吒V1的必须设置config.js中的nezhaVersion为v1**  
+**如果不想加载完整的内置库，可以使用cdn引用镜像**  
+例如：`ghcr.io/hi2shark/nazhua:latest`替换为`ghcr.io/hi2shark/nazhua:cdn`  
 
 ### Nginx配置示例
 ```nginx
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+
 server {
   listen 80;
   server_name nazhua.example.com;

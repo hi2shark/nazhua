@@ -58,6 +58,9 @@ function handleClick() {
   width: 16px;
   height: 16px;
   transform: translate(-50%, -50%);
+  :hover {
+    z-index: 100;
+  }
 
   .point-block {
     position: absolute;

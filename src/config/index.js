@@ -7,6 +7,9 @@ const defaultNezhaVersion = import.meta.env.VITE_NEZHA_VERSION;
 const config = reactive({
   nazhua: {
     title: '哪吒监控',
+    // 如果打包禁用 Sarasa Term SC 字体，默认为禁用该字体的配置
+    disableSarasaTermSC: import.meta.env.VITE_DISABLE_SARASA_TERM_SC === '1',
+
     nezhaVersion: ['v0', 'v1'].includes(defaultNezhaVersion) ? defaultNezhaVersion : 'v0',
     apiMonitorPath: '/api/v1/monitor/{id}',
     wsPath: '/ws',
@@ -27,5 +30,7 @@ export function mergeNazhuaConfig(customConfig) {
     config.nazhua[key] = customConfig[key];
   });
 }
+// 暴露合并配置方法
+window.$mergeNazhuaConfig = mergeNazhuaConfig;
 
 export default config;

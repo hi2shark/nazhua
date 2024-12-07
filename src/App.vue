@@ -7,6 +7,8 @@
 <script setup>
 import {
   ref,
+  computed,
+  watch,
   provide,
   onMounted,
 } from 'vue';
@@ -45,10 +47,16 @@ if (isWindows) {
   document.body.classList.add('windows');
 }
 // 是否加载Sarasa Term SC字体
-const loadSarasaTermSC = config.nazhua.disableSarasaTermSC !== true;
-if (loadSarasaTermSC) {
-  document.body.classList.add('sarasa-term-sc');
-}
+const loadSarasaTermSC = computed(() => config.nazhua.disableSarasaTermSC !== true);
+watch(loadSarasaTermSC, (value) => {
+  if (value) {
+    document.body.classList.add('sarasa-term-sc');
+  } else {
+    document.body.classList.remove('sarasa-term-sc');
+  }
+}, {
+  immediate: true,
+});
 
 /**
  * websocket断连的自动重连
