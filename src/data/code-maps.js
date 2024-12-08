@@ -218,6 +218,7 @@ export const aliasMapping = {
 };
 
 export const countryCodeMapping = {
+  CN: 'PEK',
   JP: 'TYO',
   SG: 'SIN',
   KR: 'SEL',
