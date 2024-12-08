@@ -1,4 +1,5 @@
 # Nazhua
+**使用前，请务必阅读Readme的内容，对你有帮助**  
 基于哪吒监控(nezha.wiki)v0版本构建的前端主题，目前兼容与v0相同数据结构的v1版本。  
 ~~主题有点**重**，因为内置了一个带中文的`SarasaTermSC-SemiBold`字体。~~  
 根据不同场景，可以选择是否打包带入或者是否加载这个字体。  
@@ -31,7 +32,7 @@ V0下载最新版本[Releases](https://github.com/hi2shark/nazhua/releases)的`v
 }
 ```
 对于几个我常见的国别位置，添加了默认映射位置，会自动显示在地图上。  
-Tips: 中国大陆地区默认在首都：北京  
+Tips: 中国大陆地区默认在首都：北京（Tips: 在0.4.6后补充）  
 Tips: 美国默认在最常买的位置：洛杉矶  
 
 ## 关于节点slogan和购买链接
@@ -108,6 +109,11 @@ services:
 **再次提示，哪吒V1的必须设置config.js中的nezhaVersion为v1**  
 **如果不想加载完整的内置库，可以使用cdn引用镜像**  
 例如：`ghcr.io/hi2shark/nazhua:latest`替换为`ghcr.io/hi2shark/nazhua:cdn`  
+
+>如果你想隐藏原面板，只暴露nazhua出来，你可以用Zero Trust的Tunnels；  
+>三个容器：Tunnels、nezha-dashboard、nazhua  
+>nazhua用docker内的地址访问nezha-dashboard，然后Tunnels绑定nazhua给公开访问的域名  
+>Tunnels绑定nezha-dashboard到私密域名，需要邮箱|IP等匹配的才能访问  
 
 ### Nginx配置示例
 ```nginx
