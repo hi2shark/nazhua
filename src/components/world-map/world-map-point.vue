@@ -2,6 +2,7 @@
   <div
     ref="pointRef"
     class="world-map-point"
+    :class="'world-map-point--' + (info?.type || 'default')"
     :style="pointStyle"
     :title="info?.label || ''"
     @click="handleClick"
@@ -87,6 +88,30 @@ function handleClick() {
 
   @media screen and (max-width: 720px) {
     --map-point-scale: 0.5;
+  }
+
+  &--group {
+    .point-block {
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: calc(var(--map-point-size) * var(--map-point-scale) + (16px * var(--map-point-scale)));
+        height: calc(var(--map-point-size) * var(--map-point-scale) + (16px * var(--map-point-scale)));
+        transform: translate(-50%, -50%);
+        border: calc(2px * var(--map-point-scale)) solid var(--world-map-point-color);
+        border-radius: 50%;
+        opacity: 0.7;
+        transition: opacity 0.3s;
+      }
+
+      &:hover {
+        &::after {
+          opacity: 1;
+        }
+      }
+    }
   }
 }
 </style>

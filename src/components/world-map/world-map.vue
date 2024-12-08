@@ -37,10 +37,14 @@
 import {
   ref,
   computed,
+  watch,
 } from 'vue';
 import validate from '@/utils/validate';
 
 import WorldMapPoint from './world-map-point.vue';
+import {
+  findIntersectingGroups,
+} from '@/utils/world-map';
 
 const props = defineProps({
   width: {
@@ -100,16 +104,75 @@ const mapStyle = computed(() => {
   return style;
 });
 
-const mapPoints = computed(() => props.locations.map((i) => {
-  const item = {
-    key: i.key,
-    left: (computedSize.value.width / 1280) * i.x,
-    top: (computedSize.value.height / 621) * i.y,
-    size: i.size || 4,
-    label: i.label,
-  };
-  return item;
-}));
+const mapPoints = ref([]);
+let computeMapPointsTimer = null;
+function computeMapPoints() {
+  if (computeMapPointsTimer) {
+    clearTimeout(computeMapPointsTimer);
+  }
+  if (props.locations.length === 0) {
+    mapPoints.value = [];
+    return;
+  }
+  computeMapPointsTimer = setTimeout(() => {
+    const points = props.locations.map((i) => {
+      const item = {
+        key: i.key,
+        left: (computedSize.value.width / 1280) * i.x,
+        top: (computedSize.value.height / 621) * i.y,
+        size: i.size || 4,
+        label: i.label,
+        servers: i.servers,
+        type: 'single',
+      };
+      const halfSize = (item.size + 8) / 2;
+      item.topLeft = {
+        left: item.left - halfSize,
+        top: item.top - halfSize,
+      };
+      item.bottomRight = {
+        left: item.left + halfSize,
+        top: item.top + halfSize,
+      };
+      return item;
+    });
+    const groups = findIntersectingGroups(points);
+    Object.entries(groups).forEach(([key, group]) => {
+      const item = points.find((i) => i.key === key);
+      if (item.parent) {
+        return;
+      }
+      item.size = 4;
+      item.type = 'group';
+      item.children = group;
+      let label = item.label || '';
+      let servers = [...(item.servers || [])];
+      group.forEach((i) => {
+        if (!i.parent && !i.children) {
+          i.parent = item;
+          label += `\n${i.label}`;
+          servers = servers.concat((i.servers || []));
+        }
+      });
+      item.label = label;
+      item.servers = servers;
+    });
+    mapPoints.value = points.filter((i) => !i.parent);
+  }, 100);
+}
+
+watch(() => props.locations, () => {
+  computeMapPoints();
+}, {
+  immediate: true,
+});
+
+watch(() => computedSize.value, () => {
+  computeMapPoints();
+}, {
+  immediate: true,
+  deep: true,
+});
 
 /**
  * 提示框
@@ -125,7 +188,7 @@ const tipsContentStyle = computed(() => {
   if (window.innerWidth > 500) {
     style.top = `${activeTipsXY.value.y}px`;
     style.left = `${activeTipsXY.value.x}px`;
-    style.transform = 'translate(-50%, 100%)';
+    style.transform = 'translate(-50%, 20px)';
   } else {
     style.bottom = '10px';
     style.left = '50%';
@@ -133,18 +196,18 @@ const tipsContentStyle = computed(() => {
   }
   return style;
 });
-let timer = null;
+let handlePointTapTimer = null;
 function handlePointTap(e) {
   tipsContent.value = e.label;
   activeTipsXY.value = {
-    x: e.left - (e.size / 2),
-    y: e.top - e.size,
+    x: e.left,
+    y: e.top - 10,
   };
   tipsShow.value = true;
-  if (timer) {
-    clearTimeout(timer);
+  if (handlePointTapTimer) {
+    clearTimeout(handlePointTapTimer);
   }
-  timer = setTimeout(() => {
+  handlePointTapTimer = setTimeout(() => {
     tipsShow.value = false;
   }, 5000);
 }
@@ -173,6 +236,20 @@ function handlePointTap(e) {
     background: rgba(#000, 0.8);
     box-shadow: 1px 4px 8px rgba(#303841, 0.4);
     z-index: 100;
+    white-space: pre;
+
+    // 向上的尖角
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border: 5px solid transparent;
+      border-bottom-color: rgba(#000, 0.8);
+      transform: translateX(-50%);
+    }
   }
 }
 

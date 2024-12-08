@@ -64,7 +64,7 @@ import {
   alias2code,
   locationCode2Info,
   count2size,
-} from '@/utils/world-map-location';
+} from '@/utils/world-map';
 import uuid from '@/utils/uuid';
 
 import WorldMap from '@/components/world-map/world-map.vue';
@@ -149,13 +149,13 @@ const serverLocations = computed(() => {
     const code = alias2code(aliasCode) || locationCode;
     if (code) {
       if (!locationMap[code]) {
-        locationMap[code] = 0;
+        locationMap[code] = [];
       }
-      locationMap[code] += 1;
+      locationMap[code].push(i);
     }
   });
   const locations = [];
-  Object.entries(locationMap).forEach(([code, count]) => {
+  Object.entries(locationMap).forEach(([code, servers]) => {
     const {
       x,
       y,
@@ -167,8 +167,9 @@ const serverLocations = computed(() => {
         x,
         y,
         code,
-        size: count2size(count),
-        label: `${name},${count}台`,
+        size: count2size(servers.length),
+        label: `${name},${servers.length}台`,
+        servers,
       });
     }
   });

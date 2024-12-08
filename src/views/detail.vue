@@ -53,7 +53,7 @@ import config from '@/config';
 import {
   alias2code,
   locationCode2Info,
-} from '@/utils/world-map-location';
+} from '@/utils/world-map';
 
 import WorldMap from '@/components/world-map/world-map.vue';
 import ServerName from './components/server-detail/server-name.vue';
@@ -99,6 +99,7 @@ const locations = computed(() => {
       code,
       size: 4,
       label: `${name}`,
+      servers: [info.value],
     });
   }
   return arr;
