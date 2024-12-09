@@ -152,10 +152,16 @@ async function setTimeLoadMonitor() {
     clearTimeout(loadMonitorTimer);
   }
   await loadMonitor();
-  let monitorRefreshTime = ((config.nazhua.monitorRefreshTime * 1) || 10);
+  let monitorRefreshTime = parseInt(config.nazhua.monitorRefreshTime, 10);
+  // 0 为不刷新
+  if (monitorRefreshTime === 0) {
+    return;
+  }
+  // 非数字 强制为 10
   if (Number.isNaN(monitorRefreshTime)) {
     monitorRefreshTime = 10;
   }
+  // 最小 10 秒
   const sTime = Math.min(monitorRefreshTime, 10);
   loadMonitorTimer = setTimeout(() => {
     setTimeLoadMonitor();
