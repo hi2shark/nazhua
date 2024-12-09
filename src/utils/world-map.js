@@ -39,7 +39,7 @@ export function findIntersectingGroups(coordinates) {
 
   coordinates.forEach((coordinate, index) => {
     const intersects = [];
-    const n = 2;
+    const n = -2;
     coordinates.forEach((otherCoordinate, otherIndex) => {
       if (index !== otherIndex) {
         if (
