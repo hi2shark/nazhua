@@ -132,7 +132,7 @@ jobs:
     - name: Add release notes
       run: |
         # 获取最近一次提交的变更内容
-        git diff HEAD^ HEAD --name-only > changes.txt
+        git log -1 --pretty=format:"%s" > changes.txt
 
         # 获取现有的发布说明
         gh release view v${{ steps.determine_version.outputs.version }} --json body -q .body > body.txt
