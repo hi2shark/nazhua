@@ -28,17 +28,13 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Get version from package.json
-      id: get_version
-      run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
-
     - name: Determine version
       id: determine_version
       run: |
-        if [ "${{ github.event.inputs.version }}" ]; then
-          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+        if [ -z "${{ github.event.inputs.version }}" ]; then
+          echo "VERSION=$(node -p 'require("./package.json").version')" >> $GITHUB_ENV
         else
-          echo "version=${{ steps.get_version.outputs.version }}" >> $GITHUB_ENV
+          echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
         fi
 
     - name: Create Release
@@ -47,16 +43,16 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{ env.version }}
-        name: Release v${{ env.version }}
+        tag_name: v$VERSION
+        name: Release v$VERSION
         draft: false
         prerelease: false
 
     - name: 构建v0版本 - 完整引用版本
       run: npm run build
 
-    - name: 打包v0-${{ env.version }}-all.zip
-      run: zip -r v0-${{ env.version }}-all.zip dist
+    - name: 打包v0-$VERSION-all.zip
+      run: zip -r v0-$VERSION-all.zip dist
 
     - name: 构建v0版本 - JSDeliver引用版本
       env:
@@ -65,8 +61,8 @@ jobs:
         VITE_CDN_LIB_TYPE: 'jsdelivr'
       run: npm run build
 
-    - name: 打包v0-${{ env.version }}-cdn-jsdelivr.zip
-      run: zip -r v0-${{ env.version }}-cdn-jsdelivr.zip dist
+    - name: 打包v0-$VERSION-cdn-jsdelivr.zip
+      run: zip -r v0-$VERSION-cdn-jsdelivr.zip dist
 
     - name: 构建v0版本 - loli(CDNJS)引用版本
       env:
@@ -75,8 +71,8 @@ jobs:
         VITE_CDN_LIB_TYPE: 'loli'
       run: npm run build
 
-    - name: 打包v0-${{ env.version }}-cdn-loli.zip
-      run: zip -r v0-${{ env.version }}-cdn-loli.zip dist
+    - name: 打包v0-$VERSION-cdn-loli.zip
+      run: zip -r v0-$VERSION-cdn-loli.zip dist
 
     - name: 构建哪吒v1内置版本
       env:
@@ -89,34 +85,34 @@ jobs:
     - name: 打包dist.zip
       run: zip -r dist.zip dist
 
-    - name: Upload v0-${{ env.version }}-all.zip
+    - name: Upload v0-$VERSION-all.zip
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./v0-${{ env.version }}-all.zip
-        asset_name: v0-${{ env.version }}-all.zip
+        asset_path: ./v0-$VERSION-all.zip
+        asset_name: v0-$VERSION-all.zip
         asset_content_type: application/zip
 
-    - name: Upload v0-${{ env.version }}-cdn-jsdelivr.zip
+    - name: Upload v0-$VERSION-cdn-jsdelivr.zip
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./v0-${{ env.version }}-cdn-jsdelivr.zip
-        asset_name: v0-${{ env.version }}-cdn-jsdelivr.zip
+        asset_path: ./v0-$VERSION-cdn-jsdelivr.zip
+        asset_name: v0-$VERSION-cdn-jsdelivr.zip
         asset_content_type: application/zip
 
-    - name: Upload v0-${{ env.version }}-cdn-loli.zip
+    - name: Upload v0-$VERSION-cdn-loli.zip
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./v0-${{ env.version }}-cdn-loli.zip
-        asset_name: v0-${{ env.version }}-cdn-loli.zip
+        asset_path: ./v0-$VERSION-cdn-loli.zip
+        asset_name: v0-$VERSION-cdn-loli.zip
         asset_content_type: application/zip
 
     - name: Upload dist.zip
@@ -135,15 +131,15 @@ jobs:
         git log -1 > changes.txt
 
         # 获取现有的发布说明
-        gh release view v${{ env.version }} --json body -q .body > body.txt
+        gh release view v$VERSION --json body -q .body > body.txt
 
         # 将变更内容添加到发布说明中
         cat changes.txt >> body.txt
 
         # 添加其他发布说明
-        echo -e "\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-${{ env.version }}-(all|cdn-jsdelivr|cdn-loli).zip\n`all`是全量包，`cdn-jsdelivr`是jsdelivr引用版，`cdn-loli`是cdnjs引用版\nv0版本构建物通过修改`./config.js`指定`nezhaVersion`版本为`v1`可以匹配哪吒v1接口" >> body.txt
+        echo -e "\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-$VERSION-(all|cdn-jsdelivr|cdn-loli).zip\n`all`是全量包，`cdn-jsdelivr`是jsdelivr引用版，`cdn-loli`是cdnjs引用版\nv0版本构建物通过修改`./config.js`指定`nezhaVersion`版本为`v1`可以匹配哪吒v1接口" >> body.txt
 
         # 更新发布说明
-        gh release edit v${{ env.version }} --notes-file body.txt
+        gh release edit v$VERSION --notes-file body.txt
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
