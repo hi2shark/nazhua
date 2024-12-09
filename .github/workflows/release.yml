@@ -20,6 +20,9 @@ jobs:
       with:
         node-version: '20' # 根据项目需求调整版本
 
+    - name: 初始化构建环境
+      run: npm install
+
     - name: 从package.json读取版本号
       id: get_version
       run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
@@ -32,9 +35,6 @@ jobs:
         else
           echo "version=${{ steps.get_version.outputs.version }}" >> $GITHUB_OUTPUT
         fi
-
-    - name: 初始化构建环境
-      run: npm install
 
     - name: 创建Release
       id: create_release
