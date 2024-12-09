@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release'
+        description: '指定版本号: v(*.*.*)'
         required: false
 
 jobs:
@@ -15,33 +15,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 2  # 获取最近的两次提交
-
-    - name: Setup Node.js
+    - name: 选择Node版本
       uses: actions/setup-node@v3
       with:
         node-version: '20' # 根据项目需求调整版本
 
-    - name: Install dependencies
-      run: npm install
-
-    - name: Get version from package.json
+    - name: 从package.json读取版本号
       id: get_version
-      run: echo "::set-output name=version::$(node -p "require('./package.json').version")"
+      run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-    - name: Determine version
+    - name: 读取或指定版本号
       id: determine_version
       run: |
         if [ "${{ github.event.inputs.version }}" ]; then
-          echo "::set-output name=version::${{ github.event.inputs.version }}"
+          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=version::${{ steps.get_version.outputs.version }}"
+          echo "version=${{ steps.get_version.outputs.version }}" >> $GITHUB_OUTPUT
         fi
 
-    - name: Create Release
+    - name: 初始化构建环境
+      run: npm install
+
+    - name: 创建Release
       id: create_release
       uses: actions/create-release@v1
       env:
@@ -89,7 +84,7 @@ jobs:
     - name: 打包dist.zip
       run: zip -r dist.zip dist
 
-    - name: Upload v0-${{ steps.determine_version.outputs.version }}-all.zip
+    - name: 上传v0全量包
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -99,7 +94,7 @@ jobs:
         asset_name: v0-${{ steps.determine_version.outputs.version }}-all.zip
         asset_content_type: application/zip
 
-    - name: Upload v0-${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip
+    - name: 上传v0的cdn-jsdelivr包
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -109,7 +104,7 @@ jobs:
         asset_name: v0-${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip
         asset_content_type: application/zip
 
-    - name: Upload v0-${{ steps.determine_version.outputs.version }}-cdn-loli.zip
+    - name: 上传v0的cdn-loli包
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -119,7 +114,7 @@ jobs:
         asset_name: v0-${{ steps.determine_version.outputs.version }}-cdn-loli.zip
         asset_content_type: application/zip
 
-    - name: Upload dist.zip
+    - name: 上传v1的发行包
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -131,18 +126,14 @@ jobs:
 
     - name: Add release notes
       run: |
-        # 获取最近一次提交的变更内容
-        git log -1 --pretty=format:"%s%n%b" > changes.txt
-
         # 获取现有的发布说明
         gh release view v${{ steps.determine_version.outputs.version }} --json body -q .body > body.txt
 
-        # 将变更内容添加到发布说明中
-        echo -e "### Changes in this release\n" >> body.txt
-        cat changes.txt >> body.txt
+        # 获取最近一次提交的变更内容
+        git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:"%s%n%b" >> body.txt
 
         # 添加其他发布说明
-        echo -e "\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-${{ steps.determine_version.outputs.version }}-all.zip\n至于all是全量包，cdn-jsdelivr是jsdelivr引用版，cdn-loli是cdnjs引用版\nv0版本构建物通过修改./config.js指定nezhaVersion版本可以正常在v1中使用" >> body.txt
+        echo -e "\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip\n -all是全量包，-cdn-jsdelivr是jsdelivr引用版，-cdn-loli是cdnjs的loli.net引用版\nv0版本构建物通过修改./config.js指定nezhaVersion的版本号为'v1'，v1也可以正常使用" >> body.txt
 
         # 更新发布说明
         gh release edit v${{ steps.determine_version.outputs.version }} --notes-file body.txt

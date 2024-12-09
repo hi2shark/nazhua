@@ -15,7 +15,7 @@
 默认的数据是基于V0  
 ### Release版本的nazhua  
 V1下载最新版本[Releases](https://github.com/hi2shark/nazhua/releases)的`dist.zip`；  
-V0下载最新版本[Releases](https://github.com/hi2shark/nazhua/releases)的`v0-{版本}-all.zip`或`v0-{版本}.zip`;  
+V0下载最新版本[Releases](https://github.com/hi2shark/nazhua/releases)的`v0-{版本}-all.zip`或`v0-{版本}-cdn-{CDN供应方}.zip`;  
 
 ## 关于点阵地图  
 点阵地图是一个失真的地图，地图边际与城市位置都不是真实的经纬度坐标，因此无法通过经纬度来定位城市。  
