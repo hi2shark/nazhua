@@ -12,19 +12,19 @@
       :locations="locations"
     />
     <server-name
-      :key="info.ID"
+      :key="`${info.ID}_name`"
       :info="info"
     />
     <server-status-box
-      :key="info.ID"
+      :key="`${info.ID}_status`"
       :info="info"
     />
     <server-info-box
-      :key="info.ID"
+      :key="`${info.ID}_info`"
       :info="info"
     />
     <server-monitor
-      :key="info.ID"
+      :key="`${info.ID}_monitor`"
       :info="info"
     />
   </div>

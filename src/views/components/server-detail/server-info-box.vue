@@ -5,28 +5,58 @@
         CPU
       </div>
       <div class="server-info-content">
-        <span
-          class="cpu-info"
-          :title="info?.Host?.CPU?.[0]"
+        <template v-if="info?.Host?.CPU?.length === 1">
+          <span
+            class="cpu-info"
+            :title="info.Host.CPU[0]"
+          >
+            <span>{{ info.Host.CPU[0] }}</span>
+          </span>
+        </template>
+        <div
+          v-else
+          class="server-info-item-group"
         >
-          <span>{{ info?.Host?.CPU?.[0] }}</span>
-        </span>
+          <span
+            v-for="(cpuItem, cpuIndex) in info.Host.CPU"
+            :key="`${info.ID}_cpu_${cpuIndex}`"
+            class="server-info-item"
+          >
+            <span class="server-info-item-label">CPU.{{ cpuIndex + 1 }}</span>
+            <span class="server-info-item-value">{{ cpuItem }}</span>
+          </span>
+        </div>
       </div>
     </div>
     <div
-      v-if="info?.Host?.GPU?.[0]"
+      v-if="gpuList.length"
       class="server-info-group server-info--gpu"
     >
       <div class="server-info-label">
         GPU
       </div>
       <div class="server-info-content">
-        <span
-          class="cpu-info"
-          :title="info?.Host?.GPU?.[0]"
+        <template v-if="gpuList.length === 1">
+          <span
+            class="gpu-info"
+            :title="gpuList[0]"
+          >
+            <span>{{ gpuList[0] }}</span>
+          </span>
+        </template>
+        <div
+          v-else
+          class="server-info-item-group"
         >
-          <span>{{ info?.Host?.GPU?.[0] }}</span>
-        </span>
+          <span
+            v-for="(gpuItem, gpuIndex) in gpuList"
+            :key="`${info.ID}_gpu_${gpuIndex}`"
+            class="server-info-item"
+          >
+            <span class="server-info-item-label">GPU.{{ gpuIndex + 1 }}</span>
+            <span class="server-info-item-value">{{ gpuItem }}</span>
+          </span>
+        </div>
       </div>
     </div>
     <div class="server-info-group server-info--system-os">
@@ -50,7 +80,7 @@
         占用
       </div>
       <div class="server-info-content">
-        <span class="server-info-item-group">
+        <div class="server-info-item-group">
           <span class="server-info-item process-count">
             <span class="server-info-item-label">进程数</span>
             <span class="server-info-item-value">{{ processCount }}</span>
@@ -58,10 +88,10 @@
           <span class="server-info-item load">
             <span class="server-info-item-label">负载</span>
             <span class="server-info-item-value">
-              {{ info?.State?.Load1 }},{{ info?.State?.Load5 }},{{ info?.State?.Load15 }}
+              {{ sysLoadInfo }}
             </span>
           </span>
-        </span>
+        </div>
       </div>
     </div>
     <div class="server-info-group server-info--transfer">
@@ -69,7 +99,7 @@
         流量
       </div>
       <div class="server-info-content">
-        <span class="server-info-item-group">
+        <div class="server-info-item-group">
           <span class="server-info-item transfer--in">
             <span class="server-info-item-label">入网</span>
             <span class="server-info-item-value">
@@ -84,7 +114,7 @@
               <span class="text-unit">{{ transfer?.out?.unit }}</span>
             </span>
           </span>
-        </span>
+        </div>
       </div>
     </div>
     <div class="server-info-group server-info--conn">
@@ -92,7 +122,7 @@
         连接
       </div>
       <div class="server-info-content">
-        <span class="server-info-item-group">
+        <div class="server-info-item-group">
           <span class="server-info-item conn--tcp">
             <span class="server-info-item-label">TCP</span>
             <span class="server-info-item-value">{{ tcpConnCount }}</span>
@@ -101,7 +131,7 @@
             <span class="server-info-item-label">UDP</span>
             <span class="server-info-item-value">{{ udpConnCount }}</span>
           </span>
-        </span>
+        </div>
       </div>
     </div>
     <div class="server-info-group server-info--boottime">
@@ -132,7 +162,7 @@
         套餐
       </div>
       <div class="server-info-content">
-        <span class="server-info-item-group">
+        <div class="server-info-item-group">
           <span
             v-for="item in billPlanData"
             :key="item.label"
@@ -144,7 +174,7 @@
             >{{ item.label }}</span>
             <span class="server-info-item-value">{{ item.value }}</span>
           </span>
-        </span>
+        </div>
       </div>
     </div>
     <div
@@ -212,6 +242,37 @@ function toBuy() {
   const decodeUrl = decodeURIComponent(props.info?.PublicNote?.customData?.orderLink);
   window.open(decodeUrl, '_blank');
 }
+
+/**
+ * GPU列表
+ */
+const gpuList = computed(() => {
+  const gpus = props.info?.Host?.GPU || [];
+  if (config.nazhua?.filterGPUKeywords?.length) {
+    // 过滤奇怪的GPU，可以考虑过滤掉 Virtual Display
+    const keywors = Array.isArray(config.nazhua.filterGPUKeywords)
+      ? config.nazhua.filterGPUKeywords
+      : [config.nazhua.filterGPUKeywords];
+    return gpus.filter((i) => {
+      if (keywors.length) {
+        return !keywors.some((k) => i.toLowerCase().includes(k.toLowerCase()));
+      }
+      return true;
+    });
+  }
+  return gpus;
+});
+
+const sysLoadInfo = computed(() => {
+  if (props.info?.State?.Load1) {
+    return [
+      props.info.State?.Load1,
+      props.info.State?.Load5,
+      props.info.State?.Load15,
+    ].filter((i) => i !== undefined).map((i) => (i).toFixed(2) * 1).join(',');
+  }
+  return '-';
+});
 
 const {
   billAndPlan,

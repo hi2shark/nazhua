@@ -45,11 +45,27 @@ export function getCPUInfo(text = '') {
   if (modelMatch) {
     [cpuInfo.model] = modelMatch;
   }
+  if (text.includes('Ryzen')) {
+    // 5900X 5950X 7900X 7950X 9900X 9950X
+    const modelNumReg = /Ryzen.*(\d{4}X)/;
+    const modelNumMatch = text.match(modelNumReg);
+    if (modelNumMatch) {
+      [, cpuInfo.modelNum] = modelNumMatch;
+    }
+  }
+  if (text.includes('EPYC')) {
+    // 7B13 7B13 9654...
+    const modelNumReg = /EPYC (\w{4})/;
+    const modelNumMatch = text.match(modelNumReg);
+    if (modelNumMatch) {
+      [, cpuInfo.modelNum] = modelNumMatch;
+    }
+  }
   // 匹配特定的CPU型号编号
   if (text.includes('Xeon')) {
-    if (text.includes('E-')) {
+    if (text.includes(' E')) {
       // Xeon型号
-      const modelNumReg = /(E\d-\S+)/;
+      const modelNumReg = /(E\d-\w+)/;
       const modelNumMatch = text.match(modelNumReg);
       if (modelNumMatch) {
         [, cpuInfo.modelNum] = modelNumMatch;
@@ -64,17 +80,29 @@ export function getCPUInfo(text = '') {
       }
     }
   }
-  if (text.includes('Ryzen')) {
-    // 5900X 5950X 7900X 7950X 9900X 9950X
-    const modelNumReg = /Ryzen.*(\d{4}X)/;
+  if (text.includes('Core(TM)')) {
+    const modelNumReg = /Core\(TM\) (\w+-\w+)/;
     const modelNumMatch = text.match(modelNumReg);
     if (modelNumMatch) {
       [, cpuInfo.modelNum] = modelNumMatch;
     }
   }
-  if (text.includes('EPYC')) {
-    // 7B13 7B13 9654...
-    const modelNumReg = /EPYC (\w{4})/;
+  if (text.includes('Celeron(R)')) {
+    const modelNumReg = /Celeron\(R\) (\w+)/;
+    const modelNumMatch = text.match(modelNumReg);
+    if (modelNumMatch) {
+      [, cpuInfo.modelNum] = modelNumMatch;
+    }
+  }
+  if (text.includes('Pentium(R)')) {
+    const modelNumReg = /Pentium\(R\) (\w+)/;
+    const modelNumMatch = text.match(modelNumReg);
+    if (modelNumMatch) {
+      [, cpuInfo.modelNum] = modelNumMatch;
+    }
+  }
+  if (text.includes('Intel(R) N')) {
+    const modelNumReg = /Intel\(R\) (N\d+)/;
     const modelNumMatch = text.match(modelNumReg);
     if (modelNumMatch) {
       [, cpuInfo.modelNum] = modelNumMatch;

@@ -94,8 +94,8 @@ export default (params) => {
         const endTime = dayjs(endDate).valueOf();
         if (endDate.indexOf('0000-00-00') === 0) {
           obj.remainingTime = {
-            label: '有效期',
-            value: config.nazhua.infinityCycle || '无限',
+            label: '剩余',
+            value: config.nazhua.infinityCycle || '长期有效',
             type: 'infinity',
           };
         } else if (autoRenewal === '1') {

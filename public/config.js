@@ -1,7 +1,7 @@
 window.$$nazhuaConfig = {
   // title: '哪吒监控', // 网站标题
   // freeAmount: '白嫖', // 免费服务的费用名称
-  // infinityCycle: '无限', // 无限周期名称
+  // infinityCycle: '长期有效', // 无限周期名称
   // buyBtnText: '购买', // 购买按钮文案
   // listServerStatusType: 'progress', // 服务器状态类型--列表
   // detailServerStatusType: 'progress', // 服务器状态类型--详情页
@@ -18,6 +18,8 @@ window.$$nazhuaConfig = {
   // hideTag: false, // 隐藏标签
   // hideDotBG: true, // 隐藏框框里面的点点背景
   // monitorRefreshTime: 10, // 监控刷新时间间隔，单位s（秒）, 0为不刷新，为保证不频繁请求源站，最低生效值为10s
+  // filterWeirdGPU: true, // 过滤奇怪的GPU
+  // filterGPUKeywords: ['Virtual Display'], // 如果GPU名称中包含这些关键字，则过滤掉
   // customCodeMap: {}, // 自定义的地图点信息
   // nezhaVersion: 'v1', // 哪吒版本
   // apiMonitorPath: '/api/v1/monitor/{id}',
