@@ -17,6 +17,7 @@ window.$$nazhuaConfig = {
   // hideFilter: false, // 隐藏筛选
   // hideTag: false, // 隐藏标签
   // hideDotBG: true, // 隐藏框框里面的点点背景
+  // monitorRefreshTime: 10, // 监控刷新时间间隔，单位s（秒）, 0为不刷新，为保证不频繁请求源站，最低生效值为10s
   // customCodeMap: {}, // 自定义的地图点信息
   // nezhaVersion: 'v1', // 哪吒版本
   // apiMonitorPath: '/api/v1/monitor/{id}',

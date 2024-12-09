@@ -5,8 +5,11 @@ import {
   TooltipComponent,
   LegendComponent,
   GridComponent,
+  DataZoomComponent,
 } from 'echarts/components';
 import dayjs from 'dayjs';
+
+import config from '@/config';
 
 use([
   CanvasRenderer,
@@ -14,6 +17,7 @@ use([
   TooltipComponent,
   LegendComponent,
   GridComponent,
+  DataZoomComponent,
 ]);
 
 export default (
@@ -22,6 +26,7 @@ export default (
   valueList,
   mode = 'dark',
 ) => {
+  const fontFamily = config.nazhua.disableSarasaTermSC === true ? undefined : 'Sarasa Term SC';
   const option = {
     tooltip: {
       trigger: 'axis',
@@ -32,7 +37,7 @@ export default (
         const time = dayjs(parseInt(params[0].axisValue, 10)).format('YYYY.MM.DD HH:mm');
         let res = `${time}<br>`;
         params.forEach((i) => {
-          res += `${i.marker} ${i.seriesName}: ${i.value}ms<br>`;
+          res += `${i.marker} ${i.seriesName}: ${i.value[1]}ms<br>`;
         });
         return res;
       },
@@ -49,27 +54,22 @@ export default (
       data: cateList,
       textStyle: {
         color: mode === 'dark' ? '#ddd' : '#222',
-        fontFamily: 'Sarasa Term SC',
+        fontFamily,
         fontSize: 14,
       },
     },
-    xAxis: {
-      type: 'category',
-      data: dateList,
-      axisLabel: {
-        hideOverlap: true,
-        interval: Math.max(
-          Math.ceil(dateList.length / 12),
-          1,
-        ),
-        nameTextStyle: {
-          fontSize: 12,
-        },
-        formatter: (val) => dayjs(parseInt(val, 10)).format('HH:mm'),
-        fontFamily: 'Sarasa Term SC',
-        color: mode === 'dark' ? '#eee' : '#222',
-      },
+    grid: {
+      left: 0,
+      right: 5,
+      bottom: 0,
+      containLabel: true,
     },
+    dataZoom: [{
+      id: 'dataZoomX',
+      type: 'slider',
+      xAxisIndex: [0],
+      filterMode: 'filter',
+    }],
     yAxis: {
       type: 'value',
       splitLine: {
@@ -78,16 +78,22 @@ export default (
         },
       },
       axisLabel: {
-        fontFamily: 'Sarasa Term SC',
+        fontFamily,
         color: mode === 'dark' ? '#ddd' : '#222',
         fontSize: 12,
       },
     },
-    grid: {
-      left: 0,
-      right: 0,
-      bottom: 0,
-      containLabel: true,
+    xAxis: {
+      type: 'time',
+      data: dateList,
+      axisLabel: {
+        hideOverlap: true,
+        nameTextStyle: {
+          fontSize: 12,
+        },
+        fontFamily,
+        color: mode === 'dark' ? '#eee' : '#222',
+      },
     },
     series: valueList.map((i) => ({
       type: 'line',

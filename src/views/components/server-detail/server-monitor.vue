@@ -101,9 +101,10 @@ const monitorChartData = computed(() => {
   const dateList = [];
   Object.keys(dateMap).forEach((i) => {
     if (dateMap[i]?.length) {
-      dateList.push(parseInt(i, 10));
+      const time = parseInt(i, 10);
+      dateList.push(time);
       dateMap[i].forEach((o) => {
-        cateMap[o.name].push(o.value);
+        cateMap[o.name].push([time, o.value]);
       });
     }
   });
@@ -151,9 +152,14 @@ async function setTimeLoadMonitor() {
     clearTimeout(loadMonitorTimer);
   }
   await loadMonitor();
+  let monitorRefreshTime = ((config.nazhua.monitorRefreshTime * 1) || 10);
+  if (Number.isNaN(monitorRefreshTime)) {
+    monitorRefreshTime = 10;
+  }
+  const sTime = Math.min(monitorRefreshTime, 10);
   loadMonitorTimer = setTimeout(() => {
     setTimeLoadMonitor();
-  }, 10000);
+  }, sTime * 1000);
 }
 
 onMounted(() => {
@@ -169,7 +175,7 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .server-monitor-group {
-  --line-chart-size: 270px;
+  --line-chart-size: 280px;
 }
 
 .module-head-group {
