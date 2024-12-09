@@ -132,17 +132,17 @@ jobs:
     - name: Add release notes
       run: |
         # 获取最近一次提交的变更内容
-        git log -1 --pretty=format:"%s%n%b" > changes.txt
+        git log -1 > changes.txt
 
         # 获取现有的发布说明
         gh release view v${{ steps.determine_version.outputs.version }} --json body -q .body > body.txt
 
         # 将变更内容添加到发布说明中
-        echo -e "### Changes in this release\n" >> body.txt
+        echo -e "### 本次发布\n" >> body.txt
         cat changes.txt >> body.txt
 
         # 添加其他发布说明
-        echo -e "\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-${{ steps.determine_version.outputs.version }}-all.zip\n至于all是全量的，cdn-jsdelivr是jsdelivr引用版，cdn-loli是cdnjs引用版\nv0版本构建物通过修改./config.js指定nezhaVersion版本可以正常在v1中使用" >> body.txt
+        echo -e "\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-${{ steps.determine_version.outputs.version }}-(all|cdn-jsdelivr|cdn-loli).zip\n`all`是全量包，`cdn-jsdelivr`是jsdelivr引用版，`cdn-loli`是cdnjs引用版\nv0版本构建物通过修改`./config.js`指定`nezhaVersion`版本为`v1`可以匹配哪吒v1接口" >> body.txt
 
         # 更新发布说明
         gh release edit v${{ steps.determine_version.outputs.version }} --notes-file body.txt
