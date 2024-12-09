@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: '指定版本号: v(*.*.*)'
+        description: 'Version to release'
         required: false
 
 jobs:
@@ -15,19 +15,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 选择Node版本
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20' # 根据项目需求调整版本
+        node-version: '20'
 
-    - name: 初始化构建环境
+    - name: Install dependencies
       run: npm install
 
-    - name: 从package.json读取版本号
+    - name: Get version from package.json
       id: get_version
       run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-    - name: 读取或指定版本号
+    - name: Determine version
       id: determine_version
       run: |
         if [ "${{ github.event.inputs.version }}" ]; then
@@ -36,7 +41,7 @@ jobs:
           echo "version=${{ steps.get_version.outputs.version }}" >> $GITHUB_OUTPUT
         fi
 
-    - name: 创建Release
+    - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
@@ -84,7 +89,7 @@ jobs:
     - name: 打包dist.zip
       run: zip -r dist.zip dist
 
-    - name: 上传v0全量包
+    - name: Upload v0-${{ steps.determine_version.outputs.version }}-all.zip
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -94,7 +99,7 @@ jobs:
         asset_name: v0-${{ steps.determine_version.outputs.version }}-all.zip
         asset_content_type: application/zip
 
-    - name: 上传v0的cdn-jsdelivr包
+    - name: Upload v0-${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -104,7 +109,7 @@ jobs:
         asset_name: v0-${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip
         asset_content_type: application/zip
 
-    - name: 上传v0的cdn-loli包
+    - name: Upload v0-${{ steps.determine_version.outputs.version }}-cdn-loli.zip
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -114,7 +119,7 @@ jobs:
         asset_name: v0-${{ steps.determine_version.outputs.version }}-cdn-loli.zip
         asset_content_type: application/zip
 
-    - name: 上传v1的发行包
+    - name: Upload dist.zip
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
