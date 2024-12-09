@@ -21,12 +21,9 @@
           class="cpu-mem-group"
         >
           <span
-            v-if="info?.Host?.Platform"
             class="system-os-icon"
           >
-            <span
-              :class="'fl-' + info?.Host?.Platform"
-            />
+            <span :class="platformLogoIconClassName" />
           </span>
           <span class="core-mem">{{ cpuAndMemAndDisk }}</span>
         </span>
@@ -91,6 +88,7 @@ const { cpuAndMemAndDisk } = handleServerInfo({
 
 const slogan = computed(() => props.info?.PublicNote?.customData?.slogan);
 const cpuInfo = computed(() => hostUtils.getCPUInfo(props.info?.Host?.CPU?.[0]));
+const platformLogoIconClassName = computed(() => hostUtils.getPlatformLogoIconClassName(props.info?.Host?.Platform));
 </script>
 
 <style lang="scss" scoped>

@@ -18,10 +18,7 @@
         <span
           class="server-flag"
         >
-          <span
-            class="fi"
-            :class="'fi-' + (info?.Host?.CountryCode || 'un')"
-          />
+          <span :class="platformLogoIconClassName" />
         </span>
         <span class="server-name">
           {{ info.Name }}
@@ -67,8 +64,12 @@
  */
 
 import {
+  computed,
+} from 'vue';
+import {
   useRouter,
 } from 'vue-router';
+import * as hostUtils from '@/utils/host';
 
 import handleServerInfo from '@/views/composable/server-info';
 import ServerRealTime from '@/views/components/server/server-real-time.vue';
@@ -90,6 +91,8 @@ const router = useRouter();
 const { cpuAndMemAndDisk } = handleServerInfo({
   props,
 });
+
+const platformLogoIconClassName = computed(() => hostUtils.getPlatformLogoIconClassName(props.info?.Host?.Platform));
 
 function openDetail() {
   router.push({

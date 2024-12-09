@@ -192,6 +192,23 @@ export function calcTransfer(bytes) {
   return result;
 }
 
+export function getPlatformLogoIconClassName(platform) {
+  const platformStr = (platform || '').toLowerCase();
+  if (platformStr.includes('windows') || platformStr.includes('microsoft')) {
+    return 'ri-microsoft-fill';
+  }
+  switch (platformStr) {
+    case 'darwin':
+    case 'macos':
+      return 'fl-apple';
+    default:
+  }
+  if (platform) {
+    return `fl-${platform}`;
+  }
+  return 'ri-server-line';
+}
+
 /**
  * 获取系统发行版本
  */
