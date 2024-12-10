@@ -13,11 +13,15 @@ const requestTagMap = {};
  * @return {Promise}
  */
 async function axiosRequest(options) {
-  return axios(options).then((res) => {
-    if (res.status === 200) {
-      return res;
+  return axios(options).then((res) => res).catch((err) => {
+    if (err.response) {
+      return err.response;
     }
-    throw new CustomError(`网络错误${res.status}`, res.status);
+    if (err.request) {
+      // 请求已经成功发起，但没有收到响应
+      return null;
+    }
+    throw new CustomError(err.message);
   });
 }
 

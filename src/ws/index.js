@@ -1,8 +1,6 @@
 import config from '@/config';
 import MessageSubscribe from '@/utils/subscribe';
-import {
-  handelV1toV0,
-} from '@/utils/load-nezha-v1-config';
+import v1TransformV0 from '@/utils/transform-v1-2-v0';
 
 import WSService from './service';
 
@@ -10,9 +8,9 @@ import WSService from './service';
  * 获取不同版本的WebSocket路径
  */
 function getWsApiPath() {
-  let url = config.nazhua.wsPath;
-  if (config.nazhua.nezhaVersion === 'v1') {
-    url = config.nazhua.v1WsPath;
+  let url = config?.nazhua?.wsPath;
+  if (config?.nazhua?.nezhaVersion === 'v1') {
+    url = config?.nazhua?.v1WsPath;
   }
   const a = document.createElement('a');
   a.href = url;
@@ -38,7 +36,7 @@ const wsService = new WSService({
         msg.emit('servers', {
           now: data.now,
           servers: data?.servers?.map?.((server) => {
-            const item = handelV1toV0(server);
+            const item = v1TransformV0(server);
             return item;
           }) || [],
         });

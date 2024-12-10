@@ -6,6 +6,7 @@
         <a
           ref="nofollow"
           href="https://nezha.wiki"
+          :title="'当前为哪吒监控' + $config.nazhua.nezhaVersion"
           target="_blank"
         >哪吒监控</a>
       </span>

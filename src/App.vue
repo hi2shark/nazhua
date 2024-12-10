@@ -14,7 +14,9 @@ import {
 } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
-import config from '@/config';
+import config, {
+  init as initConfig,
+} from '@/config';
 import sleep from '@/utils/sleep';
 import LayoutMain from './layout/main.vue';
 
@@ -75,6 +77,11 @@ async function wsReconnect() {
 
 onMounted(async () => {
   refreshTime();
+
+  // 如果没有配置哪吒版本，尝试载入 v1 版本配置
+  if (!config.init) {
+    await initConfig();
+  }
 
   /**
    * 初始化服务器信息
