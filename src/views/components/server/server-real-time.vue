@@ -7,10 +7,36 @@
       :class="`server-real-time--${item.key}`"
     >
       <div class="item-content">
-        <span class="item-value">{{ item?.value || '-' }}</span>
-        <span class="item-unit item-text">{{ item?.value ? item?.unit : '' }}</span>
+        <div
+          v-if="item.show && item.values"
+          class="item-content-sub-group"
+        >
+          <span
+            v-for="subItem in item.values"
+            :key="`${item.key}_${subItem.key}`"
+            class="item-content-sub-item"
+            :class="`item-content-sub-item--${item.key}-${subItem.key}`"
+          >
+            <span class="item-content-sub-label">
+              {{ subItem.label }}
+            </span>
+            <span class="item-content-sub-content">
+              <span class="item-value">{{ subItem.show ? subItem?.value : '-' }}</span>
+              <span class="item-unit item-text">{{ subItem.show ? subItem?.unit : '' }}</span>
+            </span>
+          </span>
+        </div>
+        <template v-else>
+          <span class="item-value">{{ item.show ? item?.value : '-' }}</span>
+          <span class="item-unit item-text">{{ item.show ? item?.unit : '' }}</span>
+        </template>
       </div>
-      <span class="item-label">{{ item.label }}</span>
+      <span
+        v-if="!item.values"
+        class="item-label"
+      >
+        {{ item.label }}
+      </span>
     </div>
   </div>
 </template>
@@ -29,6 +55,10 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  serverRealTimeListTpls: {
+    type: String,
+    default: undefined,
+  },
 });
 
 const currentTime = inject('currentTime', {
@@ -40,6 +70,7 @@ const {
 } = handleServerRealTime({
   props,
   currentTime,
+  serverRealTimeListTpls: props.serverRealTimeListTpls,
 });
 </script>
 
@@ -78,6 +109,51 @@ const {
       font-size: var(--real-time-label-font-size, 14px);
       color: #ddd;
     }
+
+    .item-content-sub-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      .item-content-sub-item {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .item-content-sub-content {
+        display: flex;
+        align-items: center;
+      }
+
+      .item-value {
+        line-height: 1em;
+        font-size: var(--real-time-label-font-size, 14px);
+      }
+
+      .item-text {
+        line-height: 1em;
+        font-size: var(--real-time-label-font-size, 14px);
+      }
+
+      .item-label {
+        line-height: 1em;
+        font-size: var(--real-time-label-font-size, 14px);
+      }
+
+      .item-content-sub-item--speeds-in {
+        .item-value {
+          color: var(--net-speed-in-color);
+        }
+      }
+      .item-content-sub-item--speeds-out {
+        .item-value {
+          color: var(--net-speed-out-color);
+        }
+      }
+    }
   }
 
   .server-real-time--duration {
@@ -90,7 +166,8 @@ const {
       color: var(--transfer-color);
     }
   }
-  .server-real-time--inSpeed {
+  .server-real-time--inSpeed,
+  .server-real-time--speed {
     .item-value {
       color: var(--net-speed-in-color);
     }

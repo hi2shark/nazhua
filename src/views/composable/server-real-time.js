@@ -174,6 +174,7 @@ export default (params) => {
           label: '在线',
           value: duration.value?.value,
           unit: duration.value?.unit,
+          show: validate.isSet(duration.value?.value),
         };
       case 'transfer':
         return {
@@ -181,6 +182,7 @@ export default (params) => {
           label: `${transfer.value.statTypeLabel}流量`,
           value: transfer.value?.value,
           unit: transfer.value?.unit,
+          show: validate.isSet(transfer.value?.value),
         };
       case 'inSpeed':
         return {
@@ -188,6 +190,7 @@ export default (params) => {
           label: '入网',
           value: netInSpeed.value?.value,
           unit: netInSpeed.value?.unit,
+          show: validate.isSet(netInSpeed.value?.value),
         };
       case 'outSpeed':
         return {
@@ -195,6 +198,37 @@ export default (params) => {
           label: '出网',
           value: netOutSpeed.value?.value,
           unit: netOutSpeed.value?.unit,
+          show: validate.isSet(netOutSpeed.value?.value),
+        };
+      case 'speeds':
+        return {
+          key,
+          label: '网速',
+          values: [
+            {
+              key: 'in',
+              label: '入网',
+              value: netInSpeed.value?.value,
+              unit: netInSpeed.value?.unit,
+              show: validate.isSet(netInSpeed.value?.value),
+            },
+            {
+              key: 'out',
+              label: '出网',
+              value: netOutSpeed.value?.value,
+              unit: netOutSpeed.value?.unit,
+              show: validate.isSet(netOutSpeed.value?.value),
+            },
+          ],
+          show: validate.isSet(netInSpeed.value?.value) && validate.isSet(netOutSpeed.value?.value),
+        };
+      case 'load':
+        return {
+          key,
+          label: '负载',
+          value: (props.info.State?.Load1 || 0).toFixed(2) * 1,
+          unit: '',
+          show: validate.isSet(props.info.State?.Load1),
         };
       default:
     }

@@ -4,6 +4,7 @@ window.$$nazhuaConfig = {
   // infinityCycle: '长期有效', // 无限周期名称
   // buyBtnText: '购买', // 购买按钮文案
   // listServerStatusType: 'progress', // 服务器状态类型--列表
+  // listServerRealTimeShowLoad: false, // 列表显示服务器实时负载
   // detailServerStatusType: 'progress', // 服务器状态类型--详情页
   // disableSarasaTermSC: false, // 禁用Sarasa Term SC字体
   // hideWorldMap: false, // 隐藏地图

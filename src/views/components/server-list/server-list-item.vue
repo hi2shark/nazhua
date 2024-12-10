@@ -49,6 +49,7 @@
       <server-real-time
         v-if="$config.nazhua.hideListItemStat !== true"
         :info="info"
+        :server-real-time-list-tpls="serverRealTimeListTpls"
       />
     </div>
     <server-list-item-bill
@@ -69,6 +70,7 @@ import {
 import {
   useRouter,
 } from 'vue-router';
+import config from '@/config';
 import * as hostUtils from '@/utils/host';
 
 import handleServerInfo from '@/views/composable/server-info';
@@ -93,6 +95,13 @@ const { cpuAndMemAndDisk } = handleServerInfo({
 });
 
 const platformLogoIconClassName = computed(() => hostUtils.getPlatformLogoIconClassName(props.info?.Host?.Platform));
+
+const serverRealTimeListTpls = computed(() => {
+  if (config.nazhua?.listServerRealTimeShowLoad) {
+    return 'duration,load,transfer,speeds';
+  }
+  return 'duration,transfer,inSpeed,outSpeed';
+});
 
 function openDetail() {
   router.push({
