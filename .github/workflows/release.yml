@@ -12,7 +12,7 @@ on:
 
 jobs:
   build-and-release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Checkout code
@@ -24,9 +24,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '20'
-
-    - name: Install dependencies
-      run: npm install
 
     - name: Get version from package.json
       id: get_version
@@ -41,6 +38,16 @@ jobs:
           echo "version=${{ steps.get_version.outputs.version }}" >> $GITHUB_OUTPUT
         fi
 
+    - name: Generate release notes
+      id: release_notes
+      run: |
+        echo "#### Changes" > release_notes.md
+        git log -10 --pretty=format:"- %s" >> release_notes.md
+        echo -e "\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-dist.zip\n哪吒V0/nazhua/子目录需求请下载v0-nazhua.zip\nv${{ steps.determine_version.outputs.version }}-all.zip是全量包\nv${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip是jsdelivr引用版\nv${{ steps.determine_version.outputs.version }}-cdn-loli.zip是cdnjs的loli.net引用版" >> release_notes.md
+
+    - name: Install dependencies
+      run: npm install
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -49,7 +56,7 @@ jobs:
       with:
         tag_name: v${{ steps.determine_version.outputs.version }}
         release_name: Release v${{ steps.determine_version.outputs.version }}
-        draft: false
+        draft: true
         prerelease: false
 
     - name: 构建自动版 - 完整引用版本
@@ -174,19 +181,7 @@ jobs:
 
     - name: Add release notes
       run: |
-        # 获取最近一次提交的变更内容
-        git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:"%s%n%b" > change.txt
-
-        # 获取现有的发布说明
-        gh release view v${{ steps.determine_version.outputs.version }} --json body -q .body > body.txt
-
-        # 添加最近一次提交的变更内容
-        echo -e "\n## 变更内容\n$(cat change.txt)" >> body.txt
-
-        # 添加其他发布说明
-        echo -e "\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-dist.zip\n哪吒V0/nazhua/子目录需求请下载v0-nazhua.zip\nv${{ steps.determine_version.outputs.version }}-all.zip是全量包\nv${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip是jsdelivr引用版\nv${{ steps.determine_version.outputs.version }}-cdn-loli.zip是cdnjs的loli.net引用版" >> body.txt
-
         # 更新发布说明
-        gh release edit v${{ steps.determine_version.outputs.version }} --notes-file body.txt
+        gh release edit v${{ steps.determine_version.outputs.version }} --notes-file release_notes.md
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
