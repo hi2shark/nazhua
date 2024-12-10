@@ -60,6 +60,7 @@ export default (params) => {
             months = 6;
             break;
           default:
+            cycleLabel = billingDataMod.cycle;
             break;
         }
       }
@@ -69,12 +70,12 @@ export default (params) => {
         let label;
         if (billingDataMod.amount.toString() === '-1') {
           amountValue = '按量';
-          label = `每${cycleLabel}`;
+          label = cycleLabel ? `每${cycleLabel}` : '';
         } else if (billingDataMod.amount.toString() === '0') {
           amountValue = config.nazhua.freeAmount || '免费';
           isFree = true;
         } else {
-          label = `${cycleLabel}付`;
+          label = cycleLabel ? `${cycleLabel}付` : '';
         }
         obj.billing = {
           label,
