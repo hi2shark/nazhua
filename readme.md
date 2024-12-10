@@ -84,7 +84,9 @@ Nazhua对这个支持大概在90%左右，参与数据处理了的字段如下�
 4-1. 分组数据，v1来自公开的api接口，`/api/v1/server-group`。  
 
 ## 部署
-Nazhua主题是一个纯前端项目，可以部署在纯静态服务器上，但需要解决`/api/v1/monitor/${id}`监控数据、`/ws`WS服务和`/`主页的跨域访问。  
+Nazhua主题是一个纯前端项目，可以部署在纯静态服务器上；  
+v0需要解决`/api/v1/monitor/${id}`监控数据、`/ws`WS服务和`/`主页的跨域访问。  
+v1需要解决`/api/xxx`等数据接口、`/api/v1/ws/server`WS服务的跨域访问。  
 通常来说，你需要一个nginx或者caddy反代请求解决跨域问题。  
 
 ### Docker Compose + Cloudflare Tunnels部署
@@ -118,8 +120,8 @@ services:
 ### Nginx配置示例
 ```nginx
 map $http_upgrade $connection_upgrade {
-    default upgrade;
-    ''      close;
+  default upgrade;
+  ''      close;
 }
 
 server {
@@ -172,7 +174,6 @@ server {
 }
 ```
 
-
 ## 自定义配置
 可以通过修改根目录下的`config.js`文件来自定义配置  
 例如：(*参考内容在文档上不一定是最新，具体参考public/config.js或者[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)*)
@@ -183,6 +184,7 @@ window.$$nazhuaConfig = {
   infinityCycle: '无限', // 无限周期名称
   buyBtnText: '购买', // 购买按钮文案
   listServerStatusType: 'progress', // 服务器状态类型--列表
+  listServerRealTimeShowLoad: false, // 列表显示服务器实时负载
   detailServerStatusType: 'progress', // 服务器状态类型--详情页
   disableSarasaTermSC: false, // 禁用Sarasa Term SC字体
   hideWorldMap: false, // 隐藏地图
@@ -196,6 +198,8 @@ window.$$nazhuaConfig = {
   hideFilter: false, // 隐藏筛选
   hideTag: false, // 隐藏标签
   hideDotBG: false, // 隐藏框框里面的点点背景
+  monitorRefreshTime: 10, // 监控刷新时间间隔，单位s（秒）, 0为不刷新，为保证不频繁请求源站，最低生效值为10s
+  filterGPUKeywords: ['Virtual Display'], // 如果GPU名称中包含这些关键字，则过滤掉
   customCodeMap: {}, // 自定义的地图点信息
   nezhaVersion: 'v1', // 哪吒版本
   apiMonitorPath: '/api/v1/monitor/{id}',
