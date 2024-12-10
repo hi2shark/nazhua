@@ -10,10 +10,13 @@ import WSService from './service';
  * 获取不同版本的WebSocket路径
  */
 function getWsApiPath() {
+  let url = config.nazhua.wsPath;
   if (config.nazhua.nezhaVersion === 'v1') {
-    return config.nazhua.v1WsPath;
+    url = config.nazhua.v1WsPath;
   }
-  return config.nazhua.wsPath;
+  const a = document.createElement('a');
+  a.href = url;
+  return a.href.replace(/^http/, 'ws');
 }
 
 const msg = new MessageSubscribe();

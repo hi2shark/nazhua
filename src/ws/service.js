@@ -11,7 +11,10 @@ class WSService {
 
     this.debug = options?.debug || false;
 
-    this.$wsUrl = wsUrl?.replace?.('http', 'ws');
+    if (!wsUrl.startsWith('ws')) {
+      throw new Error('WebSocket URL must start with ws:// or wss://');
+    }
+    this.$wsUrl = wsUrl;
     this.$on = {
       close: onClose || (() => {}),
       error: onError || (() => {}),
