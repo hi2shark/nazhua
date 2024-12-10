@@ -18,7 +18,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
       with:
-        fetch-depth: 10
+        fetch-depth: 20
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
@@ -42,8 +42,8 @@ jobs:
       id: release_notes
       run: |
         echo "#### Changes" > release_notes.md
-        git log -10 --pretty=format:"- %s" >> release_notes.md
-        echo -e "\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-dist.zip\n哪吒V0/nazhua/子目录需求请下载v0-nazhua.zip\nv${{ steps.determine_version.outputs.version }}-all.zip是全量包\nv${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip是jsdelivr引用版\nv${{ steps.determine_version.outputs.version }}-cdn-loli.zip是cdnjs的loli.net引用版" >> release_notes.md
+        git log -20 --pretty=format:"- %s" >> release_notes.md
+        echo -e "\n-----------\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-dist.zip\n哪吒V0/nazhua/子目录需求请下载v0-nazhua.zip\nv${{ steps.determine_version.outputs.version }}-all.zip是全量包\nv${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip是jsdelivr引用版\nv${{ steps.determine_version.outputs.version }}-cdn-loli.zip是cdnjs的loli.net引用版" >> release_notes.md
 
     - name: Install dependencies
       run: npm install
