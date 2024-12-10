@@ -157,9 +157,9 @@ async function setTimeLoadMonitor() {
   if (monitorRefreshTime === 0) {
     return;
   }
-  // 非数字 强制为 10
+  // 非数字 强制为30
   if (Number.isNaN(monitorRefreshTime)) {
-    monitorRefreshTime = 10;
+    monitorRefreshTime = 30;
   }
   // 最小 10 秒
   const sTime = Math.min(monitorRefreshTime, 10);
