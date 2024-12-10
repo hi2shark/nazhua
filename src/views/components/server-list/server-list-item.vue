@@ -18,7 +18,10 @@
         <span
           class="server-flag"
         >
-          <span :class="platformLogoIconClassName" />
+          <span
+            class="fi"
+            :class="'fi-' + (info?.Host?.CountryCode || 'un')"
+          />
         </span>
         <span class="server-name">
           {{ info.Name }}
@@ -29,10 +32,7 @@
           v-if="cpuAndMemAndDisk"
           class="cpu-mem-group"
         >
-          <span
-            v-if="info?.Host?.Platform"
-            :class="'fl-' + info?.Host?.Platform"
-          />
+          <span :class="platformLogoIconClassName" />
           <span class="core-mem">{{ cpuAndMemAndDisk }}</span>
         </div>
       </div>
