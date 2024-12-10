@@ -264,7 +264,7 @@ const gpuList = computed(() => {
 });
 
 const sysLoadInfo = computed(() => {
-  if (props.info?.State?.Load1) {
+  if (props.info?.State?.Load1 !== undefined) {
     return [
       props.info.State?.Load1,
       props.info.State?.Load5,
