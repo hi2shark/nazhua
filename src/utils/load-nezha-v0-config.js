@@ -6,7 +6,7 @@ function getNezhaConfigUrl() {
     return nezhaPath;
   }
   const a = document.createElement('a');
-  if (nezhaPath === '/nezha/' && import.meta.env.VITE_BASE_PATH !== '/') {
+  if (nezhaPath === '/nezha/' && (import.meta.env.VITE_BASE_PATH && import.meta.env.VITE_BASE_PATH !== '/')) {
     [a.href] = window.location.href.split(import.meta.env.VITE_BASE_PATH);
   } else {
     a.href = nezhaPath;

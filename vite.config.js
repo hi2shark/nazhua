@@ -42,7 +42,7 @@ if (process.env.NODE_ENV === 'development') {
     },
   };
 
-  if (process.env.VITE_BASE_PATH === '/') {
+  if (process.env.VITE_BASE_PATH === '/' || !process.env.VITE_BASE_PATH) {
     proxy['/nezha/'] = {
       target: process.env.NEZHA_HOST,
       changeOrigin: true,
