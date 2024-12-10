@@ -12,6 +12,21 @@
       </div>
       <div class="right-box">
         <div
+          class="refresh-data-group"
+          title="是否自动刷新"
+          @click="switchRefresh"
+        >
+          <div
+            class="switch-box"
+            :class="{
+              active: refreshData,
+            }"
+          >
+            <span class="switch-dot" />
+          </div>
+          <span class="label-text">刷新</span>
+        </div>
+        <div
           class="peak-shaving-group"
           title="过滤太高或太低的数据"
           @click="switchPeakShaving"
@@ -62,16 +77,37 @@ const props = defineProps({
   },
 });
 
+const refreshData = ref(true);
 const peakShaving = ref(false);
 
 const monitorData = ref([]);
 
 const monitorChartData = computed(() => {
+  /**
+   * 处理监控数据以生成分类的平均延迟随时间变化的列表。
+   *
+   * @returns {Object} 返回一个对象，包含：
+   * - cateList {Array}: 唯一监控名称的列表。
+   * - dateList {Array}: 排序后的唯一时间戳列表。
+   * - valueList {Array}: 包含以下内容的对象列表：
+   *   - name {String}: 监控名称。
+   *   - data {Array}: [时间戳, 平均延迟] 对的数组。
+   *
+   * 该函数执行以下步骤：
+   * 1. 遍历监控数据以分类和过滤平均延迟。
+   * 2. 如果启用了削峰，则应用削峰以过滤异常值。
+   * 3. 构建监控名称到其各自时间戳和平均延迟的映射。
+   * 4. 将映射转换为监控名称、时间戳和平均延迟数据的列表。
+   * 5. 删除重复的时间戳并对其进行排序。
+   */
   const cateMap = {};
-  const dateMap = {};
   monitorData.value.forEach((i) => {
+    const dateMap = {};
     if (!cateMap[i.monitor_name]) {
-      cateMap[i.monitor_name] = [];
+      cateMap[i.monitor_name] = {
+        dateMap,
+        avgs: [],
+      };
     }
     const {
       threshold,
@@ -80,55 +116,57 @@ const monitorChartData = computed(() => {
       min,
     } = peakShaving.value ? getThreshold(i.avg_delay, 2) : {};
     i.created_at.forEach((o, index) => {
-      if (!dateMap[o]) {
-        dateMap[o] = [];
+      if (dateMap[o]) {
+        return;
       }
       const avgDelay = i.avg_delay[index];
       if (peakShaving.value) {
-        if (Math.abs(avgDelay - mean) > threshold && max / min > 2) {
-          return;
-        }
         if (avgDelay === 0) {
           return;
         }
+        if (Math.abs(avgDelay - mean) > threshold && max / min > 2) {
+          return;
+        }
       }
-      dateMap[o].push({
-        name: i.monitor_name,
-        value: (avgDelay).toFixed(2) * 1,
-      });
+      dateMap[o] = (avgDelay).toFixed(2) * 1;
     });
   });
-  const dateList = [];
-  Object.keys(dateMap).forEach((i) => {
-    if (dateMap[i]?.length) {
-      const time = parseInt(i, 10);
-      dateList.push(time);
-      dateMap[i].forEach((o) => {
-        cateMap[o.name].push([time, o.value]);
-      });
-    }
-  });
-  dateList.sort((a, b) => a - b);
+  let dateList = [];
   const cateList = [];
   const valueList = [];
   Object.keys(cateMap).forEach((i) => {
-    if (cateMap[i]?.length) {
-      cateList.push(i);
-    }
+    const {
+      dateMap,
+      avgs,
+    } = cateMap[i];
+    Object.entries(dateMap).forEach(([key, value]) => {
+      const time = parseInt(key, 10);
+      avgs.push([time, value]);
+      dateList.push(time);
+    });
     valueList.push({
       name: i,
-      data: cateMap[i],
+      data: avgs,
     });
+    if (avgs.length) {
+      cateList.push(i);
+    }
   });
+  // 去重
+  dateList = Array.from(new Set(dateList)).sort((a, b) => a - b);
   return {
-    cateList,
     dateList,
+    cateList,
     valueList,
   };
 });
 
 function switchPeakShaving() {
   peakShaving.value = !peakShaving.value;
+}
+
+function switchRefresh() {
+  refreshData.value = !refreshData.value;
 }
 
 async function loadMonitor() {
@@ -147,11 +185,13 @@ async function loadMonitor() {
 }
 
 let loadMonitorTimer = null;
-async function setTimeLoadMonitor() {
+async function setTimeLoadMonitor(force = false) {
   if (loadMonitorTimer) {
     clearTimeout(loadMonitorTimer);
   }
-  await loadMonitor();
+  if (refreshData.value || force) {
+    await loadMonitor();
+  }
   let monitorRefreshTime = parseInt(config.nazhua.monitorRefreshTime, 10);
   // 0 为不刷新
   if (monitorRefreshTime === 0) {
@@ -169,7 +209,7 @@ async function setTimeLoadMonitor() {
 }
 
 onMounted(() => {
-  setTimeLoadMonitor();
+  setTimeLoadMonitor(true);
 });
 
 onUnmounted(() => {
@@ -197,7 +237,14 @@ onUnmounted(() => {
     color: #eee;
   }
 
-  .peak-shaving-group {
+  .right-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .peak-shaving-group,
+  .refresh-data-group {
     display: flex;
     align-items: center;
     gap: 6px;
