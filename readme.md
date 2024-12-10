@@ -246,8 +246,21 @@ window.$$nazhuaConfig = {
 ## 二次开发提示
 `.env.development.local`配置变量
 ```bash
-WS_HOST=http://127.0.0.1:9288 # 本地nezha ws反代
-API_HOST=http://nezha-dashboard.example.com # 本地nezha api反代
-NEZHA_HOST=http://nezha-dashboard.example.com # 本地nezha主页反代
-NEZHA_HOST_REPACE_PATH=1 # 是否替换主页路径`/nezha/`
+#### Sarasa Term SC字体的配置
+# VITE_DISABLE_SARASA_TERM_SC=1
+# VITE_SARASA_TERM_SC_USE_CDN=1
+
+#### 引用库的CDN配置
+# VITE_USE_CDN=1
+# VITE_CDN_LIB_TYPE=jsdelivr # jsdelivr | cdnjs | loli
+
+#### 哪吒的默认版本控制
+# VITE_NEZHA_VERSION=v1 # v0 | v0
+
+#### 本地开发设置
+# PROXY_WS_HOST= # 本地开发时，可以代理WS服务的地址，启用后，自动转发至 {PROXY_WS_HOST}/proxy?wsPath={WS_HOST}
+# API_HOST= # 本地开发时，代理的API服务地址
+# WS_HOST= # 本地开发时，代理的WS服务地址
+##### 仅限v0版本
+# NEZHA_HOST= # 本地开发时，代理的哪吒主页地址
 ```

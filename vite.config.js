@@ -50,7 +50,7 @@ export default defineConfig({
       '/nezha/': {
         target: process.env.NEZHA_HOST,
         changeOrigin: true,
-        rewrite: (e) => (process.env.NEZHA_HOST_REPACE_PATH ? e.replace(/^\/nezha/, '') : e),
+        rewrite: (e) => e.replace(/^\/nezha/, ''),
       },
     },
   },
