@@ -1,5 +1,19 @@
 import config from '@/config';
 
+function getNezhaConfigUrl() {
+  const { nezhaPath } = config.nazhua;
+  if (nezhaPath.startsWith('http')) {
+    return nezhaPath;
+  }
+  const a = document.createElement('a');
+  if (nezhaPath === '/nezha/' && import.meta.env.VITE_BASE_PATH !== '/') {
+    [a.href] = window.location.href.split(import.meta.env.VITE_BASE_PATH);
+  } else {
+    a.href = nezhaPath;
+  }
+  return a.href;
+}
+
 const configReg = (type) => new RegExp(`${type} = JSON.parse\\('(.*)'\\)`);
 // 格式化数据，保证JSON.parse能够正常解析
 const unescaped = (str) => {
@@ -9,7 +23,7 @@ const unescaped = (str) => {
   str2 = str2.replace(/\\\\/g, '\\');
   return str2;
 };
-export default async () => fetch(config.nazhua.nezhaPath).then((res) => res.text()).then((res) => {
+export default async () => fetch(getNezhaConfigUrl()).then((res) => res.text()).then((res) => {
   let resMatch = res?.match?.(configReg(config.nazhua.nezhaV0ConfigType));
   // 尝试兼容不同的nezha前台主题
   if (!resMatch) {

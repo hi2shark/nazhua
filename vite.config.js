@@ -7,52 +7,63 @@ import eslintPlugin from 'vite-plugin-eslint';
 import svgLoader from 'vite-svg-loader';
 import packageJson from './package';
 
-dotenv.config({
-  path: '.env.development.local',
-});
+let proxy;
+if (process.env.NODE_ENV === 'development') {
+  dotenv.config({
+    path: '.env.development.local',
+  });
+
+  proxy = {
+    '/api': {
+      target: process.env.API_HOST,
+      changeOrigin: true,
+    },
+    '/ws': {
+      target: process.env.PROXY_WS_HOST || process.env.WS_HOST,
+      changeOrigin: true,
+      ws: true,
+      rewrite: (e) => {
+        if (process.env.PROXY_WS_HOST) {
+          return `/proxy?wsPath=${process.env.WS_HOST}`;
+        }
+        return e;
+      },
+    },
+    '/api/v1/ws/server': {
+      target: process.env.PROXY_WS_HOST || process.env.WS_HOST,
+      changeOrigin: true,
+      ws: true,
+      rewrite: (e) => {
+        if (process.env.PROXY_WS_HOST) {
+          return `/proxy?wsPath=${process.env.WS_HOST}`;
+        }
+        return e;
+      },
+    },
+  };
+
+  if (process.env.VITE_BASE_PATH === '/') {
+    proxy['/nezha/'] = {
+      target: process.env.NEZHA_HOST,
+      changeOrigin: true,
+      rewrite: (e) => e.replace(/^\/nezha/, ''),
+    };
+  }
+}
+
+// 读取版本号
 process.env.VITE_APP_VERSION = process.env.VERSION || packageJson.version;
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: process.env.VITE_BASE_PATH || '/',
   server: {
     host: '0.0.0.0',
     port: 3000,
     hmr: {
       overlay: false,
     },
-    proxy: {
-      '/api': {
-        target: process.env.API_HOST,
-        changeOrigin: true,
-      },
-      '/ws': {
-        target: process.env.PROXY_WS_HOST || process.env.WS_HOST,
-        changeOrigin: true,
-        ws: true,
-        rewrite: (e) => {
-          if (process.env.PROXY_WS_HOST) {
-            return `/proxy?wsPath=${process.env.WS_HOST}`;
-          }
-          return e;
-        },
-      },
-      '/api/v1/ws/server': {
-        target: process.env.PROXY_WS_HOST || process.env.WS_HOST,
-        changeOrigin: true,
-        ws: true,
-        rewrite: (e) => {
-          if (process.env.PROXY_WS_HOST) {
-            return `/proxy?wsPath=${process.env.WS_HOST}`;
-          }
-          return e;
-        },
-      },
-      '/nezha/': {
-        target: process.env.NEZHA_HOST,
-        changeOrigin: true,
-        rewrite: (e) => e.replace(/^\/nezha/, ''),
-      },
-    },
+    proxy,
   },
   css: {
     preprocessorOptions: {

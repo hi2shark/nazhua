@@ -78,6 +78,18 @@ jobs:
     - name: 打包v${{ steps.determine_version.outputs.version }}-cdn-loli.zip
       run: zip -r v${{ steps.determine_version.outputs.version }}-cdn-loli.zip dist
 
+    - name: 构建哪吒v0子目录版本
+      env:
+        VITE_BASE_PATH: '/nazhua/'
+        VITE_NEZHA_VERSION: 'v0'
+        VITE_SARASA_TERM_SC_USE_CDN: '1'
+        VITE_USE_CDN: '1'
+        VITE_CDN_LIB_TYPE: 'jsdelivr'
+      run: npm run build
+
+    - name: 打包v0-nazhua.zip
+      run: zip -r v0-nazhua.zip dist
+
     - name: 构建哪吒v0版本
       env:
         VITE_NEZHA_VERSION: 'v0'
@@ -130,6 +142,16 @@ jobs:
         asset_name: v${{ steps.determine_version.outputs.version }}-cdn-loli.zip
         asset_content_type: application/zip
 
+    - name: Upload v0-nazhua.zip
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./v0-nazhua.zip
+        asset_name: v0-nazhua.zip
+        asset_content_type: application/zip
+
     - name: Upload v0-dist.zip
       uses: actions/upload-release-asset@v1
       env:
@@ -162,7 +184,7 @@ jobs:
         echo -e "\n## 变更内容\n$(cat change.txt)" >> body.txt
 
         # 添加其他发布说明
-        echo -e "\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-dist.zip\nv${{ steps.determine_version.outputs.version }}-all.zip是全量包\nv${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip是jsdelivr引用版\nv${{ steps.determine_version.outputs.version }}-cdn-loli.zip是cdnjs的loli.net引用版" >> body.txt
+        echo -e "\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-dist.zip\n哪吒V0/nazhua/子目录需求请下载v0-nazhua.zip\nv${{ steps.determine_version.outputs.version }}-all.zip是全量包\nv${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip是jsdelivr引用版\nv${{ steps.determine_version.outputs.version }}-cdn-loli.zip是cdnjs的loli.net引用版" >> body.txt
 
         # 更新发布说明
         gh release edit v${{ steps.determine_version.outputs.version }} --notes-file body.txt
