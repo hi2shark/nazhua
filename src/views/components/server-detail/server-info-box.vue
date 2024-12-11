@@ -59,6 +59,28 @@
         </div>
       </div>
     </div>
+    <div
+      v-if="temperatureData.list.length"
+      class="server-info-group server-info--temperature"
+    >
+      <div class="server-info-label">
+        温度
+      </div>
+      <div class="server-info-content">
+        <div class="server-info-item-group">
+          <span
+            v-for="(ttItem, ttIndex) in temperatureData.list"
+            :key="`${info.ID}_temperature_${ttIndex}`"
+            class="server-info-item"
+            :class="`temperature--${ttItem.type}`"
+            :title="ttItem?.title || ''"
+          >
+            <span class="server-info-item-label">{{ ttItem.label }}</span>
+            <span class="server-info-item-value">{{ ttItem.value }}</span>
+          </span>
+        </div>
+      </div>
+    </div>
     <div class="server-info-group server-info--system-os">
       <div class="server-info-label">
         系统
@@ -274,6 +296,107 @@ const sysLoadInfo = computed(() => {
   return '-';
 });
 
+const temperatureData = computed(() => {
+  const data = [];
+  if (props.info?.State?.Temperatures) {
+    const acpitz = [];
+    const coretemp_package_id = [];
+    const coretemp_core = [];
+    const other = [];
+    props.info.State.Temperatures.forEach((item) => {
+      if (item.Name.indexOf('acpitz') === 0) {
+        acpitz.push(item.Temperature);
+        return;
+      }
+      if (item.Name.indexOf('coretemp_package_id_') === 0) {
+        const coreIndex = parseInt(item.Name.replace('coretemp_package_id_', ''), 10);
+        coretemp_package_id.push({
+          index: coreIndex,
+          value: `${item.Temperature}℃`,
+        });
+        return;
+      }
+      if (item.Name.indexOf('coretemp_core_') === 0) {
+        const coreIndex = parseInt(item.Name.replace('coretemp_core_', ''), 10);
+        coretemp_core.push({
+          index: coreIndex,
+          value: item.Temperature,
+        });
+        return;
+      }
+      // console.log(item);
+      other.push({
+        label: item.Name,
+        value: `${item.Temperature}℃`,
+      });
+    });
+
+    if (acpitz.length) {
+      data.push({
+        label: '主板',
+        value: `${acpitz[0]}℃`,
+        type: 'acpitz',
+      });
+      if (acpitz.length) {
+        const acpitzMean = (acpitz.reduce((a, b) => a + b, 0) / acpitz.length).toFixed(1) * 1;
+        data.push({
+          label: '主板平均',
+          value: `${acpitzMean}℃`,
+          title: acpitz.map((i, index) => `传感器${index + 1}: ${i}℃`).join('\n'),
+          type: 'acpitz-mean',
+        });
+      }
+    }
+    if (coretemp_package_id.length) {
+      data.push({
+        label: 'CPU温度',
+        value: coretemp_package_id.map((i) => i.value).join(', '),
+        title: coretemp_package_id.length > 1
+          ? coretemp_package_id.map((i) => `CPU.${i.index + 1}: ${i.value}`).join('\n')
+          : '',
+        type: 'coretemp-package',
+      });
+    }
+    if (coretemp_core.length) {
+      const coretempCoreMean = (coretemp_core.reduce((a, b) => a + b.value, 0) / coretemp_core.length).toFixed(1) * 1;
+      data.push({
+        label: '核心平均',
+        value: `${coretempCoreMean}℃`,
+        title: coretemp_core.map((i) => `核心${i.index + 1}: ${i.value}℃`).join('\n'),
+        type: 'coretemp-core',
+      });
+      // 最高温度的核心
+      let max;
+      let maxCore;
+      coretemp_core.forEach((i) => {
+        if (max === undefined || i.value > max) {
+          max = i.value;
+          maxCore = i.index;
+        }
+      });
+      // 当最高温度的核心温度比平均温度高 20% 时，显示
+      if (max / coretempCoreMean > 1.2) {
+        data.push({
+          label: `最热核心.${maxCore + 1}`,
+          value: `${max}℃`,
+          type: 'coretemp-max-core',
+        });
+      }
+    }
+    if (other.length) {
+      data.push({
+        type: 'other',
+        label: '其它',
+        value: '...',
+        title: other.map((i) => `${i.label}: ${i.value}`).join('\n'),
+      });
+    }
+  }
+  return {
+    list: data,
+  };
+});
+
 const {
   billAndPlan,
 } = handleServerBillAndPlan({
@@ -392,6 +515,13 @@ const processCount = computed(() => props.info?.State?.ProcessCount);
     justify-content: flex-end;
     flex-wrap: wrap;
     gap: 0 12px;
+
+    &.temperature--other {
+      // 移动端不显示
+      @media screen and (max-width: 768px) {
+        display: none;
+      }
+    }
   }
 
   .server-info-item {
