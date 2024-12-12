@@ -18,6 +18,7 @@ import {
 
 const defaultState = () => ({
   init: false,
+  serverTime: 0,
   serverGroup: [],
   serverList: [],
   serverCount: {
@@ -50,6 +51,9 @@ let firstSetServers = true;
 const store = createStore({
   state: defaultState(),
   mutations: {
+    SET_SERVER_TIME(state, time) {
+      state.serverTime = time;
+    },
     SET_SERVER_GROUP(state, serverGroup) {
       state.serverGroup = serverGroup;
     },
@@ -153,6 +157,9 @@ const store = createStore({
     }) {
       msg.on('servers', (res) => {
         if (res) {
+          if (res.now) {
+            commit('SET_SERVER_TIME', res.now);
+          }
           const servers = res.servers?.map?.((i) => {
             const item = {
               ...i,

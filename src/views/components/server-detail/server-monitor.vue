@@ -16,6 +16,7 @@
           title="是否自动刷新"
           @click="switchRefresh"
         >
+          <span class="label-text">刷新</span>
           <div
             class="switch-box"
             :class="{
@@ -24,13 +25,13 @@
           >
             <span class="switch-dot" />
           </div>
-          <span class="label-text">刷新</span>
         </div>
         <div
           class="peak-shaving-group"
           title="过滤太高或太低的数据"
           @click="switchPeakShaving"
         >
+          <span class="label-text">削峰</span>
           <div
             class="switch-box"
             :class="{
@@ -39,7 +40,28 @@
           >
             <span class="switch-dot" />
           </div>
-          <span class="label-text">削峰</span>
+        </div>
+        <div class="last-update-time-group">
+          <span class="last-update-time-label">
+            最近
+          </span>
+          <div class="minutes">
+            <div
+              v-for="minuteItem in minutes"
+              :key="minuteItem.value"
+              class="minute-item"
+              :class="{
+                active: minuteItem.value === minute,
+              }"
+              @click="toggleMinute(minuteItem.value)"
+            >
+              <span>{{ minuteItem.label }}</span>
+            </div>
+            <div
+              class="active-arrow"
+              :style="minuteActiveArrowStyle"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -97,6 +119,7 @@ import {
   onMounted,
   onUnmounted,
 } from 'vue';
+import { useStore } from 'vuex';
 import config from '@/config';
 import request from '@/utils/request';
 import validate from '@/utils/validate';
@@ -115,11 +138,45 @@ const props = defineProps({
   },
 });
 
+const store = useStore();
+
+const minute = ref(1440);
+const minutes = [{
+  label: '30分钟',
+  value: 30,
+}, {
+  label: '1小时',
+  value: 60,
+}, {
+  label: '3小时',
+  value: 180,
+}, {
+  label: '6小时',
+  value: 360,
+}, {
+  label: '12小时',
+  value: 720,
+}, {
+  label: '24小时',
+  value: 1440,
+}];
 const refreshData = ref(true);
 const peakShaving = ref(false);
 const showCates = ref({});
 
 const monitorData = ref([]);
+
+const accpetShowTime = computed(() => {
+  const now = store.state.serverTime || Date.now();
+  return now - (minute.value * 60 * 1000);
+});
+
+const minuteActiveArrowStyle = computed(() => {
+  const index = minutes.findIndex((i) => i.value === minute.value);
+  return {
+    left: `calc(${index} * var(--minute-item-width))`,
+  };
+});
 
 const monitorChartData = computed(() => {
   /**
@@ -149,17 +206,25 @@ const monitorChartData = computed(() => {
         avgs: [],
       };
     }
+    const showAvgDelay = [];
+    const showCreateTime = i.created_at.filter((o, index) => {
+      const status = o >= accpetShowTime.value;
+      if (status) {
+        showAvgDelay.push(i.avg_delay[index]);
+      }
+      return status;
+    });
     const {
       threshold,
       mean,
       max,
       min,
-    } = peakShaving.value ? getThreshold(i.avg_delay, 2) : {};
-    i.created_at.forEach((o, index) => {
+    } = peakShaving.value ? getThreshold(showAvgDelay, 2) : {};
+    showCreateTime.forEach((o, index) => {
       if (dateMap[o]) {
         return;
       }
-      const avgDelay = i.avg_delay[index];
+      const avgDelay = showAvgDelay[index];
       if (peakShaving.value) {
         if (avgDelay === 0) {
           return;
@@ -238,6 +303,10 @@ function switchRefresh() {
   refreshData.value = !refreshData.value;
 }
 
+function toggleMinute(value) {
+  minute.value = value;
+}
+
 function toggleShowCate(id) {
   showCates.value[id] = !showCates.value[id];
 }
@@ -299,12 +368,14 @@ onUnmounted(() => {
 
 .module-head-group {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  height: 30px;
 
   .module-title {
+    width: max-content;
+    height: 30px;
     line-height: 30px;
     font-size: 16px;
     color: #eee;
@@ -312,15 +383,16 @@ onUnmounted(() => {
 
   .right-box {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
 
   .peak-shaving-group,
   .refresh-data-group {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     cursor: pointer;
 
     @media screen and (max-width: 1024px) {
@@ -351,6 +423,7 @@ onUnmounted(() => {
 
         .switch-dot {
           left: 16px;
+          box-shadow: 1px 1px 2px #000;
         }
       }
     }
@@ -358,6 +431,83 @@ onUnmounted(() => {
     .label-text {
       color: #ddd;
       font-size: 12px;
+    }
+  }
+
+  .last-update-time-group {
+    --minute-item-width: 50px;
+    --minute-item-height: 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .last-update-time-label {
+      color: #ddd;
+      height: var(--minute-item-height);
+      line-height: var(--minute-item-height);
+      font-size: 12px;
+    }
+
+    @media screen and (max-width: 660px) {
+      --minute-item-width: 46px;
+    }
+
+    @media screen and (max-width: 600px) {
+      --minute-item-width: 46px;
+    }
+
+    @media screen and (max-width: 400px) {
+      .last-update-time-label {
+        display: none;
+      }
+    }
+
+    @media screen and (max-width: 330px) {
+      margin-left: -12px;
+    }
+
+    @media screen and (max-width: 320px) {
+      margin-left: -18px;
+    }
+  }
+  .minutes {
+    position: relative;
+    display: flex;
+    align-items: center;
+    // padding: 0 10px;
+    height: var(--minute-item-height);
+    background: rgba(#fff, 0.1);
+    border-radius: calc(var(--minute-item-height) / 2);
+
+    .minute-item {
+      position: relative;
+      z-index: 10;
+      width: var(--minute-item-width);
+      height: var(--minute-item-height);
+      line-height: var(--minute-item-height);
+      font-size: 12px;
+      text-align: center;
+      cursor: pointer;
+      color: #aaa;
+      transition: color 0.3s;
+
+      &.active {
+        color: #fff;
+        text-shadow: 1px 1px 2px #000;
+      }
+    }
+
+    .active-arrow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--minute-item-width);
+      height: var(--minute-item-height);
+      border-radius: calc(var(--minute-item-height) / 2);
+      background: #4caf50;
+      // opacity: 0.5;
+      transition: left 0.3s;
+      z-index: 1;
     }
   }
 }
