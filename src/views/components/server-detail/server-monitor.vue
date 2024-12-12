@@ -202,10 +202,10 @@ const monitorChartData = computed(() => {
       }
       const titles = [
         cateItem.name,
-        `平均延迟：${cateItem.avg}ms`,
-        `执行成功：${cateItem.over}%`,
+        cateItem.avg === 0 ? '' : `平均延迟：${cateItem.avg}ms`,
+        `成功率：${cateItem.over}%`,
       ];
-      cateItem.title = titles.join('\n');
+      cateItem.title = titles.filter((s) => s).join('\n');
       cateList.push(cateItem);
       valueList.push({
         id,

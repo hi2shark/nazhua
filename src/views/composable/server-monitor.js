@@ -33,19 +33,74 @@ export function getThreshold(data, tolerance = 2) {
   };
 }
 
-const lineNameColorMap = {};
-const lineColorNameMap = {};
+/**
+ * - 处理相对固定折线的颜色
+ */
+const lineColorMap = {};
+const lineColors = [];
 
-export function getLineColor(name) {
-  if (lineNameColorMap[name]) {
-    return lineNameColorMap[name];
-  }
+/**
+ * 将十六进制颜色转换为 RGB 数组
+ * @param {string} hex - 十六进制颜色字符串
+ * @returns {number[]} 返回包含 RGB 数组的对象
+ */
+function hexToRgb(hex) {
+  // 去掉可能的前缀 "#"
+  hex = hex.replace(/^#/, '');
+  // 将字符串拆分为 r, g, b 三个部分
+  const bigint = parseInt(hex, 16);
+  const r = Math.floor(bigint / (256 * 256)) % 256;
+  const g = Math.floor(bigint / 256) % 256;
+  const b = bigint % 256;
+  return [r, g, b];
+}
+
+/**
+ * 计算两个 RGB 颜色之间的距离
+ * @param {number[]} color1 - 第一个颜色的 RGB 数组
+ * @param {number[]} color2 - 第二个颜色的 RGB 数组
+ * @returns {number} 返回两个颜色之间的距离
+ */
+function rgbDistance(color1, color2) {
+  const [r1, g1, b1] = color1;
+  const [r2, g2, b2] = color2;
+  return Math.abs(r1 - r2) + Math.abs(g1 - g2) + Math.abs(b1 - b2);
+}
+
+/**
+ * 获取一个随机颜色
+ * @returns {string} 返回一个随机颜色的字符串
+ */
+function getColor() {
   const { color } = uniqolor.random({
     saturation: [75, 90],
     lightness: [65, 70],
     differencePoint: 100,
   });
-  lineNameColorMap[name] = color;
-  lineColorNameMap[color] = name;
+  if (lineColors.includes(color)) {
+    return getColor();
+  }
+  if (lineColors.some((i) => rgbDistance(
+    hexToRgb(i),
+    hexToRgb(color),
+  ) < 80)) {
+    return getColor();
+  }
+  return color;
+}
+
+/**
+ * 获取线的颜色
+ * @param {string} name - 线的名称
+ * @returns {string} 返回线的颜色
+ */
+export function getLineColor(name) {
+  // 如果已经有了对应的颜色，直接返回
+  if (lineColorMap[name]) {
+    return lineColorMap[name];
+  }
+  const color = getColor();
+  lineColorMap[name] = color;
+  lineColors.push(color);
   return color;
 }

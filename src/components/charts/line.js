@@ -78,7 +78,7 @@ export default (
       id: 'dataZoomX',
       type: 'slider',
       xAxisIndex: [0],
-      filterMode: 'none',
+      filterMode: 'filter',
     }],
     yAxis: {
       type: 'value',
