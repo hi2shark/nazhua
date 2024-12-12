@@ -115,6 +115,7 @@ const tagList = computed(() => {
 const show = computed(() => {
   const checks = [
     billAndPlan.value.remainingTime,
+    billAndPlan.value.billing,
     tagList.value.length > 0,
     showBuyBtn.value,
   ];
