@@ -1,3 +1,5 @@
+import uniqolor from 'uniqolor';
+
 /**
  * 计算数据的阈值和平均值
  *
@@ -29,4 +31,21 @@ export function getThreshold(data, tolerance = 2) {
     min,
     max,
   };
+}
+
+const lineNameColorMap = {};
+const lineColorNameMap = {};
+
+export function getLineColor(name) {
+  if (lineNameColorMap[name]) {
+    return lineNameColorMap[name];
+  }
+  const { color } = uniqolor.random({
+    saturation: [75, 90],
+    lightness: [65, 70],
+    differencePoint: 100,
+  });
+  lineNameColorMap[name] = color;
+  lineColorNameMap[color] = name;
+  return color;
 }
