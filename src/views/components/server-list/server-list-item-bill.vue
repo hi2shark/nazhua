@@ -109,7 +109,8 @@ const tagList = computed(() => {
   if (props?.info?.PublicNote?.planDataMod?.extra) {
     list.push(...props.info.PublicNote.planDataMod.extra.split(','));
   }
-  return list;
+  // 列表最多显示5个标签
+  return list.slice(0, 5);
 });
 
 const show = computed(() => {
@@ -186,7 +187,8 @@ const show = computed(() => {
       line-height: 20px;
       font-size: 12px;
       color: var(--public-note-tag-color);
-      background-color: var(--public-note-tag-bg);
+      background: var(--public-note-tag-bg);
+      text-shadow: 1px 1px 2px rgba(#000, 0.2);
       border-radius: 4px;
     }
   }

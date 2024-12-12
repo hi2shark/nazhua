@@ -480,7 +480,7 @@ onUnmounted(() => {
     align-items: center;
     // padding: 0 10px;
     height: var(--minute-item-height);
-    background: rgba(#fff, 0.1);
+    background: rgba(#fff, 0.2);
     border-radius: calc(var(--minute-item-height) / 2);
 
     .minute-item {

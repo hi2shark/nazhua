@@ -595,7 +595,8 @@ const processCount = computed(() => props.info?.State?.ProcessCount);
       line-height: 20px;
       font-size: 12px;
       color: var(--public-note-tag-color);
-      background-color: var(--public-note-tag-bg);
+      background: var(--public-note-tag-bg);
+      text-shadow: 1px 1px 2px rgba(#000, 0.2);
       border-radius: 4px;
     }
   }

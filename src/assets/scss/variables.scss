@@ -25,8 +25,9 @@
 
   --list-item-price-color: #eee;
   --list-item-buy-link-color: #ffc300;
-  --public-note-tag-color: #ddd;
-  --public-note-tag-bg: #6a7efc;
+  --public-note-tag-color: #ccc;
+  // --public-note-tag-bg: #6a7efc;
+  --public-note-tag-bg: linear-gradient(125deg, #8f94fb, #4e54c8);
 
   // 针对1440px以下的屏幕
   @media screen and (max-width: 1440px) {
