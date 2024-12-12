@@ -43,6 +43,42 @@
         </div>
       </div>
     </div>
+
+    <div class="monitor-cate-group">
+      <div
+        v-for="cateItem in monitorChartData.cateList"
+        :key="cateItem.id"
+        class="monitor-cate-item"
+        :class="{
+          disabled: showCates[cateItem.id] === false,
+        }"
+        :style="{
+          '--cate-color': cateItem.color,
+        }"
+        :title="cateItem.title"
+        @click="toggleShowCate(cateItem.id)"
+      >
+        <span class="cate-legend" />
+        <span
+          class="cate-name"
+        >
+          {{ cateItem.name }}
+        </span>
+        <span
+          v-if="cateItem.avg !== 0"
+          class="cate-avg-ms"
+        >
+          {{ cateItem.avg }}ms
+        </span>
+        <span
+          v-else
+          class="cate-avg-ms"
+        >
+          -ms
+        </span>
+      </div>
+    </div>
+
     <line-chart
       :cate-list="monitorChartData.cateList"
       :date-list="monitorChartData.dateList"
@@ -63,11 +99,13 @@ import {
 } from 'vue';
 import config from '@/config';
 import request from '@/utils/request';
+import validate from '@/utils/validate';
 
 import LineChart from '@/components/charts/line.vue';
 
 import {
   getThreshold,
+  getLineColor,
 } from '@/views/composable/server-monitor';
 
 const props = defineProps({
@@ -79,6 +117,7 @@ const props = defineProps({
 
 const refreshData = ref(true);
 const peakShaving = ref(false);
+const showCates = ref({});
 
 const monitorData = ref([]);
 
@@ -105,6 +144,7 @@ const monitorChartData = computed(() => {
     const dateMap = {};
     if (!cateMap[i.monitor_name]) {
       cateMap[i.monitor_name] = {
+        id: i.monitor_id,
         dateMap,
         avgs: [],
       };
@@ -132,10 +172,11 @@ const monitorChartData = computed(() => {
     });
   });
   let dateList = [];
+  let valueList = [];
   const cateList = [];
-  const valueList = [];
   Object.keys(cateMap).forEach((i) => {
     const {
+      id,
       dateMap,
       avgs,
     } = cateMap[i];
@@ -144,16 +185,44 @@ const monitorChartData = computed(() => {
       avgs.push([time, value]);
       dateList.push(time);
     });
-    valueList.push({
-      name: i,
-      data: avgs,
-    });
+    const color = getLineColor(id);
     if (avgs.length) {
-      cateList.push(i);
+      if (!validate.hasOwn(showCates.value, id)) {
+        showCates.value[id] = true;
+      }
+      const cateItem = {
+        id,
+        name: i,
+        color,
+        avg: (avgs.reduce((a, b) => a + b[1], 0) / avgs.length).toFixed(2) * 1,
+        over: ((avgs.filter((o) => o[1] > 0).length / avgs.length) * 100).toFixed(2) * 1,
+      };
+      if (Number.isNaN(cateItem.avg)) {
+        cateItem.avg = 0;
+      }
+      const titles = [
+        cateItem.name,
+        `平均延迟：${cateItem.avg}ms`,
+        `执行成功：${cateItem.over}%`,
+      ];
+      cateItem.title = titles.join('\n');
+      cateList.push(cateItem);
+      valueList.push({
+        id,
+        name: i,
+        data: avgs,
+        itemStyle: {
+          color,
+        },
+        lineStyle: {
+          color,
+        },
+      });
     }
   });
   // 去重
   dateList = Array.from(new Set(dateList)).sort((a, b) => a - b);
+  valueList = valueList.filter((i) => showCates.value[i.id]);
   return {
     dateList,
     cateList,
@@ -167,6 +236,10 @@ function switchPeakShaving() {
 
 function switchRefresh() {
   refreshData.value = !refreshData.value;
+}
+
+function toggleShowCate(id) {
+  showCates.value[id] = !showCates.value[id];
 }
 
 async function loadMonitor() {
@@ -221,7 +294,7 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .server-monitor-group {
-  --line-chart-size: 280px;
+  --line-chart-size: 300px;
 }
 
 .module-head-group {
@@ -285,6 +358,67 @@ onUnmounted(() => {
     .label-text {
       color: #ddd;
       font-size: 12px;
+    }
+  }
+}
+
+.monitor-cate-group {
+  --gap-size: 0;
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  // justify-content: center;
+  gap: var(--gap-size);
+  margin-right: calc(var(--gap-size) * -1);
+
+  .monitor-cate-item {
+    // --cate-item-width: calc(20% - var(--gap-size));
+    --cate-item-height: 28px;
+    --cate-item-font-size: 14px;
+    --cate-color: #fff;
+
+    display: flex;
+    align-items: center;
+    width: var(--cate-item-width);
+    height: var(--cate-item-height);
+    gap: 6px;
+    padding: 0 6px;
+    font-size: var(--cate-item-font-size);
+    // background: rgba(#fff, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+
+    .cate-legend {
+      width: 0.5em;
+      height: 0.5em;
+      // border-radius: 50%;
+      // width: 6px;
+      // height: calc(var(--cate-item-height) - 10px);
+      // margin-left: -6px;
+      background: var(--cate-color);
+    }
+
+    .cate-name {
+      // flex: 1;
+      height: var(--cate-item-height);
+      line-height: calc(var(--cate-item-height) + 2px);
+      // text-overflow: ellipsis;
+      // white-space: nowrap;
+      // overflow: hidden;
+      color: #eee;
+    }
+
+    .cate-avg-ms {
+      // width: 55px;
+      height: var(--cate-item-height);
+      line-height: calc(var(--cate-item-height) + 2px);
+      text-align: right;
+      color: #fff;
+    }
+
+    &.disabled {
+      filter: grayscale(1);
+      opacity: 0.5;
     }
   }
 }

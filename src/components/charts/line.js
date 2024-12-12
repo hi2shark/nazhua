@@ -3,7 +3,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { LineChart } from 'echarts/charts';
 import {
   TooltipComponent,
-  LegendComponent,
+  // LegendComponent,
   GridComponent,
   DataZoomComponent,
 } from 'echarts/components';
@@ -15,7 +15,7 @@ use([
   CanvasRenderer,
   LineChart,
   TooltipComponent,
-  LegendComponent,
+  // LegendComponent,
   GridComponent,
   DataZoomComponent,
 ]);
@@ -28,6 +28,7 @@ export default (
 ) => {
   const fontFamily = config.nazhua.disableSarasaTermSC === true ? undefined : 'Sarasa Term SC';
   const option = {
+    darkMode: mode === 'dark',
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -49,26 +50,35 @@ export default (
         fontSize: 14,
       },
     },
-    legend: {
-      top: 5,
-      data: cateList,
-      textStyle: {
-        color: mode === 'dark' ? '#ddd' : '#222',
-        fontFamily,
-        fontSize: 14,
-      },
-    },
+    // legend: {
+    //   show: false,
+    //   data: cateList.map((i) => ({
+    //     name: i.name,
+    //     itemStyle: {
+    //       color: i.color,
+    //     },
+    //     lineStyle: {
+    //       color: i.color,
+    //     },
+    //   })),
+    //   textStyle: {
+    //     color: mode === 'dark' ? '#ddd' : '#222',
+    //     fontFamily,
+    //     fontSize: 14,
+    //   },
+    // },
     grid: {
-      left: 0,
+      top: 10,
+      left: 5,
       right: 5,
-      bottom: 0,
+      bottom: 50,
       containLabel: true,
     },
     dataZoom: [{
       id: 'dataZoomX',
       type: 'slider',
       xAxisIndex: [0],
-      filterMode: 'filter',
+      filterMode: 'none',
     }],
     yAxis: {
       type: 'value',
@@ -96,9 +106,8 @@ export default (
       },
     },
     series: valueList.map((i) => ({
+      ...i,
       type: 'line',
-      data: i.data,
-      name: i.name,
       smooth: true,
       connectNulls: true,
       legendHoverLink: false,
