@@ -255,12 +255,16 @@ const monitorChartData = computed(() => {
       if (!validate.hasOwn(showCates.value, id)) {
         showCates.value[id] = true;
       }
+      // 计算平均延迟和成功率
+      const validAvgs = avgs.filter((a) => a[1] !== 0);
+      const avg = validAvgs.reduce((a, b) => a + b[1], 0) / validAvgs.length;
+      const over = avgs.filter((a) => a[1] !== 0).length / avgs.length;
       const cateItem = {
         id,
         name: i,
         color,
-        avg: (avgs.reduce((a, b) => a + b[1], 0) / avgs.length).toFixed(2) * 1,
-        over: ((avgs.filter((o) => o[1] > 0).length / avgs.length) * 100).toFixed(2) * 1,
+        avg: avg.toFixed(2) * 1,
+        over: (over * 100).toFixed(2) * 1,
       };
       if (Number.isNaN(cateItem.avg)) {
         cateItem.avg = 0;
