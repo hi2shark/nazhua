@@ -4,6 +4,7 @@ import {
   createWebHashHistory,
 } from 'vue-router';
 import config from '@/config';
+import pageTitle from '@/utils/page-title';
 
 const constantRoutes = [{
   name: 'Home',
@@ -35,7 +36,7 @@ const routerOptions = {
 const router = createRouter(routerOptions);
 
 router.beforeResolve((to, from, next) => {
-  document.title = [to?.meta?.title, config.nazhua.title].filter((i) => i).join(' - ');
+  pageTitle(to?.meta?.title);
   next();
 });
 

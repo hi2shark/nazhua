@@ -54,6 +54,7 @@ import {
   alias2code,
   locationCode2Info,
 } from '@/utils/world-map';
+import pageTitle from '@/utils/page-title';
 
 import WorldMap from '@/components/world-map/world-map.vue';
 import ServerName from './components/server-detail/server-name.vue';
@@ -131,6 +132,7 @@ function handleWorldMapWidth() {
 
 watch(() => info.value, () => {
   if (info.value) {
+    pageTitle(info.value?.Name, '节点详情');
     handleWorldMapWidth();
   }
 });
@@ -145,6 +147,7 @@ watch(() => dataInit.value, () => {
 
 onMounted(() => {
   if (info.value) {
+    pageTitle(info.value?.Name, '节点详情');
     handleWorldMapWidth();
   }
   window.addEventListener('resize', handleWorldMapWidth);
