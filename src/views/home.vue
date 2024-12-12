@@ -100,6 +100,7 @@ const tagOptions = computed(() => store.state.serverGroup.map((i) => ({
   key: uuid(),
   label: i.name,
   value: i.name,
+  title: `${i.servers.length}台`,
 })));
 
 const onlineOptions = computed(() => {
@@ -108,10 +109,12 @@ const onlineOptions = computed(() => {
       key: 'online',
       label: '在线',
       value: '1',
+      title: `${serverCount.value.online}台`,
     }, {
       key: 'offline',
       label: '离线',
       value: '-1',
+      title: `${serverCount.value.offline}台`,
     }];
   }
   return [];

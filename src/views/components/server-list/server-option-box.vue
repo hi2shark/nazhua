@@ -7,6 +7,7 @@
       :class="{
         active: activeValue === item.value,
       }"
+      :title="item?.title || false"
       @click="toggleModelValue(item)"
     >
       <span class="option-label">{{ item.label }}</span>
