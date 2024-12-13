@@ -2,6 +2,7 @@
  * V1版数据加载
  */
 import store from '@/store';
+import validate from '@/utils/validate';
 import { Mapping } from '@/utils/object-mapping';
 
 /**
@@ -97,6 +98,14 @@ export default function (v1Data) {
           break;
         case '_$mapping':
           v0Data[key] = Mapping.each(magics[$magic[1]], v1Data);
+          if (key === 'State') {
+            // 修复Load1、Load5、Load15字段为空时的问题
+            ['Load1', 'Load5', 'Load15'].forEach((k) => {
+              if (!validate.isSet(v0Data[key][k])) {
+                v0Data[key][k] = 0;
+              }
+            });
+          }
           break;
         default:
           break;
