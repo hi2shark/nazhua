@@ -81,7 +81,7 @@ export default (used, total, itemColors, size = 100) => ({
       color: typeof itemColors === 'string' ? itemColors : handleColor(itemColors?.used),
       borderRadius: 5,
       shadowColor: config.nazhua.serverStatusLinear ? 'rgba(0, 0, 0, 0.5)' : undefined,
-      shadowBlur: 10,
+      shadowBlur: config.nazhua.serverStatusLinear ? 10 : undefined,
     },
     coordinateSystem: 'polar',
     cursor: 'default',
