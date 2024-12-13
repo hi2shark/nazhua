@@ -120,8 +120,8 @@ const codeMaps = {
     country: '美国',
   },
   MIA: {
-    x: 243,
-    y: 244,
+    x: 237,
+    y: 249,
     name: '迈阿密',
     country: '美国',
   },
@@ -137,11 +137,47 @@ const codeMaps = {
     name: '纽约',
     country: '美国',
   },
+  DFW: {
+    x: 172,
+    y: 211,
+    name: '达拉斯',
+    country: '美国',
+  },
+  ATL: {
+    x: 225,
+    y: 205,
+    name: '亚特兰大',
+    country: '美国',
+  },
+  HNL: {
+    x: 28,
+    y: 270,
+    name: '檀香山',
+    country: '美国',
+  },
   YYZ: {
     x: 267,
     y: 161,
     name: '多伦多',
     country: '加拿大',
+  },
+  MEX: {
+    x: 158,
+    y: 280,
+    name: '墨西哥城',
+    country: '墨西哥',
+  },
+  SCQ: {
+    x: 289,
+    y: 513,
+    name: '圣地亚哥',
+    country: '智利',
+  },
+  GRU: {
+    x: 370,
+    y: 473,
+    name: '圣保罗',
+    country: '巴西',
   },
   SYD: {
     x: 1167,
@@ -167,6 +203,12 @@ const codeMaps = {
     name: '法兰克福',
     country: '德国',
   },
+  BER: {
+    x: 620,
+    y: 130,
+    name: '柏林',
+    country: '德国',
+  },
   LUX: {
     x: 591,
     y: 140,
@@ -178,6 +220,24 @@ const codeMaps = {
     y: 145,
     name: '巴黎',
     country: '法国',
+  },
+  WAW: {
+    name: '华沙',
+    country: '波兰',
+    x: 649,
+    y: 123,
+  },
+  MAD: {
+    name: '马德里',
+    country: '西班牙',
+    x: 554,
+    y: 180,
+  },
+  MXP: {
+    name: '米兰',
+    country: '意大利',
+    x: 604,
+    y: 153,
   },
   SVO: {
     x: 704,
@@ -235,6 +295,13 @@ export const countryCodeMapping = {
   GB: 'LON',
   AU: 'SYD',
   US: 'LAX',
+  CA: 'YYZ',
+  MX: 'MEX',
+  CL: 'SCQ',
+  BR: 'GRU',
+  IT: 'MXP',
+  ES: 'MAD',
+  PL: 'WAW',
 };
 
 export default codeMaps;
