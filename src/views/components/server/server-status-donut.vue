@@ -12,7 +12,7 @@
         <template #default>
           <div
             class="chart-donut-label"
-            :title="`${(used).toFixed(1) * 1}%`"
+            :title="valPercent ? valPercent : `${(used).toFixed(1) * 1}%`"
           >
             <div class="server-status-val-text">
               <span>{{ valText }}</span>
@@ -73,6 +73,10 @@ defineProps({
     type: String,
     default: '',
   },
+  valPercent: {
+    type: String,
+    default: '',
+  },
   label: {
     type: String,
     default: '',
@@ -103,6 +107,7 @@ defineProps({
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    transform: scale(var(--server-status-label-scale, 1));
     cursor: pointer;
   }
 
