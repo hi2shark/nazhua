@@ -190,7 +190,7 @@ const tipsContentStyle = computed(() => {
     style.left = `${activeTipsXY.value.x}px`;
     style.transform = 'translate(-50%, 20px)';
   } else {
-    style.bottom = '10px';
+    style.bottom = '4px';
     style.left = '50%';
     style.transform = 'translate(-50%, 0)';
   }
@@ -232,11 +232,11 @@ function handlePointTap(e) {
     padding: 5px 10px;
     border-radius: 5px;
     line-height: 20px;
+    white-space: pre;
     color: #eee;
     background: rgba(#000, 0.8);
     box-shadow: 1px 4px 8px rgba(#303841, 0.4);
     z-index: 100;
-    white-space: pre;
 
     // 向上的尖角
     &::before {
@@ -249,6 +249,15 @@ function handlePointTap(e) {
       border: 5px solid transparent;
       border-bottom-color: rgba(#000, 0.8);
       transform: translateX(-50%);
+    }
+
+    @media screen and (max-width: 500px) {
+      line-height: 16px;
+      font-size: 12px;
+
+      &::before {
+        display: none;
+      }
     }
   }
 }
