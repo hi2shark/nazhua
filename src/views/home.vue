@@ -33,9 +33,11 @@
         name="list"
         tag="div"
         class="server-list-container"
+        :class="`server-list--${serverItemComponentName}`"
       >
-        <server-item
-          v-for="item in filterServerList"
+        <component
+          :is="serverItemComponentMaps[serverItemComponentName]"
+          v-for="item in filterServerList.list"
           :key="item.ID"
           :info="item"
         />
@@ -51,6 +53,7 @@
 
 import {
   ref,
+  provide,
   computed,
   onMounted,
   onUnmounted,
@@ -66,10 +69,21 @@ import {
   count2size,
 } from '@/utils/world-map';
 import uuid from '@/utils/uuid';
+import validate from '@/utils/validate';
 
 import WorldMap from '@/components/world-map/world-map.vue';
 import ServerOptionBox from './components/server-list/server-option-box.vue';
-import ServerItem from './components/server-list/server-list-item.vue';
+import ServerCardItem from './components/server-list/card/server-list-item.vue';
+import ServerRowItem from './components/server-list/row/server-list-item.vue';
+
+const serverItemComponentMaps = {
+  card: ServerCardItem,
+  row: ServerRowItem,
+};
+const serverItemComponentName = [
+  'card',
+  'row',
+].includes(config.nazhua.listServerItemType) ? config.nazhua.listServerItemType : 'card';
 
 const store = useStore();
 const worldMapWidth = ref();
@@ -120,45 +134,80 @@ const onlineOptions = computed(() => {
   return [];
 });
 
-const filterServerList = computed(() => serverList.value.filter((i) => {
-  const isFilterArr = [];
-  if (filterFormData.value.tag) {
-    const group = store.state.serverGroup.find((o) => o.name === filterFormData.value.tag);
-    isFilterArr.push((group?.servers || []).includes(i.ID));
-  }
-  if (filterFormData.value.online) {
-    isFilterArr.push(i.online === (filterFormData.value.online * 1));
-  }
-  return isFilterArr.length ? isFilterArr.every((o) => o) : true;
-}));
+const filterServerList = computed(() => {
+  const fields = {};
+  const locationMap = {};
+
+  const list = serverList.value.filter((i) => {
+    const isFilterArr = [];
+    if (filterFormData.value.tag) {
+      const group = store.state.serverGroup.find((o) => o.name === filterFormData.value.tag);
+      isFilterArr.push((group?.servers || []).includes(i.ID));
+    }
+    if (filterFormData.value.online) {
+      isFilterArr.push(i.online === (filterFormData.value.online * 1));
+    }
+    const status = isFilterArr.length ? isFilterArr.every((o) => o) : true;
+    if (!status) {
+      return false;
+    }
+
+    // 判断是否有字段
+    if (i.PublicNote) {
+      const {
+        billingDataMod,
+        planDataMod,
+        customData,
+      } = i.PublicNote;
+      if (validate.isSet(billingDataMod?.amount)) {
+        fields.billing = true;
+      }
+      if (validate.isSet(billingDataMod?.endDate)) {
+        fields.remainingTime = true;
+      }
+      if (validate.isSet(planDataMod?.bandwidth)) {
+        fields.bandwidth = true;
+      }
+      if (validate.isSet(customData?.orderLink)) {
+        fields.orderLink = true;
+      }
+    }
+
+    // 位置
+    if (i.online === 1) {
+      let aliasCode;
+      let locationCode;
+      if (i?.PublicNote?.customData?.location) {
+        aliasCode = i.PublicNote.customData.location;
+        locationCode = i.PublicNote.customData.location;
+      } else if (i?.Host?.CountryCode) {
+        aliasCode = i.Host.CountryCode.toUpperCase();
+      }
+      const code = alias2code(aliasCode) || locationCode;
+      if (code) {
+        if (!locationMap[code]) {
+          locationMap[code] = [];
+        }
+        locationMap[code].push(i);
+      }
+    }
+
+    return true;
+  });
+  return {
+    fields,
+    list,
+    locationMap,
+  };
+});
+provide('filterServerList', filterServerList);
 
 /**
  * 解构服务器列表的位置数据
  */
 const serverLocations = computed(() => {
-  const locationMap = {};
-  filterServerList.value.forEach((i) => {
-    if (i.online === -1) {
-      return;
-    }
-    let aliasCode;
-    let locationCode;
-    if (i?.PublicNote?.customData?.location) {
-      aliasCode = i.PublicNote.customData.location;
-      locationCode = i.PublicNote.customData.location;
-    } else if (i?.Host?.CountryCode) {
-      aliasCode = i.Host.CountryCode.toUpperCase();
-    }
-    const code = alias2code(aliasCode) || locationCode;
-    if (code) {
-      if (!locationMap[code]) {
-        locationMap[code] = [];
-      }
-      locationMap[code].push(i);
-    }
-  });
   const locations = [];
-  Object.entries(locationMap).forEach(([code, servers]) => {
+  Object.entries(filterServerList.value.locationMap).forEach(([code, servers]) => {
     const {
       x,
       y,
@@ -214,6 +263,31 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
 
+  .scroll-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 0;
+  }
+
+  .world-map-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.fitler-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 20px;
+  width: var(--list-container-width);
+  margin: auto;
+}
+
+.server-list-container.server-list--card {
   --list-padding: 20px;
   --list-gap-size: 20px;
   --list-item-num: 3;
@@ -228,29 +302,13 @@ onUnmounted(() => {
     )
     / var(--list-item-num)
   );
-
-  .scroll-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px 0;
-  }
-
-  .world-map-box {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .server-list-container {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--list-gap-size);
-    padding: 0 var(--list-padding);
-    width: var(--list-container-width);
-    margin: auto;
-  }
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--list-gap-size);
+  padding: 0 var(--list-padding);
+  width: var(--list-container-width);
+  margin: auto;
 
   // 针对1440px以下的屏幕
   @media screen and (max-width: 1440px) {
@@ -266,11 +324,14 @@ onUnmounted(() => {
   }
 }
 
-.fitler-group {
+.server-list-container.server-list--row {
+  --list-padding: 20px;
+  --list-gap-size: 12px;
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 10px 20px;
+  flex-direction: column;
+  gap: var(--list-gap-size);
+  // padding: 0 var(--list-padding);
   width: var(--list-container-width);
   margin: auto;
 }

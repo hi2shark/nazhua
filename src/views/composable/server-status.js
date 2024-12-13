@@ -65,6 +65,8 @@ export default (params) => {
       {
         const CoresVal = cpuInfo.value?.cores ? `${cpuInfo.value?.cores}C` : '-';
         const usedColor = config.nazhua.serverStatusLinear ? ['#0088FF', '#72B7FF'] : '#0088FF';
+        const valPercent = `${(props.info.State?.CPU || 0).toFixed(1) * 1}%`;
+        const valText = valPercent;
         return {
           type: 'cpu',
           used: (props.info.State?.CPU || 0).toFixed(1) * 1,
@@ -72,7 +74,8 @@ export default (params) => {
             used: usedColor,
             total: 'rgba(255, 255, 255, 0.25)',
           },
-          valText: `${(props.info.State?.CPU || 0).toFixed(1) * 1}%`,
+          valText,
+          valPercent,
           label: 'CPU',
           content: {
             default: cpuInfo.value?.core || CoresVal,
@@ -82,11 +85,11 @@ export default (params) => {
       }
       case 'mem':
       {
-        let usedVal;
+        let valText;
         if (useMemAndTotalMem.value.used.g >= 10 && useMemAndTotalMem.value.total.g >= 10) {
-          usedVal = `${(useMemAndTotalMem.value.used.g).toFixed(1) * 1}G`;
+          valText = `${(useMemAndTotalMem.value.used.g).toFixed(1) * 1}G`;
         } else {
-          usedVal = `${Math.ceil(useMemAndTotalMem.value.used.m)}M`;
+          valText = `${Math.ceil(useMemAndTotalMem.value.used.m)}M`;
         }
         let contentVal;
         if (useMemAndTotalMem.value.total.g > 4) {
@@ -102,7 +105,8 @@ export default (params) => {
             used: usedColor,
             total: 'rgba(255, 255, 255, 0.25)',
           },
-          valText: usedVal,
+          valText,
+          valPercent: `${useMemAndTotalMem.value.usePercent.toFixed(1) * 1}%`,
           label: '内存',
           content: {
             default: `运行内存${contentVal}`,
@@ -115,11 +119,11 @@ export default (params) => {
         if (!useSwapAndTotalSwap.value) {
           return null;
         }
-        let usedVal;
+        let valText;
         if (useSwapAndTotalSwap.value.used.g >= 10 && useSwapAndTotalSwap.value.total.g >= 10) {
-          usedVal = `${(useSwapAndTotalSwap.value.used.g).toFixed(1) * 1}G`;
+          valText = `${(useSwapAndTotalSwap.value.used.g).toFixed(1) * 1}G`;
         } else {
-          usedVal = `${Math.ceil(useSwapAndTotalSwap.value.used.m)}M`;
+          valText = `${Math.ceil(useSwapAndTotalSwap.value.used.m)}M`;
         }
         let contentVal;
         if (useSwapAndTotalSwap.value.total.g > 4) {
@@ -135,7 +139,8 @@ export default (params) => {
             used: usedColor,
             total: 'rgba(255, 255, 255, 0.25)',
           },
-          valText: usedVal,
+          valText,
+          valPercent: `${useSwapAndTotalSwap.value.usePercent.toFixed(1) * 1}%`,
           label: '交换',
           content: {
             default: `交换内存${contentVal}`,
@@ -160,6 +165,7 @@ export default (params) => {
             total: 'rgba(255, 255, 255, 0.25)',
           },
           valText: `${(useDiskAndTotalDisk.value.used.g).toFixed(1) * 1}G`,
+          valPercent: `${useDiskAndTotalDisk.value.usePercent.toFixed(1) * 1}%`,
           label: '磁盘',
           content: {
             default: `磁盘容量${contentValue}`,
