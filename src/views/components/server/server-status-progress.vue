@@ -75,7 +75,11 @@ const progressStyle = computed(() => {
   style.width = `${Math.min(props.used, 100)}%`;
   const color = typeof props.colors === 'string' ? props.colors : props.colors?.used;
   if (color) {
-    style.backgroundColor = color;
+    if (Array.isArray(color)) {
+      style.background = `linear-gradient(-35deg, ${color.join(',')})`;
+    } else {
+      style.backgroundColor = color;
+    }
   }
   return style;
 });
@@ -105,7 +109,7 @@ const progressStyle = computed(() => {
     width: 100%;
     height: var(--progress-bar-height);
     background: rgba(255, 255, 255, 0.2);
-    border-radius: var(--progress-bar-height);
+    border-radius: calc(var(--progress-bar-height) / 2);
     overflow: hidden;
   }
 
@@ -115,7 +119,7 @@ const progressStyle = computed(() => {
     left: 0;
     bottom: 0;
     background-color: #08f;
-    border-radius: var(--progress-bar-height);
+    border-radius: calc(var(--progress-bar-height) / 2);
   }
 
   .progress-bar-label {

@@ -1,6 +1,7 @@
 import {
   computed,
 } from 'vue';
+import config from '@/config';
 import validate from '@/utils/validate';
 import * as hostUtils from '@/utils/host';
 
@@ -63,12 +64,13 @@ export default (params) => {
       case 'cpu':
       {
         const CoresVal = cpuInfo.value?.cores ? `${cpuInfo.value?.cores}C` : '-';
+        const usedColor = config.nazhua.serverStatusLinear ? ['#0088FF', '#72B7FF'] : '#0088FF';
         return {
           type: 'cpu',
           used: (props.info.State?.CPU || 0).toFixed(1) * 1,
           colors: {
-            used: '#0088ff',
-            total: 'rgba(255, 255, 255, 0.2)',
+            used: usedColor,
+            total: 'rgba(255, 255, 255, 0.25)',
           },
           valText: `${(props.info.State?.CPU || 0).toFixed(1) * 1}%`,
           label: 'CPU',
@@ -92,12 +94,13 @@ export default (params) => {
         } else {
           contentVal = `${Math.ceil(useMemAndTotalMem.value.total.m)}M`;
         }
+        const usedColor = config.nazhua.serverStatusLinear ? ['#2B6939', '#0AA344'] : '#0AA344';
         return {
           type: 'mem',
           used: useMemAndTotalMem.value.usePercent,
           colors: {
-            used: '#0aa344',
-            total: 'rgba(255, 255, 255, 0.2)',
+            used: usedColor,
+            total: 'rgba(255, 255, 255, 0.25)',
           },
           valText: usedVal,
           label: '内存',
@@ -124,12 +127,13 @@ export default (params) => {
         } else {
           contentVal = `${Math.ceil(useSwapAndTotalSwap.value.total.m)}M`;
         }
+        const usedColor = config.nazhua.serverStatusLinear ? ['#FF8C00', '#F38100'] : '#FF8C00';
         return {
           type: 'swap',
           used: useSwapAndTotalSwap.value.usePercent,
           colors: {
-            used: '#ff8c00',
-            total: 'rgba(255, 255, 255, 0.2)',
+            used: usedColor,
+            total: 'rgba(255, 255, 255, 0.25)',
           },
           valText: usedVal,
           label: '交换',
@@ -147,12 +151,13 @@ export default (params) => {
         } else {
           contentValue = `${Math.ceil(useDiskAndTotalDisk.value.total.g)}G`;
         }
+        const usedColor = config.nazhua.serverStatusLinear ? ['#00848F', '#70F3FF'] : '#70F3FF';
         return {
           type: 'disk',
           used: useDiskAndTotalDisk.value.usePercent,
           colors: {
-            used: '#70f3ff',
-            total: 'rgba(255, 255, 255, 0.2)',
+            used: usedColor,
+            total: 'rgba(255, 255, 255, 0.25)',
           },
           valText: `${(useDiskAndTotalDisk.value.used.g).toFixed(1) * 1}G`,
           label: '磁盘',

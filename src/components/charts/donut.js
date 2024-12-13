@@ -7,11 +7,33 @@ import {
   PolarComponent,
 } from 'echarts/components';
 
+import config from '@/config';
+
 use([
   CanvasRenderer,
   BarChart,
   PolarComponent,
 ]);
+
+function handleColor(color) {
+  if (Array.isArray(color)) {
+    return {
+      type: 'linear',
+      x: 1,
+      y: 1,
+      x2: 0,
+      y2: 0,
+      colorStops: [{
+        offset: 0,
+        color: color[0], // 0% 处的颜色
+      }, {
+        offset: 1,
+        color: color[1], // 100% 处的颜色
+      }],
+    };
+  }
+  return color;
+}
 
 export default (used, total, itemColors, size = 100) => ({
   angleAxis: {
@@ -56,11 +78,10 @@ export default (used, total, itemColors, size = 100) => ({
       value: used,
     }],
     itemStyle: {
-      color: typeof itemColors === 'string' ? itemColors : itemColors?.used,
+      color: typeof itemColors === 'string' ? itemColors : handleColor(itemColors?.used),
       borderRadius: 5,
-      shadowColor: 'rgba(0, 0, 0, 0.2)',
+      shadowColor: config.nazhua.serverStatusLinear ? 'rgba(0, 0, 0, 0.5)' : undefined,
       shadowBlur: 10,
-      shadowOffsetY: 2,
     },
     coordinateSystem: 'polar',
     cursor: 'default',
@@ -74,7 +95,7 @@ export default (used, total, itemColors, size = 100) => ({
       value: total,
     }],
     itemStyle: {
-      color: itemColors?.total || 'rgba(255, 255, 255, 0.2)',
+      color: handleColor(itemColors?.total) || 'rgba(255, 255, 255, 0.2)',
     },
     coordinateSystem: 'polar',
     cursor: 'default',

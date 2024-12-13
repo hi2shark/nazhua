@@ -38,6 +38,11 @@ export function getThreshold(data, tolerance = 2) {
  */
 const lineColorMap = {};
 const lineColors = [];
+const defaultColors = [
+  '#5470c6', '#91cc75', '#fac858',
+  '#ee6666', '#73c0de', '#3ba272',
+  '#fc8452', '#9a60b4', '#ea7ccc',
+];
 
 /**
  * 将十六进制颜色转换为 RGB 数组
@@ -98,6 +103,13 @@ export function getLineColor(name) {
   // 如果已经有了对应的颜色，直接返回
   if (lineColorMap[name]) {
     return lineColorMap[name];
+  }
+  // 如果默认颜色还有剩余，直接使用
+  if (defaultColors.length > 0) {
+    const color = defaultColors.shift();
+    lineColorMap[name] = color;
+    lineColors.push(color);
+    return color;
   }
   const color = getColor();
   lineColorMap[name] = color;
