@@ -427,7 +427,7 @@ onUnmounted(() => {
 
         .switch-dot {
           left: 16px;
-          box-shadow: 1px 1px 2px #000;
+          box-shadow: 1px 1px 2px rgba(#000, 0.4);
         }
       }
     }
@@ -497,7 +497,7 @@ onUnmounted(() => {
 
       &.active {
         color: #fff;
-        text-shadow: 1px 1px 2px #000;
+        text-shadow: 1px 1px 2px rgba(#000, 0.6);
       }
     }
 
