@@ -39,9 +39,11 @@ export function getThreshold(data, tolerance = 2) {
 const lineColorMap = {};
 const lineColors = [];
 const defaultColors = [
-  '#5470c6', '#91cc75', '#fac858',
-  '#ee6666', '#73c0de', '#3ba272',
-  '#fc8452', '#9a60b4', '#ea7ccc',
+  '#5470C6', '#91CC75', '#FAC858', '#EE6666',
+  '#73C0DE', '#3BA272', '#FC8452', '#9A60B4',
+  '#EA7CCC', '#C23531', '#2F4554', '#61A0A8',
+  '#D48265', '#91C7AE', '#749F83', '#CA8622',
+  '#BDA29A', '#6E7074', '#546570', '#C4CCD3',
 ];
 
 /**
@@ -76,20 +78,24 @@ function rgbDistance(color1, color2) {
  * 获取一个随机颜色
  * @returns {string} 返回一个随机颜色的字符串
  */
-function getColor() {
+function getColor(count = 0, len = 0) {
+  // 如果尝试次数超过 3 次，返回固定颜色组里面的颜色
+  if (count > 3) {
+    return defaultColors[len % defaultColors.length];
+  }
   const { color } = uniqolor.random({
     saturation: [75, 90],
     lightness: [65, 70],
     differencePoint: 100,
   });
   if (lineColors.includes(color)) {
-    return getColor();
+    return getColor(count + 1, len);
   }
   if (lineColors.some((i) => rgbDistance(
     hexToRgb(i),
     hexToRgb(color),
-  ) < 80)) {
-    return getColor();
+  ) < 50)) {
+    return getColor(count + 1, len);
   }
   return color;
 }
@@ -104,14 +110,7 @@ export function getLineColor(name) {
   if (lineColorMap[name]) {
     return lineColorMap[name];
   }
-  // 如果默认颜色还有剩余，直接使用
-  if (defaultColors.length > 0) {
-    const color = defaultColors.shift();
-    lineColorMap[name] = color;
-    lineColors.push(color);
-    return color;
-  }
-  const color = getColor();
+  const color = getColor(0, lineColors.length);
   lineColorMap[name] = color;
   lineColors.push(color);
   return color;
