@@ -122,6 +122,44 @@ export default (params) => {
     return result;
   });
 
+  const inTransfer = computed(() => {
+    const inStats = hostUtils.calcBinary(props.info?.State?.NetInTransfer || 0);
+    const result = {
+      value: 0,
+      unit: '',
+    };
+    if (inStats.g > 1) {
+      result.value = (inStats.g).toFixed(1) * 1;
+      result.unit = 'G';
+    } else if (inStats.m > 1) {
+      result.value = (inStats.m).toFixed(1) * 1;
+      result.unit = 'M';
+    } else {
+      result.value = (inStats.k).toFixed(1) * 1;
+      result.unit = 'K';
+    }
+    return result;
+  });
+
+  const outTransfer = computed(() => {
+    const outStats = hostUtils.calcBinary(props.info?.State?.NetOutTransfer || 0);
+    const result = {
+      value: 0,
+      unit: '',
+    };
+    if (outStats.g > 1) {
+      result.value = (outStats.g).toFixed(1) * 1;
+      result.unit = 'G';
+    } else if (outStats.m > 1) {
+      result.value = (outStats.m).toFixed(1) * 1;
+      result.unit = 'M';
+    } else {
+      result.value = (outStats.k).toFixed(1) * 1;
+      result.unit = 'K';
+    }
+    return result;
+  });
+
   /**
    * 计算入向网速
    */
@@ -184,6 +222,22 @@ export default (params) => {
           unit: transfer.value?.unit,
           show: validate.isSet(transfer.value?.value),
         };
+      case 'inTransfer':
+        return {
+          key,
+          label: '入网流量',
+          value: inTransfer.value?.value,
+          unit: inTransfer.value?.unit,
+          show: validate.isSet(inTransfer.value?.value),
+        };
+      case 'outTransfer':
+        return {
+          key,
+          label: '出网流量',
+          value: outTransfer.value?.value,
+          unit: outTransfer.value?.unit,
+          show: validate.isSet(outTransfer.value?.value),
+        };
       case 'inSpeed':
         return {
           key,
@@ -226,7 +280,7 @@ export default (params) => {
         return {
           key,
           label: '负载',
-          value: (props.info.State?.Load1 || 0).toFixed(2) * 1,
+          value: (props.info.State?.Load1 || 0).toFixed(2),
           unit: '',
           show: validate.isSet(props.info.State?.Load1),
         };
