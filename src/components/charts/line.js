@@ -36,10 +36,29 @@ export default (
       },
       formatter: (params) => {
         const time = dayjs(parseInt(params[0].axisValue, 10)).format('YYYY.MM.DD HH:mm');
-        let res = `${time}<br>`;
-        params.forEach((i) => {
-          res += `${i.marker} ${i.seriesName}: ${i.value[1]}ms<br>`;
-        });
+        let res = `<p style="font-weight: bold; color: #ff6;">${time}</p>`;
+        if (params.length < 10) {
+          params.forEach((i) => {
+            res += `${i.marker} ${i.seriesName}: ${i.value[1]}ms<br>`;
+          });
+        } else {
+          res += '<table>';
+          let trEnd = false;
+          params.forEach((i, index) => {
+            if (index % 2 === 0) {
+              res += '<tr>';
+            }
+            res += `<td style="padding: 0 4px;">${i.marker} ${i.seriesName}: ${i.value[1]}ms</td>`;
+            if (index % 2 === 1) {
+              res += '</tr>';
+              trEnd = true;
+            }
+          });
+          if (!trEnd) {
+            res += '</tr>';
+          }
+          res += '</table>';
+        }
         return res;
       },
       backgroundColor: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)',

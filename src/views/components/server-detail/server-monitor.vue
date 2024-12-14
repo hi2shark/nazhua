@@ -166,10 +166,8 @@ const showCates = ref({});
 
 const monitorData = ref([]);
 
-const accpetShowTime = computed(() => {
-  const now = store.state.serverTime || Date.now();
-  return now - (minute.value * 60 * 1000);
-});
+const now = ref(Date.now());
+const accpetShowTime = computed(() => now.value - (minute.value * 60 * 1000));
 
 const minuteActiveArrowStyle = computed(() => {
   const index = minutes.findIndex((i) => i.value === minute.value);
@@ -308,6 +306,7 @@ function switchRefresh() {
 }
 
 function toggleMinute(value) {
+  now.value = store.state.serverTime || Date.now();
   minute.value = value;
 }
 
@@ -328,6 +327,7 @@ async function loadMonitor() {
   }).catch((err) => {
     console.error(err);
   });
+  now.value = store.state.serverTime || Date.now();
 }
 
 let loadMonitorTimer = null;
