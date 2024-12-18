@@ -25,7 +25,8 @@ export default (params) => {
         billingDataMod,
         planDataMod,
       } = props.info.PublicNote;
-      let months;
+      // 默认1个月
+      let months = 1;
       // 套餐资费
       let cycleLabel;
       if (validate.isSet(billingDataMod?.cycle)) {
