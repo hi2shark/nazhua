@@ -3,7 +3,7 @@ window.$$nazhuaConfig = {
   // freeAmount: '白嫖', // 免费服务的费用名称
   // infinityCycle: '长期有效', // 无限周期名称
   // buyBtnText: '购买', // 购买按钮文案
-  // listServerItemType: 'row', // 服务器列表项类型 card/row
+  // listServerItemType: 'row', // 服务器列表项类型 card/row row列表模式目前为体验版不兼容移动端
   // listServerStatusType: 'progress', // 服务器状态类型--列表
   // listServerRealTimeShowLoad: false, // 列表显示服务器实时负载
   // detailServerStatusType: 'progress', // 服务器状态类型--详情页

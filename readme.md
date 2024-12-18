@@ -5,7 +5,7 @@
 根据不同场景，可以选择是否打包带入或者是否加载这个字体。  
 
 ## 劝退指南 用前必读
-1. 本主题是基于哪吒监控v0版本构建的，不确定能否完美v1版本。*20241206的版本已适配*  
+1. 本主题是基于哪吒监控v0版本构建的，~~不确定能否完美v1版本~~。*v0.4.3的版本已适配*  
 2. 本主题是一个纯前端项目，需要解决跨域问题，通常需要一个nginx或者caddy反代请求解决跨域问题。  
 3. 我不会提供任何技术支持，如果你有问题，可以提issue，但是我不保证会回答，可能询问GPT会更快。  
 
@@ -15,7 +15,9 @@
 默认的数据是基于V0  
 ### Release版本的nazhua  
 V1下载最新版本[Releases](https://github.com/hi2shark/nazhua/releases)的`dist.zip`；  
-V0下载最新版本[Releases](https://github.com/hi2shark/nazhua/releases)的`v0-{版本}-all.zip`或`v0-{版本}-cdn-{CDN供应方}.zip`;  
+V0下载最新版本[Releases](https://github.com/hi2shark/nazhua/releases)的`v0-dist.zip`;  
+`v{版本}-all.zip`是包含字体的全量包。  
+`v{版本}-cdn-{CDN供应方}.zip`是公共资源使用CDN引用的版本。    
 
 ## 关于点阵地图  
 点阵地图是一个失真的地图，地图边际与城市位置都不是真实的经纬度坐标，因此无法通过经纬度来定位城市。  
@@ -181,11 +183,13 @@ server {
 window.$$nazhuaConfig = {
   title: '哪吒监控', // 网站标题
   freeAmount: '白嫖', // 免费服务的费用名称
-  infinityCycle: '无限', // 无限周期名称
+  infinityCycle: '长期有效', // 无限周期名称
   buyBtnText: '购买', // 购买按钮文案
+  listServerItemType: 'row', // 服务器列表项类型 card/row row列表模式目前不兼容移动端
   listServerStatusType: 'progress', // 服务器状态类型--列表
   listServerRealTimeShowLoad: false, // 列表显示服务器实时负载
   detailServerStatusType: 'progress', // 服务器状态类型--详情页
+  serverStatusLinear: true, // 服务器状态渐变线性显示
   disableSarasaTermSC: false, // 禁用Sarasa Term SC字体
   hideWorldMap: false, // 隐藏地图
   hideHomeWorldMap: false, // 隐藏首页地图
@@ -197,7 +201,7 @@ window.$$nazhuaConfig = {
   hideListItemBill: false, // 隐藏列表项的账单信息
   hideFilter: false, // 隐藏筛选
   hideTag: false, // 隐藏标签
-  hideDotBG: false, // 隐藏框框里面的点点背景
+  hideDotBG: true, // 隐藏框框里面的点点背景
   monitorRefreshTime: 10, // 监控刷新时间间隔，单位s（秒）, 0为不刷新，为保证不频繁请求源站，最低生效值为10s
   filterGPUKeywords: ['Virtual Display'], // 如果GPU名称中包含这些关键字，则过滤掉
   customCodeMap: {}, // 自定义的地图点信息
@@ -212,7 +216,7 @@ window.$$nazhuaConfig = {
   v1ApiSettingPath: '/api/v1/setting',
   v1ApiProfilePath: '/api/v1/profile',
   v1DashboardUrl: '/dashboard', // v1版本控制台地址
-  v1HideNezhaDashboardBtn: false, // v1版本导航栏控制台入口/登录按钮 在nezhaVersion为v1时有效
+  v1HideNezhaDashboardBtn: true, // v1版本导航栏控制台入口/登录按钮 在nezhaVersion为v1时有效
   routeMode: 'h5', // 路由模式
 };
 ```
