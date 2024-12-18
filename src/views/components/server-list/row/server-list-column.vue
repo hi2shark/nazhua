@@ -79,7 +79,7 @@ const columnStyle = computed(() => {
 
 <style lang="scss" scoped>
 .list-column {
-  width: 50px;
+  width: 60px;
 
   .list-column-content {
     --list-column-label-height: 16px;
@@ -115,7 +115,6 @@ const columnStyle = computed(() => {
   }
 
   &--transfer {
-    width: 80px;
     .item-value {
       color: var(--transfer-color);
     }
@@ -146,14 +145,12 @@ const columnStyle = computed(() => {
   }
 
   &--remaining-time {
-    width: 60px;
     .value-text {
       color: #74dbef;
     }
   }
 
   &--billing {
-    width: 60px;
     .value-text {
       color: var(--list-item-price-color);
     }

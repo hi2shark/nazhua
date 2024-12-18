@@ -31,6 +31,7 @@
         prop="server-flag"
         label="地区"
         :value="info?.Host?.CountryCode?.toUpperCase() || 'UN'"
+        :width="40"
       />
       <server-list-column
         prop="server-system"
@@ -165,7 +166,7 @@ function openDetail() {
     }
   }
   &--server-name {
-    width: 200px;
+    width: 220px;
 
     .server-name {
       height: 32px;

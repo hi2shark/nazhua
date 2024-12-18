@@ -6,6 +6,7 @@
     :label="item.label"
     :value="item.show ? item?.value : '-'"
     :unit="item.show ? item?.unit : ''"
+    :width="fieldWidth[item.key]"
   />
 </template>
 
@@ -42,4 +43,12 @@ const {
   currentTime,
   serverRealTimeListTpls: props.serverRealTimeListTpls,
 });
+
+const fieldWidth = {
+  transfer: 80,
+  load: 40,
+  inSpeed: 40,
+  outSpeed: 40,
+};
+
 </script>

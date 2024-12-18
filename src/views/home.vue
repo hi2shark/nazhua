@@ -331,7 +331,6 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: var(--list-gap-size);
-  // padding: 0 var(--list-padding);
   width: var(--list-container-width);
   margin: auto;
 }
