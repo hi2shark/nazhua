@@ -4,7 +4,10 @@
     :class="`list-column--${prop}`"
     :style="columnStyle"
   >
-    <div class="list-column-content">
+    <div
+      ref="columnContentRef"
+      class="list-column-content"
+    >
       <span class="item-label">{{ label }}</span>
       <div class="item-content">
         <template v-if="slotContent">
@@ -34,7 +37,13 @@
 
 import {
   computed,
+  ref,
+  onMounted,
+  onBeforeUnmount,
 } from 'vue';
+import {
+  useStore,
+} from 'vuex';
 
 const props = defineProps({
   prop: {
@@ -67,11 +76,46 @@ const props = defineProps({
   },
 });
 
+const store = useStore();
+
+const columnContentRef = ref(null);
+let resizeObserver = null;
+
+const columnWidth = computed(() => store.state?.serverListColumnWidths?.[props.prop]);
+
+onMounted(() => {
+  if (columnContentRef.value) {
+    resizeObserver = new ResizeObserver((entries) => {
+      entries.forEach((entry) => {
+        let { width } = entry.contentRect;
+        width = Math.ceil(width);
+        store.dispatch('setServerListColumnWidth', {
+          prop: props.prop,
+          width: width > 40 ? width : 40,
+        });
+      });
+    });
+
+    resizeObserver.observe(columnContentRef.value);
+  }
+});
+
+onBeforeUnmount(() => {
+  if (resizeObserver) {
+    resizeObserver.disconnect();
+    resizeObserver = null;
+  }
+});
+
 const columnStyle = computed(() => {
   const style = {};
-  const width = parseInt(props.width, 10);
-  if (Number.isNaN(width) === false) {
-    style.width = `${width}px`;
+  if (props.width) {
+    const width = parseInt(props.width, 10);
+    if (Number.isNaN(width) === false) {
+      style.width = `${width}px`;
+    }
+  } else if (columnWidth.value > 0) {
+    style.width = `${columnWidth.value}px`;
   }
   return style;
 });
@@ -79,15 +123,23 @@ const columnStyle = computed(() => {
 
 <style lang="scss" scoped>
 .list-column {
-  width: 60px;
+  --list-column-label-height: 16px;
+  --list-column-value-height: 24px;
+  position: relative;
+  width: auto;
+  height: calc(var(--list-column-label-height) + var(--list-column-value-height) + 10px);
 
   .list-column-content {
-    --list-column-label-height: 16px;
-    --list-column-value-height: 24px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: max-content;
     height: var(--list-item-height);
 
     .item-label {

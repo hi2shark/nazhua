@@ -8,60 +8,52 @@
     }"
     @click="openDetail"
   >
-    <div class="row-left-box">
-      <div class="list-column-item list-column-item--server-flag">
+    <div class="list-column-item list-column-item--server-flag">
+      <span
+        class="server-flag"
+      >
         <span
-          class="server-flag"
-        >
-          <span
-            class="fi"
-            :class="'fi-' + (info?.Host?.CountryCode || 'un')"
-          />
-        </span>
-      </div>
-      <div class="list-column-item list-column-item--server-name">
-        <span
-          class="server-name"
-          :title="info.Name"
-        >
-          {{ info.Name }}
-        </span>
-      </div>
-      <server-list-column
-        prop="server-flag"
-        label="地区"
-        :value="info?.Host?.CountryCode?.toUpperCase() || 'UN'"
-        :width="40"
-      />
-      <server-list-column
-        prop="server-system"
-        label="系统"
-        :value="platformSystemLabel || '-'"
-      />
-      <server-list-column
-        prop="cpu-mem"
-        label="配置"
-        width="80"
-        :value="cpuAndMemAndDisk || '-'"
-      />
+          class="fi"
+          :class="'fi-' + (info?.Host?.CountryCode || 'un')"
+        />
+      </span>
     </div>
-    <div class="row-center-box">
-      <server-list-item-status
-        v-if="$config.nazhua.hideListItemStatusDonut !== true"
-        :info="info"
-      />
+    <div class="list-column-item list-column-item--server-name">
+      <span
+        class="server-name"
+        :title="info.Name"
+      >
+        {{ info.Name }}
+      </span>
     </div>
-    <div class="row-right-box">
-      <server-list-item-real-time
-        v-if="$config.nazhua.hideListItemStat !== true"
-        :info="info"
-        server-real-time-list-tpls="load,inSpeed,outSpeed,transfer,duration"
-      />
-      <server-list-item-bill
-        v-if="$config.nazhua.hideListItemBill !== true"
-        :info="info"
-      />
-    </div>
+    <server-list-column
+      prop="server-flag"
+      label="地区"
+      :value="info?.Host?.CountryCode?.toUpperCase() || 'UN'"
+    />
+    <server-list-column
+      prop="server-system"
+      label="系统"
+      :value="platformSystemLabel || '-'"
+    />
+    <server-list-column
+      prop="cpu-mem"
+      label="配置"
+      :value="cpuAndMemAndDisk || '-'"
+    />
+    <server-list-item-status
+      v-if="$config.nazhua.hideListItemStatusDonut !== true"
+      :info="info"
+    />
+    <server-list-item-real-time
+      v-if="$config.nazhua.hideListItemStat !== true"
+      :info="info"
+      server-real-time-list-tpls="load,inSpeed,outSpeed,transfer,duration"
+    />
+    <server-list-item-bill
+      v-if="$config.nazhua.hideListItemBill !== true"
+      :info="info"
+    />
   </dot-dot-box>
 </template>
 
@@ -116,8 +108,8 @@ function openDetail() {
 .server-list-row-item {
   --list-item-height: 64px;
   --list-item-border-radius: 8px;
-  --list-item-gap: 10px;
-  --list-item-padding: 0;
+  --list-item-gap: 0;
+  --list-item-padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -129,23 +121,8 @@ function openDetail() {
     filter: grayscale(1);
   }
 
-  .row-left-box,
-  .row-center-box,
-  .row-right-box {
-    display: flex;
-    align-items: center;
-    gap: var(--list-item-gap);
-  }
-
-  .row-left-box,
-  .row-right-box {
-    flex: 1;
-  }
-  .row-right-box {
-    justify-content: flex-end;
-  }
-  .row-center-box {
-    justify-content: center;
+  @media (max-width: 1280px) {
+    --list-item-padding: 0 10px;
   }
 }
 
@@ -157,12 +134,19 @@ function openDetail() {
   &--server-flag {
     --server-flag-size: 24px;
     width: calc(var(--server-flag-size) * 1.5);
-    margin-left: 20px;
     .server-flag {
       width: calc(var(--server-flag-size) * 1.5);
       height: var(--server-flag-size);
       line-height: var(--server-flag-size);
       font-size: var(--server-flag-size);
+    }
+
+    @media (max-width: 1280px) {
+      display: none;
+    }
+
+    @media (max-width: 1024px) {
+      display: block;
     }
   }
   &--server-name {
@@ -176,6 +160,14 @@ function openDetail() {
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
+    }
+
+    @media (max-width: 1280px) {
+      width: 180px;
+    }
+
+    @media (max-width: 1024px) {
+      width: 300px;
     }
   }
 }

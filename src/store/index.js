@@ -21,6 +21,7 @@ const defaultState = () => ({
   serverTime: 0,
   serverGroup: [],
   serverList: [],
+  serverListColumnWidths: {},
   serverCount: {
     total: 0,
     online: 0,
@@ -91,6 +92,9 @@ const store = createStore({
     },
     SET_SETTING(state, setting) {
       state.setting = setting;
+    },
+    SET_SERVER_LIST_COLUMN_WIDTHS(state, widths) {
+      state.serverListColumnWidths = widths;
     },
   },
   actions: {
@@ -183,6 +187,33 @@ const store = createStore({
           }
         }
       });
+    },
+    /**
+     * 设置服务器列表行宽度
+     */
+    setServerListColumnWidths({
+      commit,
+      state,
+    }, data) {
+      const newWidths = {
+        ...state.serverListColumnWidths,
+        ...data,
+      };
+      commit('SET_SERVER_LIST_COLUMN_WIDTHS', newWidths);
+    },
+    setServerListColumnWidth({
+      commit,
+      state,
+    }, data) {
+      const newWidths = {
+        ...state.serverListColumnWidths,
+      };
+      if (newWidths[data.prop]) {
+        newWidths[data.prop] = Math.max(newWidths[data.prop], data.width);
+      } else {
+        newWidths[data.prop] = data.width;
+      }
+      commit('SET_SERVER_LIST_COLUMN_WIDTHS', newWidths);
     },
   },
 });

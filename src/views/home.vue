@@ -13,6 +13,10 @@
       <div
         v-if="showFilter"
         class="fitler-group"
+        :class="{
+          'list-is-row': showListRow,
+          'list-is-card': showListCard,
+        }"
       >
         <div class="left-box">
           <server-option-box
@@ -30,13 +34,26 @@
         </div>
       </div>
       <transition-group
+        v-if="showListRow"
         name="list"
         tag="div"
         class="server-list-container"
-        :class="`server-list--${serverItemComponentName}`"
+        :class="`server-list--row`"
       >
-        <component
-          :is="serverItemComponentMaps[serverItemComponentName]"
+        <server-row-item
+          v-for="item in filterServerList.list"
+          :key="item.ID"
+          :info="item"
+        />
+      </transition-group>
+      <transition-group
+        v-if="showListCard"
+        name="list"
+        tag="div"
+        class="server-list-container"
+        :class="`server-list--card`"
+      >
+        <server-card-item
           v-for="item in filterServerList.list"
           :key="item.ID"
           :info="item"
@@ -76,17 +93,22 @@ import ServerOptionBox from './components/server-list/server-option-box.vue';
 import ServerCardItem from './components/server-list/card/server-list-item.vue';
 import ServerRowItem from './components/server-list/row/server-list-item.vue';
 
-const serverItemComponentMaps = {
-  card: ServerCardItem,
-  row: ServerRowItem,
-};
-const serverItemComponentName = [
-  'card',
-  'row',
-].includes(config.nazhua.listServerItemType) ? config.nazhua.listServerItemType : 'card';
-
 const store = useStore();
 const worldMapWidth = ref();
+const windowWidth = ref(window.innerWidth);
+
+const showListRow = computed(() => {
+  if (windowWidth.value > 1024) {
+    return config.nazhua.listServerItemType === 'row';
+  }
+  return false;
+});
+const showListCard = computed(() => {
+  if (windowWidth.value > 1024) {
+    return config.nazhua.listServerItemType !== 'row';
+  }
+  return true;
+});
 
 const showFilter = computed(() => config.nazhua.hideFilter !== true);
 const filterFormData = ref({
@@ -246,6 +268,7 @@ const showWorldMap = computed(() => {
  */
 function handleResize() {
   worldMapWidth.value = document.querySelector('.server-list-container').clientWidth - 40;
+  windowWidth.value = window.innerWidth;
 }
 
 onMounted(() => {
@@ -285,6 +308,10 @@ onUnmounted(() => {
   gap: 10px 20px;
   width: var(--list-container-width);
   margin: auto;
+
+  &.list-is-card {
+    padding: 0 20px;
+  }
 }
 
 .server-list-container.server-list--card {

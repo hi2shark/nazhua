@@ -3,7 +3,6 @@
     v-if="extraFields?.remainingTime"
     prop="remaining-time"
     label="剩余"
-    :width="50"
     :value="billAndPlan?.remainingTime?.value || '-'"
   />
   <server-list-column
@@ -16,7 +15,6 @@
     v-if="extraFields?.orderLink"
     prop="order-link"
     label="链接"
-    :wdith="80"
     :slot-content="true"
   >
     <span
