@@ -74,6 +74,9 @@ import {
   computed,
   onMounted,
   onUnmounted,
+  onActivated,
+  onDeactivated,
+  nextTick,
 } from 'vue';
 import {
   useStore,
@@ -278,6 +281,25 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize);
+});
+
+const scrollPosition = ref(0);
+
+onDeactivated(() => {
+  // 保存滚动位置
+  scrollPosition.value = document.documentElement.scrollTop || document.body.scrollTop;
+});
+
+onActivated(() => {
+  // 如果有保存的位置，则恢复到该位置
+  if (scrollPosition.value > 0) {
+    nextTick(() => {
+      window.scrollTo({
+        top: scrollPosition.value,
+        behavior: 'instant',
+      });
+    });
+  }
 });
 </script>
 

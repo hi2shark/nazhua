@@ -1,5 +1,10 @@
 <template>
-  <div class="server-option-box">
+  <div
+    class="server-option-box"
+    :class="{
+      'server-option-box--light-background': lightBackground,
+    }"
+  >
     <div
       v-for="item in options"
       :key="item.key"
@@ -22,6 +27,7 @@
 import {
   computed,
 } from 'vue';
+import config from '@/config';
 
 const props = defineProps({
   modelValue: {
@@ -41,6 +47,8 @@ const props = defineProps({
 const emits = defineEmits([
   'update:modelValue',
 ]);
+
+const lightBackground = computed(() => config.nazhua.lightBackground);
 
 const activeValue = computed({
   get: () => props.modelValue,
@@ -75,6 +83,7 @@ function toggleModelValue(item) {
     line-height: 1.2;
     border-radius: 6px;
     background: rgba(#000, 0.3);
+    transition: all 0.3s linear;
     cursor: pointer;
     @media screen and (max-width: 768px) {
       background-color: rgba(#000, 0.8);
@@ -83,10 +92,35 @@ function toggleModelValue(item) {
 
     .option-label {
       color: #fff;
+      transition: all 0.3s linear;
+    }
+
+    @media screen and (min-width: 768px) {
+      &:hover {
+        .option-label {
+          color: #ff7500;
+        }
+      }
     }
 
     &.active {
       background: rgba(#ff7500, 0.75);
+
+      .option-label {
+        color: #fff;
+      }
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    &--light-background {
+      .server-option-item {
+        background: rgba(#000, 0.5);
+
+        &:hover {
+          background: rgba(#000, 0.8);
+        }
+      }
     }
   }
 }

@@ -1,6 +1,9 @@
 <template>
   <div
     class="world-map-group"
+    :class="{
+      'world-map-group--light-background': lightBackground,
+    }"
     :style="mapStyle"
   >
     <div class="world-map-img" />
@@ -39,6 +42,7 @@ import {
   computed,
   watch,
 } from 'vue';
+import config from '@/config';
 import validate from '@/utils/validate';
 
 import WorldMapPoint from './world-map-point.vue';
@@ -63,37 +67,46 @@ const props = defineProps({
   },
 });
 
+const lightBackground = computed(() => config.nazhua.lightBackground);
+const boxPadding = computed(() => (lightBackground.value ? 20 : 0));
+
 // 计算地图大小 保持1280:621的比例 保证地图不变形
 const computedSize = computed(() => {
+  // 考虑内边距，从总宽高中减去padding
+  const adjustedWidth = Number(props.width) - (boxPadding.value * 2);
+  const adjustedHeight = Number(props.height) - (boxPadding.value * 2);
+
   if (!validate.isEmpty(props.width) && !validate.isEmpty(props.height)) {
     return {
       width: 1280,
       height: 621,
     };
   }
-  const width = Number(props.width);
-  const height = Number(props.height);
+
   if (!validate.isEmpty(props.width) && validate.isEmpty(props.height)) {
     return {
-      width,
-      height: Math.ceil((621 / 1280) * width),
+      width: adjustedWidth,
+      height: Math.ceil((621 / 1280) * adjustedWidth),
     };
   }
+
   if (validate.isEmpty(props.width) && !validate.isEmpty(props.height)) {
     return {
-      width: Math.ceil((1280 / 621) * height),
-      height,
+      width: Math.ceil((1280 / 621) * adjustedHeight),
+      height: adjustedHeight,
     };
   }
-  if (width / height > 1280 / 621) {
+
+  if (adjustedWidth / adjustedHeight > 1280 / 621) {
     return {
-      width: Math.ceil(height * (1280 / 621)),
-      height,
+      width: Math.ceil(adjustedHeight * (1280 / 621)),
+      height: adjustedHeight,
     };
   }
+
   return {
-    width,
-    height: Math.ceil(width * (621 / 1280)),
+    width: adjustedWidth,
+    height: Math.ceil(adjustedWidth * (621 / 1280)),
   };
 });
 
@@ -118,8 +131,8 @@ function computeMapPoints() {
     const points = props.locations.map((i) => {
       const item = {
         key: i.key,
-        left: (computedSize.value.width / 1280) * i.x,
-        top: (computedSize.value.height / 621) * i.y,
+        left: (computedSize.value.width / 1280) * i.x + boxPadding.value,
+        top: (computedSize.value.height / 621) * i.y + boxPadding.value,
         size: i.size || 4,
         label: i.label,
         servers: i.servers,
@@ -218,6 +231,30 @@ function handlePointTap(e) {
   width: var(--world-map-width, 1280px);
   height: var(--world-map-height, 621px);
   position: relative;
+
+  &--light-background {
+    padding: 20px;
+    background: rgba(#000, 0.6);
+    border-radius: 12px;
+    box-sizing: content-box;
+    transition: background-color 0.3s linear;
+
+    .world-map-img {
+      opacity: 1;
+    }
+
+    &:hover {
+      background: rgba(#000, 0.9);
+    }
+
+    @media screen and (max-width: 768px) {
+      background: rgba(#000, 0.8);
+
+      &:hover {
+        background: rgba(#000, 0.8);
+      }
+    }
+  }
 
   .world-map-img {
     width: var(--world-map-width, 1280px);

@@ -2,7 +2,7 @@
   <div
     class="dot-dot-box"
     :class="{
-      'dot-dot-box--hide': $config.nazhua?.hideDotBG === true,
+      'dot-dot-box--hide': hideDotBG,
     }"
     :style="boxStyle"
   >
@@ -16,6 +16,7 @@
  */
 
 import { computed } from 'vue';
+import config from '@/config';
 
 const props = defineProps({
   borderRadius: {
@@ -31,6 +32,10 @@ const props = defineProps({
     default: '#eee',
   },
 });
+
+const lightBackground = computed(() => config.nazhua.lightBackground);
+
+const hideDotBG = computed(() => lightBackground.value || config.nazhua?.hideDotBG === true);
 
 const boxStyle = computed(() => {
   const style = {};
@@ -68,9 +73,14 @@ const boxStyle = computed(() => {
   backdrop-filter: saturate(50%) blur(3px);
 
   &--hide {
-    background-color: rgba(#000, 0.8);
+    background-color: rgba(#000, 0.5);
     background-image: none;
     backdrop-filter: none;
+    transition: all 0.3s linear;
+
+    &:hover {
+      background-color: rgba(#000, 0.8);
+    }
   }
 
   @media screen and (max-width: 768px) {

@@ -27,10 +27,15 @@ const constantRoutes = [{
 
 const routerOptions = {
   history: config.nazhua.routeMode === 'h5' ? createWebHistory() : createWebHashHistory(),
-  scrollBehavior: () => ({
-    top: 0,
-    behavior: 'smooth',
-  }),
+  scrollBehavior: (to, from, savedPosition) => {
+    if (savedPosition) {
+      return savedPosition;
+    }
+    return {
+      top: 0,
+      behavior: 'smooth',
+    };
+  },
   routes: constantRoutes,
 };
 const router = createRouter(routerOptions);

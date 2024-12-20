@@ -143,6 +143,8 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 
+const lightBackground = computed(() => config.nazhua.lightBackground);
+
 const headerStyle = computed(() => {
   const style = {};
   if (route.name === 'ServerDetail') {
@@ -267,6 +269,9 @@ const headerClass = computed(() => {
   if (showServerCount.value) {
     classes.push('layout-header--show-server-count');
   }
+  if (lightBackground.value) {
+    classes.push('layout-header--light-background');
+  }
   return classes;
 });
 
@@ -302,6 +307,12 @@ const dashboardUrl = computed(() => config.nazhua.v1DashboardUrl || '/dashboard'
     @media screen and (max-width: 450px) {
       padding-top: 10px;
     }
+  }
+
+  &--light-background {
+    background-color: rgba(#000, 0.7);
+    background-image: none;
+    backdrop-filter: none;
   }
 
   .site-name {

@@ -1,5 +1,5 @@
 import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
+import { SVGRenderer } from 'echarts/renderers';
 import {
   BarChart,
 } from 'echarts/charts';
@@ -10,7 +10,7 @@ import {
 import config from '@/config';
 
 use([
-  CanvasRenderer,
+  SVGRenderer,
   BarChart,
   PolarComponent,
 ]);
@@ -80,8 +80,16 @@ export default (used, total, itemColors, size = 100) => ({
     itemStyle: {
       color: typeof itemColors === 'string' ? itemColors : handleColor(itemColors?.used),
       borderRadius: 5,
-      shadowColor: config.nazhua.serverStatusLinear ? 'rgba(0, 0, 0, 0.5)' : undefined,
-      shadowBlur: config.nazhua.serverStatusLinear ? 10 : undefined,
+      shadowColor: (() => {
+        if (config.nazhua.serverStatusLinear) {
+          return 'rgba(0, 0, 0, 0.5)';
+        }
+        if (config.nazhua.lightBackground) {
+          return 'rgba(0, 0, 0, 0.2)';
+        }
+        return undefined;
+      })(),
+      shadowBlur: (config.nazhua.serverStatusLinear || config.nazhua.lightBackground) ? 10 : undefined,
     },
     coordinateSystem: 'polar',
     cursor: 'default',

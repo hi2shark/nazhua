@@ -1,5 +1,5 @@
 import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
+import { SVGRenderer } from 'echarts/renderers';
 import { LineChart } from 'echarts/charts';
 import {
   TooltipComponent,
@@ -12,7 +12,7 @@ import dayjs from 'dayjs';
 import config from '@/config';
 
 use([
-  CanvasRenderer,
+  SVGRenderer,
   LineChart,
   TooltipComponent,
   // LegendComponent,

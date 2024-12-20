@@ -1,6 +1,12 @@
 <template>
-  <div class="layout-group">
-    <div class="layout-bg" />
+  <div
+    class="layout-group"
+    :style="layoutGroupStyle"
+  >
+    <div
+      class="layout-bg"
+      :style="layoutBGStyle"
+    />
     <div class="layout-main">
       <layout-header />
       <slot />
@@ -13,8 +19,27 @@
 /**
  * LayoutMain
  */
+import { computed } from 'vue';
+import config from '@/config';
 import LayoutHeader from './components/header.vue';
 import LayoutFooter from './components/footer.vue';
+
+const layoutGroupStyle = computed(() => {
+  const style = {};
+  if (config.nazhua.lightBackground) {
+    style['--layout-main-bg-color'] = 'rgba(20, 30, 40, 0.2)';
+  }
+  return style;
+});
+
+const layoutBGStyle = computed(() => {
+  const style = {};
+  if (config.nazhua.customBackgroundImage) {
+    style.background = `url(${config.nazhua.customBackgroundImage}) 50% 50%`;
+    style.backgroundSize = 'cover';
+  }
+  return style;
+});
 </script>
 
 <style lang="scss" scoped>
