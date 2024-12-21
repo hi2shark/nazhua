@@ -43,7 +43,7 @@ jobs:
       run: |
         echo "#### Changes" > release_notes.md
         git log -20 --pretty=format:"- %s" >> release_notes.md
-        echo -e "\n-----------\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-dist.zip\n哪吒V0/nazhua/子目录需求请下载v0-nazhua.zip\nv${{ steps.determine_version.outputs.version }}-all.zip是全量包\nv${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip是jsdelivr引用版\nv${{ steps.determine_version.outputs.version }}-cdn-loli.zip是cdnjs的loli.net引用版" >> release_notes.md
+        echo -e "\n-----------\n哪吒V1请下载dist.zip\n哪吒V0请下载v0-dist.zip\n哪吒V0/nazhua/子目录需求请下载v0-nazhua.zip\nv${{ steps.determine_version.outputs.version }}-all.zip是包含字体的全量包\nv${{ steps.determine_version.outputs.version }}-cdn-jsdelivr.zip是jsdelivr引用版\nv${{ steps.determine_version.outputs.version }}-cdn-loli.zip是cdnjs的loli.net引用版" >> release_notes.md
 
     - name: Install dependencies
       run: npm install
@@ -77,7 +77,7 @@ jobs:
 
     - name: 构建自动版 - loli(CDNJS)引用版本
       env:
-        VITE_SARASA_TERM_SC_USE_CDN: '1'
+        VITE_DISABLE_SARASA_TERM_SC: '1'
         VITE_USE_CDN: '1'
         VITE_CDN_LIB_TYPE: 'loli'
       run: npm run build
@@ -89,9 +89,7 @@ jobs:
       env:
         VITE_BASE_PATH: '/nazhua/'
         VITE_NEZHA_VERSION: 'v0'
-        VITE_SARASA_TERM_SC_USE_CDN: '1'
-        VITE_USE_CDN: '1'
-        VITE_CDN_LIB_TYPE: 'jsdelivr'
+        VITE_DISABLE_SARASA_TERM_SC: '1'
       run: npm run build
 
     - name: 打包v0-nazhua.zip
@@ -100,9 +98,7 @@ jobs:
     - name: 构建哪吒v0版本
       env:
         VITE_NEZHA_VERSION: 'v0'
-        VITE_SARASA_TERM_SC_USE_CDN: '1'
-        VITE_USE_CDN: '1'
-        VITE_CDN_LIB_TYPE: 'jsdelivr'
+        VITE_DISABLE_SARASA_TERM_SC: '1'
       run: npm run build
 
     - name: 打包v0-dist.zip
@@ -111,9 +107,7 @@ jobs:
     - name: 构建哪吒v1版本
       env:
         VITE_NEZHA_VERSION: 'v1'
-        VITE_SARASA_TERM_SC_USE_CDN: '1'
-        VITE_USE_CDN: '1'
-        VITE_CDN_LIB_TYPE: 'jsdelivr'
+        VITE_DISABLE_SARASA_TERM_SC: '1'
       run: npm run build
 
     - name: 打包dist.zip

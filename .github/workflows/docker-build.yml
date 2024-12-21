@@ -49,7 +49,7 @@ jobs:
       env:
         VITE_SARASA_TERM_SC_USE_CDN: '1'
         VITE_USE_CDN: '1'
-        VITE_CDN_LIB_TYPE: 'jsdelivr'
+        VITE_CDN_LIB_TYPE: 'loli'
       run: npm run build
 
     - name: 构建CDN引用版本的Docker镜像
