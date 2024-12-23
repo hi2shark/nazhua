@@ -41,7 +41,11 @@ const routerOptions = {
 const router = createRouter(routerOptions);
 
 router.beforeResolve((to, from, next) => {
-  pageTitle(to?.meta?.title);
+  if (to?.meta?.title) {
+    pageTitle(to?.meta?.title);
+  } else if (to.name === 'Home') {
+    pageTitle(config.nazhua.title);
+  }
   next();
 });
 

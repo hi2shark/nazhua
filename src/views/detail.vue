@@ -130,9 +130,9 @@ function handleWorldMapWidth() {
   );
 }
 
-watch(() => info.value, () => {
-  if (info.value) {
-    pageTitle(info.value?.Name, '节点详情');
+watch(() => info.value, (oldValue, newValue) => {
+  if (!oldValue && newValue && router.currentRoute.value.name === 'ServerDetail') {
+    pageTitle(newValue?.Name, '节点详情');
     handleWorldMapWidth();
   }
 });
