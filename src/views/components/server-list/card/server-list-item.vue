@@ -167,6 +167,7 @@ function openDetail() {
       height: 30px;
       line-height: 32px;
       font-size: 14px;
+      font-weight: bold;
     }
 
     .cpu-mem-group {
@@ -178,6 +179,7 @@ function openDetail() {
     .core-mem {
       height: 30px;
       line-height: 32px;
+      font-weight: bold;
     }
   }
 

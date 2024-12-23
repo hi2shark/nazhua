@@ -144,6 +144,7 @@ const platformLogoIconClassName = computed(() => hostUtils.getPlatformLogoIconCl
     .server-name {
       line-height: 30px;
       font-size: 24px;
+      font-weight: bold;
       color: #fff;
     }
 
@@ -156,6 +157,7 @@ const platformLogoIconClassName = computed(() => hostUtils.getPlatformLogoIconCl
     .core-mem {
       line-height: 30px;
       font-size: 16px;
+      font-weight: bold;
     }
 
     @media screen and (max-width: 500px) {

@@ -36,6 +36,9 @@
           v-for="(tagItem, index) in tagList"
           :key="`${tagItem}_${index}`"
           class="tag-item"
+          :class="{
+            'has-sarasa-term': $hasSarasaTerm,
+          }"
         >
           {{ tagItem }}
         </span>
@@ -184,12 +187,16 @@ const show = computed(() => {
     .tag-item {
       height: 18px;
       padding: 0 4px;
-      line-height: 20px;
+      line-height: 18px;
       font-size: 12px;
       color: var(--public-note-tag-color);
       background: var(--public-note-tag-bg);
       text-shadow: 1px 1px 2px rgba(#000, 0.2);
       border-radius: 4px;
+
+      &.has-sarasa-term {
+        line-height: 20px;
+      }
     }
   }
 

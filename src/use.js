@@ -11,5 +11,6 @@ export default (app) => {
   app.use(store);
   app.component('DotDotBox', DotDotBox);
 
+  app.config.globalProperties.$hasSarasaTerm = !import.meta.env.VITE_DISABLE_SARASA_TERM_SC;
   app.config.globalProperties.$config = config;
 };

@@ -318,6 +318,7 @@ const dashboardUrl = computed(() => config.nazhua.v1DashboardUrl || '/dashboard'
   .site-name {
     line-height: calc(var(--layout-header-height) - 20px);
     font-size: 24px;
+    font-weight: bold;
     color: #fff;
     text-shadow: 2px 2px 4px rgba(#000, 0.5);
     cursor: pointer;
