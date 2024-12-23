@@ -1,6 +1,6 @@
 {
   "name": "nazhua",
-  "version": "0.4.24",
+  "version": "0.4.25",
   "type": "module",
   "scripts": {
     "dev": "vite",
