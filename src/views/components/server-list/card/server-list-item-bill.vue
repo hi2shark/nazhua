@@ -106,11 +106,24 @@ function toBuy() {
 
 const tagList = computed(() => {
   const list = [];
-  if (props?.info?.PublicNote?.planDataMod?.networkRoute) {
-    list.push(...props.info.PublicNote.planDataMod.networkRoute.split(','));
+  const {
+    networkRoute,
+    extra,
+    IPv4,
+    IPv6,
+  } = props?.info?.PublicNote?.planDataMod || {};
+  if (networkRoute) {
+    list.push(...networkRoute.split(','));
   }
-  if (props?.info?.PublicNote?.planDataMod?.extra) {
-    list.push(...props.info.PublicNote.planDataMod.extra.split(','));
+  if (extra) {
+    list.push(...extra.split(','));
+  }
+  if (IPv4 === '1' && IPv6 === '1') {
+    list.push('双栈IP');
+  } else if (IPv4 === '1') {
+    list.push('仅IPv4');
+  } else if (IPv6 === '1') {
+    list.push('仅IPv6');
   }
   // 列表最多显示5个标签
   return list.slice(0, 5);
