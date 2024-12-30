@@ -118,7 +118,7 @@ const store = createStore({
             commit('SET_SETTING', res);
             // 如果自定义配置没有设置title，使用站点名称
             if (!window.$$nazhuaConfig.title) {
-              config.nazhua.title = res.site_name;
+              config.nazhua.title = res.config?.site_name || res.site_name;
               if (route?.name === 'Home' || !route) {
                 document.title = config.nazhua.title;
               }

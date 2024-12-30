@@ -26,7 +26,8 @@ export const loadServerGroup = async () => request({
 /**
  * 加载网站配置
  *
- * 暂时只使用site_name
+ * 暂时只使用site_name\custom_code
+ * 哪吒v1.4.9之后，上面的参数调整至data.config
  */
 export const loadSetting = async () => request({
   url: config.nazhua.v1ApiSettingPath,

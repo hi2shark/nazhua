@@ -46,6 +46,9 @@ const store = useStore();
 const dynamicContentRef = ref();
 
 const dynamicContent = computed(() => {
+  if (store.state.setting?.config?.custom_code) {
+    return store.state.setting.config.custom_code;
+  }
   if (store.state.setting?.custom_code) {
     return store.state.setting.custom_code;
   }
