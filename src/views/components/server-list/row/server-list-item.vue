@@ -92,7 +92,7 @@ const { cpuAndMemAndDisk } = handleServerInfo({
   props,
 });
 
-const platformSystemLabel = computed(() => hostUtils.getSystemOSLabel(props.info?.Host?.Platform));
+const platformSystemLabel = computed(() => hostUtils.getSystemOSLabel(props.info?.Host?.Platform, true));
 
 function openDetail() {
   router.push({

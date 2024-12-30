@@ -212,8 +212,13 @@ export function getPlatformLogoIconClassName(platform) {
 /**
  * 获取系统发行版本
  */
-export function getSystemOSLabel(platform) {
-  switch (platform) {
+export function getSystemOSLabel(platform, short = false) {
+  const platformStr = (platform || '').toLowerCase();
+  // 匹配一些超长系统发行版本
+  if (short && platformStr.includes('windows')) {
+    return 'Windows';
+  }
+  switch (platformStr) {
     case 'windows':
       return 'Windows';
     case 'linux':
