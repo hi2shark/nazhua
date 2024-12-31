@@ -8,7 +8,7 @@ window.$$nazhuaConfig = {
   // listServerItemTypeToggle: true, // 服务器列表项类型切换
   // listServerItemType: 'row', // 服务器列表项类型 card/row row列表模式移动端自动切换至card
   // listServerStatusType: 'progress', // 服务器状态类型--列表
-  // listServerRealTimeShowLoad: false, // 列表显示服务器实时负载
+  // listServerRealTimeShowLoad: true, // 列表显示服务器实时负载
   // detailServerStatusType: 'progress', // 服务器状态类型--详情页
   // serverStatusLinear: true, // 服务器状态渐变线性显示
   // disableSarasaTermSC: true, // 禁用Sarasa Term SC字体

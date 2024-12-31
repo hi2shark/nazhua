@@ -144,6 +144,10 @@ function toggleModelValue(item) {
         &:hover {
           background: rgba(#000, 0.8);
         }
+
+        &.active {
+          background: rgba(#ff7500, 0.75);
+        }
       }
     }
   }
