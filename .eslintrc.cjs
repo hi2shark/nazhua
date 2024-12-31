@@ -66,6 +66,7 @@ module.exports = {
     'no-param-reassign': 'off',
     'no-underscore-dangle': 'off',
     'no-unsafe-optional-chaining': 'off',
+    'max-classes-per-file': 'off',
     'max-len': ['warn', 120],
     'vue/max-len': ['warn', 120],
     'object-property-newline': ['error', {

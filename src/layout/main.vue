@@ -12,6 +12,12 @@
       <slot />
       <layout-footer />
     </div>
+    <template v-if="config.nazhua.showFireworks">
+      <fireworks />
+    </template>
+    <template v-if="config.nazhua.showLantern">
+      <lantern />
+    </template>
   </div>
 </template>
 
@@ -21,6 +27,8 @@
  */
 import { computed } from 'vue';
 import config from '@/config';
+import Fireworks from '@/components/fireworks.vue';
+import Lantern from '@/components/lantern.vue';
 import LayoutHeader from './components/header.vue';
 import LayoutFooter from './components/footer.vue';
 

@@ -5,6 +5,8 @@ window.$$nazhuaConfig = {
   // buyBtnText: '购买', // 购买按钮文案
   // customBackgroundImage: '', // 自定义的背景图片地址
   // lightBackground: true, // 启用了浅色系背景图，会强制关闭点点背景
+  // showFireworks: true, // 是否显示烟花，建议开启浅色系背景
+  // showLantern: true, // 是否显示灯笼
   // listServerItemTypeToggle: true, // 服务器列表项类型切换
   // listServerItemType: 'row', // 服务器列表项类型 card/row row列表模式移动端自动切换至card
   // listServerStatusType: 'progress', // 服务器状态类型--列表
