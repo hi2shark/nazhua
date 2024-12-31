@@ -10,12 +10,22 @@
       :key="item.key"
       class="server-option-item"
       :class="{
+        'has-icon': item.icon,
         active: activeValue === item.value,
       }"
       :title="item?.title || false"
       @click="toggleModelValue(item)"
     >
-      <span class="option-label">{{ item.label }}</span>
+      <i
+        v-if="item.icon"
+        class="option-icon"
+        :class="item.icon"
+        :title="item.label"
+      />
+      <span
+        v-else
+        class="option-label"
+      >{{ item.label }}</span>
     </div>
   </div>
 </template>
@@ -85,13 +95,28 @@ function toggleModelValue(item) {
     background: rgba(#000, 0.3);
     transition: all 0.3s linear;
     cursor: pointer;
+
+    &.has-icon {
+      padding: 0 10px;
+      border-radius: 4px;
+    }
+
     @media screen and (max-width: 768px) {
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 3px;
       background-color: rgba(#000, 0.8);
       cursor: default;
     }
 
+    .option-icon {
+      line-height: 1;
+      font-size: 18px;
+    }
+
     .option-label {
       color: #fff;
+      font-weight: bold;
       transition: all 0.3s linear;
     }
 

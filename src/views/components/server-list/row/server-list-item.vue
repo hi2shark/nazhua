@@ -156,6 +156,7 @@ function openDetail() {
       height: 32px;
       line-height: 34px;
       font-size: 16px;
+      font-weight: bold;
       width: 100%;
       text-overflow: ellipsis;
       white-space: nowrap;

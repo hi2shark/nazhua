@@ -335,6 +335,10 @@ const dashboardUrl = computed(() => config.nazhua.v1DashboardUrl || '/dashboard'
       color: #ddd;
       line-height: 30px;
 
+      .value {
+        font-weight: bold;
+      }
+
       &.server-count--total {
         .value {
           color: #70f3ff;

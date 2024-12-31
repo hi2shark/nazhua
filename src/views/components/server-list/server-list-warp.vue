@@ -90,6 +90,7 @@ defineProps({
   flex-direction: column;
   gap: var(--list-gap-size);
   width: var(--list-container-width);
+  padding: 0 var(--list-padding);
   margin: auto;
 }
 

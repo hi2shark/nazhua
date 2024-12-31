@@ -5,12 +5,13 @@ window.$$nazhuaConfig = {
   // buyBtnText: '购买', // 购买按钮文案
   // customBackgroundImage: '', // 自定义的背景图片地址
   // lightBackground: true, // 启用了浅色系背景图，会强制关闭点点背景
+  // listServerItemTypeToggle: true, // 服务器列表项类型切换
   // listServerItemType: 'row', // 服务器列表项类型 card/row row列表模式移动端自动切换至card
   // listServerStatusType: 'progress', // 服务器状态类型--列表
   // listServerRealTimeShowLoad: false, // 列表显示服务器实时负载
   // detailServerStatusType: 'progress', // 服务器状态类型--详情页
   // serverStatusLinear: true, // 服务器状态渐变线性显示
-  // disableSarasaTermSC: false, // 禁用Sarasa Term SC字体
+  // disableSarasaTermSC: true, // 禁用Sarasa Term SC字体
   // hideWorldMap: false, // 隐藏地图
   // hideHomeWorldMap: false, // 隐藏首页地图
   // hideDetailWorldMap: false, // 隐藏详情地图

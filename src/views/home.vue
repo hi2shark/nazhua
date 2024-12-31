@@ -31,6 +31,12 @@
             v-model="filterFormData.online"
             :options="onlineOptions"
           />
+          <server-option-box
+            v-if="config.nazhua.listServerItemTypeToggle"
+            v-model="listType"
+            :options="listTypeOptions"
+            :accpet-empty="false"
+          />
         </div>
       </div>
       <server-list-warp
@@ -97,6 +103,8 @@ const store = useStore();
 const worldMapWidth = ref();
 const windowWidth = ref(window.innerWidth);
 
+const listType = ref(config.nazhua.listServerItemType || 'card');
+
 const showTransition = computed(() => {
   // 强制开启
   if (config.nazhua.forceTransition) {
@@ -107,12 +115,18 @@ const showTransition = computed(() => {
 });
 const showListRow = computed(() => {
   if (windowWidth.value > 1024) {
+    if (config.nazhua.listServerItemTypeToggle) {
+      return listType.value === 'row';
+    }
     return config.nazhua.listServerItemType === 'row';
   }
   return false;
 });
 const showListCard = computed(() => {
   if (windowWidth.value > 1024) {
+    if (config.nazhua.listServerItemTypeToggle) {
+      return listType.value !== 'row';
+    }
     return config.nazhua.listServerItemType !== 'row';
   }
   return true;
@@ -163,6 +177,18 @@ const onlineOptions = computed(() => {
   }
   return [];
 });
+
+const listTypeOptions = computed(() => [{
+  key: 'card',
+  label: '卡片',
+  value: 'card',
+  icon: 'ri-gallery-view-2',
+}, {
+  key: 'row',
+  label: '列表',
+  value: 'row',
+  icon: 'ri-list-view',
+}]);
 
 const filterServerList = computed(() => {
   const fields = {};
@@ -334,10 +360,15 @@ onActivated(() => {
   justify-content: space-between;
   gap: 10px 20px;
   width: var(--list-container-width);
+  padding: 0 20px;
   margin: auto;
 
-  &.list-is-card {
-    padding: 0 20px;
+  .left-box {
+    gap: 10px;
+  }
+
+  .right-box {
+    gap: 10px;
   }
 }
 </style>

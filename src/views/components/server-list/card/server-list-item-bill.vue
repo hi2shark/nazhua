@@ -37,7 +37,7 @@
           :key="`${tagItem}_${index}`"
           class="tag-item"
           :class="{
-            'has-sarasa-term': $hasSarasaTerm,
+            'has-sarasa-term': $hasSarasaTerm && config.nazhua.disableSarasaTermSC !== true,
           }"
         >
           {{ tagItem }}
