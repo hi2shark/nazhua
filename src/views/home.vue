@@ -33,32 +33,28 @@
           />
         </div>
       </div>
-      <transition-group
+      <server-list-warp
         v-if="showListRow"
-        name="list"
-        tag="div"
-        class="server-list-container"
-        :class="`server-list--row`"
+        :show-transition="showTransition"
+        :show-list-row="showListRow"
       >
         <server-row-item
           v-for="item in filterServerList.list"
           :key="item.ID"
           :info="item"
         />
-      </transition-group>
-      <transition-group
+      </server-list-warp>
+      <server-list-warp
         v-if="showListCard"
-        name="list"
-        tag="div"
-        class="server-list-container"
-        :class="`server-list--card`"
+        :show-transition="showTransition"
+        :show-list-card="showListCard"
       >
         <server-card-item
           v-for="item in filterServerList.list"
           :key="item.ID"
           :info="item"
         />
-      </transition-group>
+      </server-list-warp>
     </div>
   </div>
 </template>
@@ -93,6 +89,7 @@ import validate from '@/utils/validate';
 
 import WorldMap from '@/components/world-map/world-map.vue';
 import ServerOptionBox from './components/server-list/server-option-box.vue';
+import ServerListWarp from './components/server-list/server-list-warp.vue';
 import ServerCardItem from './components/server-list/card/server-list-item.vue';
 import ServerRowItem from './components/server-list/row/server-list-item.vue';
 
@@ -100,6 +97,14 @@ const store = useStore();
 const worldMapWidth = ref();
 const windowWidth = ref(window.innerWidth);
 
+const showTransition = computed(() => {
+  // 强制开启
+  if (config.nazhua.forceTransition) {
+    return true;
+  }
+  // 服务器数量小于7时，不开启
+  return store.state.serverList.length < 7;
+});
 const showListRow = computed(() => {
   if (windowWidth.value > 1024) {
     return config.nazhua.listServerItemType === 'row';
@@ -334,70 +339,5 @@ onActivated(() => {
   &.list-is-card {
     padding: 0 20px;
   }
-}
-
-.server-list-container.server-list--card {
-  --list-padding: 20px;
-  --list-gap-size: 20px;
-  --list-item-num: 3;
-  --list-item-width: calc(
-    (
-      var(--list-container-width)
-      - (var(--list-padding) * 2)
-      - (
-        var(--list-gap-size)
-        * (var(--list-item-num) - 1)
-        )
-    )
-    / var(--list-item-num)
-  );
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--list-gap-size);
-  padding: 0 var(--list-padding);
-  width: var(--list-container-width);
-  margin: auto;
-
-  // 针对1440px以下的屏幕
-  @media screen and (max-width: 1440px) {
-    --list-gap-size: 10px;
-  }
-
-  @media screen and (max-width: 1024px) {
-    --list-item-num: 2;
-  }
-
-  @media screen and (max-width: 680px) {
-    --list-item-num: 1;
-  }
-}
-
-.server-list-container.server-list--row {
-  --list-padding: 20px;
-  --list-gap-size: 12px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--list-gap-size);
-  width: var(--list-container-width);
-  margin: auto;
-}
-
-.list-move,
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.3s ease;
-}
-.list-enter-from {
-  opacity: 0;
-  transform: translateY(-30px);
-}
-.list-leave-to {
-  opacity: 0;
-  transform: translateY(30px);
-}
-.list-leave-active {
-  position: absolute;
 }
 </style>
