@@ -364,11 +364,15 @@ onActivated(() => {
   margin: auto;
 
   .left-box {
-    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 
   .right-box {
-    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 }
 </style>

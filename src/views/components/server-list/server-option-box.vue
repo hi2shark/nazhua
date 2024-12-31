@@ -98,7 +98,6 @@ function toggleModelValue(item) {
 
     &.has-icon {
       padding: 0 10px;
-      border-radius: 4px;
     }
 
     @media screen and (max-width: 768px) {
