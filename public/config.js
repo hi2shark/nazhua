@@ -1,5 +1,6 @@
 window.$$nazhuaConfig = {
   // title: '哪吒监控', // 网站标题
+  // footerSlogan: '不要年付！不要年付！不要年付！<span style="color: #f00;">欢迎访问Nazhua探针</span>',
   // freeAmount: '白嫖', // 免费服务的费用名称
   // infinityCycle: '长期有效', // 无限周期名称
   // buyBtnText: '购买', // 购买按钮文案

@@ -1,5 +1,11 @@
 <template>
   <div class="layout-footer">
+    <div
+      v-if="footerSlogan"
+      class="footer-slogan"
+    >
+      <div v-html="footerSlogan" />
+    </div>
     <div class="copyright-text">
       <span class="text">
         Powered by
@@ -40,9 +46,13 @@ import {
   nextTick,
 } from 'vue';
 import { useStore } from 'vuex';
+import config from '@/config';
 
 const version = import.meta.env.VITE_APP_VERSION;
 const store = useStore();
+
+const footerSlogan = computed(() => decodeURIComponent(config.nazhua?.footerSlogan || ''));
+
 const dynamicContentRef = ref();
 
 const dynamicContent = computed(() => {
@@ -92,6 +102,16 @@ onMounted(() => {
   padding: 20px;
   font-size: 12px;
   color: #ccc;
+
+  .footer-slogan {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+
+    font-size: 14px;
+    color: #fff;
+  }
 
   .copyright-text {
     display: flex;
