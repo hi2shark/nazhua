@@ -6,6 +6,11 @@
 考虑到多数国内直连用户无法访问jsdelivr，所以默认使用cdnjs的loli.net引用版本。  
 同时默认关闭SarasaTermSC字体，如果需要使用，请使用Docker镜像全量包。  
 
+## 赞助
+| 赞助商 | 赞助商介绍 |
+| --- | --- |
+| [![YXVM](./.github/images/yxvm-logo.jpg)](https://yxvm.com/aff.php?aff=644) | YXVM，优秀的香港、新加坡、日本云服务器/物理服务器供应商 |
+
 ## 劝退指南 用前必读
 1. 本主题是基于哪吒监控v0版本构建的，~~不确定能否完美v1版本~~。*v0.4.3的版本已适配*  
 2. 本主题是一个纯前端项目，需要解决跨域问题，通常需要一个nginx或者caddy反代请求解决跨域问题。  
@@ -189,17 +194,21 @@ server {
 ```javascript
 window.$$nazhuaConfig = {
   title: '哪吒监控', // 网站标题
+  footerSlogan: '不要年付！不要年付！不要年付！<span style="color: #f00;">欢迎访问Nazhua探针</span>',
   freeAmount: '白嫖', // 免费服务的费用名称
   infinityCycle: '长期有效', // 无限周期名称
   buyBtnText: '购买', // 购买按钮文案
   customBackgroundImage: '', // 自定义的背景图片地址
   lightBackground: true, // 启用了浅色系背景图，会强制关闭点点背景
-  listServerItemType: 'row', // 服务器列表项类型 card/row row列表模式目前不兼容移动端
+  showFireworks: true, // 是否显示烟花，建议开启浅色系背景
+  showLantern: true, // 是否显示灯笼
+  listServerItemTypeToggle: true, // 服务器列表项类型切换
+  listServerItemType: 'row', // 服务器列表项类型 card/row row列表模式移动端自动切换至card
   listServerStatusType: 'progress', // 服务器状态类型--列表
-  listServerRealTimeShowLoad: false, // 列表显示服务器实时负载
+  listServerRealTimeShowLoad: true, // 列表显示服务器实时负载
   detailServerStatusType: 'progress', // 服务器状态类型--详情页
   serverStatusLinear: true, // 服务器状态渐变线性显示
-  disableSarasaTermSC: false, // 禁用Sarasa Term SC字体
+  disableSarasaTermSC: true, // 禁用Sarasa Term SC字体
   hideWorldMap: false, // 隐藏地图
   hideHomeWorldMap: false, // 隐藏首页地图
   hideDetailWorldMap: false, // 隐藏详情地图
