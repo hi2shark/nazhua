@@ -75,8 +75,15 @@
             :class="`temperature--${ttItem.type}`"
             :title="ttItem?.title || ''"
           >
-            <span class="server-info-item-label">{{ ttItem.label }}</span>
-            <span class="server-info-item-value">{{ ttItem.value }}</span>
+            <span
+              class="server-info-item-label"
+              :title="ttItem.label"
+            >
+              {{ ttItem.label }}
+            </span>
+            <span class="server-info-item-value">
+              {{ ttItem.value }}
+            </span>
           </span>
         </div>
       </div>
@@ -398,11 +405,18 @@ const temperatureData = computed(() => {
       }
     }
     if (other.length) {
-      data.push({
-        type: 'other',
-        label: '其它',
-        value: '...',
-        title: other.map((i) => `${i.label}: ${i.value}`).join('\n'),
+      // data.push({
+      //   type: 'other',
+      //   label: '其它',
+      //   value: '...',
+      //   title: other.map((i) => `${i.label}: ${i.value}`).join('\n'),
+      // });
+      other.forEach((i) => {
+        data.push({
+          label: i.label,
+          value: i.value,
+          type: 'other',
+        });
       });
     }
   }
@@ -575,6 +589,17 @@ const processCount = computed(() => props.info?.State?.ProcessCount);
     }
     .text-value {
       color: var(--transfer-out-color);
+    }
+  }
+
+  .server-info--temperature {
+    .server-info-item {
+      .server-info-item-label {
+        max-width: 4.5em;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
     }
   }
 
