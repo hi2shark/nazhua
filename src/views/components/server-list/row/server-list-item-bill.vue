@@ -62,7 +62,12 @@ const {
   props,
 });
 
-const buyBtnText = computed(() => config.nazhua.buyBtnText || '购买');
+const buyBtnText = computed(() => {
+  if (props.info?.PublicNote?.customData?.buyBtnText) {
+    return props.info?.PublicNote?.customData?.buyBtnText;
+  }
+  return config.nazhua.buyBtnText || '购买';
+});
 const showBuyBtn = computed(() => !!props.info?.PublicNote?.customData?.orderLink);
 
 function toBuy() {

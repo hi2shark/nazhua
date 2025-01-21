@@ -2532,10 +2532,10 @@ regexp.prototype.flags@^1.5.2, regexp.prototype.flags@^1.5.3:
     es-errors "^1.3.0"
     set-function-name "^2.0.2"
 
-remixicon@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/remixicon/-/remixicon-4.5.0.tgz#75d625b89a98ae0322a5d39935366d59143172ee"
-  integrity sha512-IP/wNQGG3JCigaeFF3DERSTqMIZBlNu1yu8clNGB7wFe7ZN/ueKMplFHL5uEbnGpCzqfY6MlxIYn2vRzub+5cQ==
+remixicon@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/remixicon/-/remixicon-4.6.0.tgz#f2adafd18aaa983d61f8c9f7274fa17706da4ddc"
+  integrity sha512-bKM5odjqE1yzVxEZGJE7F79WHhNrJFIKHXR+GG+P1IWXn8AnJZhl8SbIRDJsNAvIqx4VPkNwjuHfc42tutMDpQ==
 
 resolve-from@^4.0.0:
   version "4.0.0"

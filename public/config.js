@@ -4,6 +4,7 @@ window.$$nazhuaConfig = {
   // freeAmount: '白嫖', // 免费服务的费用名称
   // infinityCycle: '长期有效', // 无限周期名称
   // buyBtnText: '购买', // 购买按钮文案
+  // buyBtnIcon: '', // 购买按钮图标，取自remixicon
   // customBackgroundImage: '', // 自定义的背景图片地址
   // lightBackground: true, // 启用了浅色系背景图，会强制关闭点点背景
   // showFireworks: true, // 是否显示烟花，建议开启浅色系背景

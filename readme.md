@@ -16,6 +16,14 @@
 2. 本主题是一个纯前端项目，需要解决跨域问题，通常需要一个nginx或者caddy反代请求解决跨域问题。  
 3. 我不会提供任何技术支持，如果你有问题，可以提issue，但是我不保证会回答，可能询问GPT会更快。  
 
+## 功能更新说明
+### v0.5.3更新
+新增：支持单独给服务器设置购买按钮的文案和图标，需要在公开备注的customData中添加`buyBtnText`和`buyBtnIcon`字段。  
+使用方法：`buyBtnText`用于设置购买按钮的文案，`buyBtnIcon`用于设置购买按钮的图标，图标支持Remixicon的图标名称，例如：`ri-gift-2-line`。  
+示例：点击复制图标名称，然后填写到`buyBtnIcon`字段中，补齐`ri-`前缀即可。  
+![remixicon使用方法](./.github/images/remixicon-select.jpg)
+在线图标网站：[www.remixicon.com](https://www.remixicon.com/) 目前支持版本为4.6.0
+
 ## V0/V1的使用区别  
 ### Docker版本的nazhua
 使用V1必须在`config.js`中指定`nezhaVersion`的版本为`v1`，**大小写敏感*  

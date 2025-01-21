@@ -231,7 +231,7 @@
           @click.stop="toBuy"
         >
           <span class="icon">
-            <span class="ri-shopping-bag-3-line" />
+            <span :class="buyBtnIcon" />
           </span>
           <span class="text">{{ buyBtnText }}</span>
         </div>
@@ -260,7 +260,18 @@ const props = defineProps({
   },
 });
 
-const buyBtnText = computed(() => config.nazhua.buyBtnText || '购买');
+const buyBtnIcon = computed(() => {
+  if (props.info?.PublicNote?.customData?.buyBtnIcon) {
+    return props.info?.PublicNote?.customData?.buyBtnIcon;
+  }
+  return config.nazhua.buyBtnIcon || 'ri-shopping-bag-3-line';
+});
+const buyBtnText = computed(() => {
+  if (props.info?.PublicNote?.customData?.buyBtnText) {
+    return props.info?.PublicNote?.customData?.buyBtnText;
+  }
+  return config.nazhua.buyBtnText || '购买';
+});
 const showBuyBtn = computed(() => !!props.info?.PublicNote?.customData?.orderLink);
 
 function toBuy() {
