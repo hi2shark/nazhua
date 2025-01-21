@@ -19,10 +19,10 @@
 ## 功能更新说明
 ### v0.5.3更新
 新增：支持单独给服务器设置购买按钮的文案和图标，需要在公开备注的customData中添加`buyBtnText`和`buyBtnIcon`字段。  
-使用方法：`buyBtnText`用于设置购买按钮的文案，`buyBtnIcon`用于设置购买按钮的图标，图标支持Remixicon的图标名称，例如：`ri-gift-2-line`。  
-示例：点击复制图标名称，然后填写到`buyBtnIcon`字段中，补齐`ri-`前缀即可。  
-![remixicon使用方法](./.github/images/remixicon-select.jpg)
-在线图标网站：[www.remixicon.com](https://www.remixicon.com/) 目前支持版本为4.6.0
+> 使用方法：`buyBtnText`用于设置购买按钮的文案，`buyBtnIcon`用于设置购买按钮的图标，图标支持Remixicon的图标名称，例如：`ri-gift-2-line`。  
+> 示例：点击复制图标名称，然后填写到`buyBtnIcon`字段中，补齐`ri-`前缀即可。  
+> ![remixicon使用方法](./.github/images/remixicon-select.jpg)
+> 在线图标网站：[www.remixicon.com](https://www.remixicon.com/) 目前支持版本为4.6.0
 
 ## V0/V1的使用区别  
 ### Docker版本的nazhua
