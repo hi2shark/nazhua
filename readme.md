@@ -11,7 +11,7 @@
 <table>
   <tr>
     <td align="center">
-      <a href="https://app.vmiss.com/aff.php?aff=1129" target="_blank" title="VMISS，加拿大企业，打造全球平价优化线路。提供香港、日本、韩国、美国的云服务器">
+      <a href="https://app.vmiss.com/aff.php?aff=1129" target="_blank" title="VMISS，加拿大企业，打造全球优质优化线路。提供香港、日本、韩国、美国、英国的云服务器">
         <img src="./.github/images/vmiss-logo.jpg" width="200px;" alt="VMISS"/>
       </a>
       <br />
