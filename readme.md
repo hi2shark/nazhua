@@ -7,21 +7,22 @@
 同时默认关闭SarasaTermSC字体，如果需要使用，请使用Docker镜像全量包。  
 
 ## 赞助
+> 按服务商字母排序，不分先后。
 <table>
   <tr>
-    <td align="center">
-      <a href="https://yxvm.com/aff.php?aff=644" target="_blank" title="YXVM，提供香港、新加坡、日本的云服务器与物理服务器">
-        <img src="./.github/images/yxvm-logo.jpg" width="200px;" alt="YXVM"/>
-      </a>
-      <br />
-      <span style="font-weight: bold;">YXVM</span>
-    </td>
     <td align="center">
       <a href="https://app.vmiss.com/aff.php?aff=1129" target="_blank" title="VMISS，加拿大企业，打造全球平价优化线路。提供香港、日本、韩国、美国的云服务器">
         <img src="./.github/images/vmiss-logo.jpg" width="200px;" alt="VMISS"/>
       </a>
       <br />
       <span style="font-weight: bold;">VMISS</span>
+    </td>
+    <td align="center">
+      <a href="https://yxvm.com/aff.php?aff=644" target="_blank" title="YXVM，提供香港、新加坡、日本的云服务器与物理服务器">
+        <img src="./.github/images/yxvm-logo.jpg" width="200px;" alt="YXVM"/>
+      </a>
+      <br />
+      <span style="font-weight: bold;">YXVM</span>
     </td>
   </tr>
 </table>
