@@ -100,7 +100,11 @@ export default function (v1Data) {
           v0Data[key] = Mapping.each(magics[$magic[1]], v1Data);
           if (key === 'State') {
             // 修复Load1、Load5、Load15字段为空时的问题
-            ['Load1', 'Load5', 'Load15'].forEach((k) => {
+            [
+              'Load1', 'Load5', 'Load15',
+              'NetInTransfer', 'NetOutTransfer',
+              'NetInSpeed', 'NetOutSpeed',
+            ].forEach((k) => {
               if (!validate.isSet(v0Data[key][k])) {
                 v0Data[key][k] = 0;
               }
