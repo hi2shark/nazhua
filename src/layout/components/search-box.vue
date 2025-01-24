@@ -155,7 +155,7 @@ function openDetail(info) {
 }
 
 function handleKeyDown(event) {
-  if (event.ctrlKey && event.key === 'k') {
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
     event.stopPropagation();
     event.preventDefault();
     if (show.value) {
