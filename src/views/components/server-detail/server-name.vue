@@ -224,6 +224,17 @@ const platformLogoIconClassName = computed(() => hostUtils.getPlatformLogoIconCl
     .cpu-model-num {
       color: #c7eeff;
     }
+
+    @media screen and (max-width: 500px) {
+      padding-left: 0;
+      margin-top: -7px;
+      line-height: 16px;
+      .cpu-company {
+        height: 16px;
+        line-height: 16px;
+        padding: 0 3px;
+      }
+    }
   }
 }
 </style>
