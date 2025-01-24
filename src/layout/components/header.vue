@@ -187,10 +187,18 @@ const serverStat = computed(() => {
   if (store.state.serverList.length) {
     store.state.serverList.forEach((server) => {
       if (server.online === 1 && server.State) {
-        transfer.in += server.State.NetInTransfer;
-        transfer.out += server.State.NetOutTransfer;
-        netSpeed.in += server.State.NetInSpeed;
-        netSpeed.out += server.State.NetOutSpeed;
+        if (typeof server.State.NetInTransfer === 'number') {
+          transfer.in += server.State.NetInTransfer;
+        }
+        if (typeof server.State.NetOutTransfer === 'number') {
+          transfer.out += server.State.NetOutTransfer;
+        }
+        if (typeof server.State.NetInSpeed === 'number') {
+          netSpeed.in += server.State.NetInSpeed;
+        }
+        if (typeof server.State.NetOutSpeed === 'number') {
+          netSpeed.out += server.State.NetOutSpeed;
+        }
       }
     });
   }
