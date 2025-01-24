@@ -11,6 +11,10 @@
       <layout-header />
       <slot />
       <layout-footer />
+
+      <search-box
+        v-if="enableInnerSearch"
+      />
     </div>
     <template v-if="config.nazhua.showFireworks">
       <fireworks />
@@ -31,6 +35,7 @@ import Fireworks from '@/components/fireworks.vue';
 import Lantern from '@/components/lantern.vue';
 import LayoutHeader from './components/header.vue';
 import LayoutFooter from './components/footer.vue';
+import SearchBox from './components/search-box.vue';
 
 const layoutGroupStyle = computed(() => {
   const style = {};
@@ -48,6 +53,8 @@ const layoutBGStyle = computed(() => {
   }
   return style;
 });
+
+const enableInnerSearch = computed(() => config.nazhua.enableInnerSearch);
 </script>
 
 <style lang="scss" scoped>
