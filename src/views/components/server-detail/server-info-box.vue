@@ -68,23 +68,26 @@
       </div>
       <div class="server-info-content">
         <div class="server-info-item-group">
-          <span
+          <template
             v-for="(ttItem, ttIndex) in temperatureData.list"
             :key="`${info.ID}_temperature_${ttIndex}`"
-            class="server-info-item"
-            :class="`temperature--${ttItem.type}`"
-            :title="ttItem?.title || ''"
           >
-            <span
-              class="server-info-item-label"
-              :title="ttItem.label"
-            >
-              {{ ttItem.label }}
-            </span>
-            <span class="server-info-item-value">
-              {{ ttItem.value }}
-            </span>
-          </span>
+            <popover :title="ttItem?.title || (`${ttItem.label}: ${ttItem.value}`)">
+              <template #trigger>
+                <span
+                  class="server-info-item"
+                  :class="`temperature--${ttItem.type}`"
+                >
+                  <span class="server-info-item-label">
+                    {{ ttItem.label }}
+                  </span>
+                  <span class="server-info-item-value">
+                    {{ ttItem.value }}
+                  </span>
+                </span>
+              </template>
+            </popover>
+          </template>
         </div>
       </div>
     </div>

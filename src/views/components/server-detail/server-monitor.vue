@@ -67,38 +67,44 @@
     </div>
 
     <div class="monitor-cate-group">
-      <div
+      <template
         v-for="cateItem in monitorChartData.cateList"
         :key="cateItem.id"
-        class="monitor-cate-item"
-        :class="{
-          disabled: showCates[cateItem.id] === false,
-        }"
-        :style="{
-          '--cate-color': cateItem.color,
-        }"
-        :title="cateItem.title"
-        @click="toggleShowCate(cateItem.id)"
       >
-        <span class="cate-legend" />
-        <span
-          class="cate-name"
-        >
-          {{ cateItem.name }}
-        </span>
-        <span
-          v-if="cateItem.avg !== 0"
-          class="cate-avg-ms"
-        >
-          {{ cateItem.avg }}ms
-        </span>
-        <span
-          v-else
-          class="cate-avg-ms"
-        >
-          -ms
-        </span>
-      </div>
+        <popover :title="cateItem.title">
+          <template #trigger>
+            <div
+              class="monitor-cate-item"
+              :class="{
+                disabled: showCates[cateItem.id] === false,
+              }"
+              :style="{
+                '--cate-color': cateItem.color,
+              }"
+              @click="toggleShowCate(cateItem.id)"
+            >
+              <span class="cate-legend" />
+              <span
+                class="cate-name"
+              >
+                {{ cateItem.name }}
+              </span>
+              <span
+                v-if="cateItem.avg !== 0"
+                class="cate-avg-ms"
+              >
+                {{ cateItem.avg }}ms
+              </span>
+              <span
+                v-else
+                class="cate-avg-ms"
+              >
+                -ms
+              </span>
+            </div>
+          </template>
+        </popover>
+      </template>
     </div>
 
     <line-chart
