@@ -44,4 +44,5 @@ window.$$nazhuaConfig = {
   // v1DashboardUrl: '/dashboard', // v1版本控制台地址
   // v1HideNezhaDashboardBtn: true, // v1版本导航栏控制台入口/登录按钮 在nezhaVersion为v1时有效
   // routeMode: 'h5', // 路由模式
+  // customFavicon: '', // 自定义favicon, 填写完整的url地址
 };

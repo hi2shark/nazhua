@@ -33,10 +33,27 @@ if (config.nazhua.nezhaVersion) {
   config.init = true;
 }
 
+/**
+ * 替换网站图标
+ */
+function replaceFavicon() {
+  if (config.nazhua.customFavicon) {
+    const link = document.querySelector("link[rel*='icon']");
+    link.type = 'image/x-icon';
+    link.rel = 'shortcut icon';
+    link.href = config.nazhua.customFavicon;
+  }
+}
+replaceFavicon();
+
+/**
+ * 合并自定义配置
+ */
 export function mergeNazhuaConfig(customConfig) {
   Object.keys(customConfig).forEach((key) => {
     config.nazhua[key] = customConfig[key];
   });
+  replaceFavicon();
 }
 // 暴露合并配置方法
 window.$mergeNazhuaConfig = mergeNazhuaConfig;
