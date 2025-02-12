@@ -17,7 +17,7 @@ function useCdnCss(item) {
   if (['cdnjs', 'loli'].includes(cdnType)) {
     cssUrl = item.cdnjs;
     if (cdnType === 'loli') {
-      cssUrl = cssUrl.replace('https://cdnjs.cloudflare.com/', 'https://cdn.loli.net/');
+      cssUrl = cssUrl.replace('https://cdnjs.cloudflare.com/', 'https://cdnjs.loli.net/');
     }
   }
   const cdnStylesheet = document.createElement('link');
@@ -30,8 +30,8 @@ function useCdnCss(item) {
 if (import.meta.env.VITE_USE_CDN) {
   Object.entries({
     remixicon: {
-      jsdelivr: 'https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css',
-      cdnjs: 'https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.css',
+      jsdelivr: 'https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css',
+      cdnjs: 'https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css',
     },
     flagIcons: {
       jsdelivr: 'https://cdn.jsdelivr.net/npm/flag-icons/css/flag-icons.min.css',
@@ -39,7 +39,7 @@ if (import.meta.env.VITE_USE_CDN) {
     },
     fontLogos: {
       jsdelivr: 'https://cdn.jsdelivr.net/npm/font-logos/assets/font-logos.css',
-      cdnjs: 'https://cdnjs.cloudflare.com/ajax/libs/font-logos/1.3.0/assets/font-logos.css',
+      cdnjs: 'https://cdnjs.cloudflare.com/ajax/libs/font-logos/1.2.0/font-logos.css',
     },
   }).forEach(([, item]) => {
     useCdnCss(item);
