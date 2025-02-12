@@ -30,15 +30,15 @@ function useCdnCss(item) {
 if (import.meta.env.VITE_USE_CDN) {
   Object.entries({
     remixicon: {
-      jsdelivr: 'https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css',
+      jsdelivr: 'https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css',
       cdnjs: 'https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css',
     },
     flagIcons: {
-      jsdelivr: 'https://cdn.jsdelivr.net/npm/flag-icons/css/flag-icons.min.css',
+      jsdelivr: 'https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css',
       cdnjs: 'https://cdnjs.cloudflare.com/ajax/libs/flag-icons/7.2.3/css/flag-icons.min.css',
     },
     fontLogos: {
-      jsdelivr: 'https://cdn.jsdelivr.net/npm/font-logos/assets/font-logos.css',
+      jsdelivr: 'https://cdn.jsdelivr.net/npm/font-logos@1.3.0/assets/font-logos.css',
       cdnjs: 'https://cdnjs.cloudflare.com/ajax/libs/font-logos/1.2.0/font-logos.css',
     },
   }).forEach(([, item]) => {
