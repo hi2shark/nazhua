@@ -111,6 +111,10 @@ const showTransition = computed(() => {
   if (config.nazhua.forceTransition) {
     return true;
   }
+  // 安卓设备不开启 -> 部分安卓浏览器渲染动画会卡顿
+  if (window.navigator.userAgent.includes('Android')) {
+    return false;
+  }
   // 服务器数量小于7时，不开启
   return store.state.serverList.length < 7;
 });
