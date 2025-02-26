@@ -3,6 +3,7 @@
     class="server-option-box"
     :class="{
       'server-option-box--light-background': lightBackground,
+      'server-option-box--mobile-hide': !mobileShow,
     }"
   >
     <div
@@ -52,6 +53,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  mobileShow: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emits = defineEmits([
@@ -84,6 +89,12 @@ function toggleModelValue(item) {
   flex-wrap: wrap;
   padding: 0 var(--list-padding);
   gap: 8px;
+
+  @media screen and (max-width: 768px) {
+    &--mobile-hide {
+      display: none;
+    }
+  }
 
   .server-option-item {
     display: flex;
@@ -122,13 +133,13 @@ function toggleModelValue(item) {
     @media screen and (min-width: 768px) {
       &:hover {
         .option-label {
-          color: #ff7500;
+          color: var(--option-high-color);
         }
       }
     }
 
     &.active {
-      background: rgba(#ff7500, 0.75);
+      background: var(--option-high-color-active);
 
       .option-label {
         color: #fff;
@@ -146,7 +157,7 @@ function toggleModelValue(item) {
         }
 
         &.active {
-          background: rgba(#ff7500, 0.75);
+          background: var(--option-high-color-active);
         }
       }
     }

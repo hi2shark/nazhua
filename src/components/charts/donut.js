@@ -35,80 +35,86 @@ function handleColor(color) {
   return color;
 }
 
-export default (used, total, itemColors, size = 100) => ({
-  angleAxis: {
-    max: total, // 满分
-    // 隐藏刻度线
-    axisLine: {
-      show: false,
+export default (used, total, itemColors, size = 100) => {
+  const isLinear = (
+    (config.nazhua.serverStatusLinear || config.nazhua.lightBackground)
+    && !config.nazhua.simpleColorMode
+  );
+  return {
+    angleAxis: {
+      max: total, // 满分
+      // 隐藏刻度线
+      axisLine: {
+        show: false,
+      },
+      axisTick: {
+        show: false,
+      },
+      axisLabel: {
+        show: false,
+      },
+      splitLine: {
+        show: false,
+      },
     },
-    axisTick: {
-      show: false,
+    radiusAxis: {
+      type: 'category',
+      // 隐藏刻度线
+      axisLine: {
+        show: false,
+      },
+      axisTick: {
+        show: false,
+      },
+      axisLabel: {
+        show: false,
+      },
+      splitLine: {
+        show: false,
+      },
     },
-    axisLabel: {
-      show: false,
+    polar: {
+      center: ['50%', '50%'],
+      radius: ['50%', '100%'],
     },
-    splitLine: {
-      show: false,
-    },
-  },
-  radiusAxis: {
-    type: 'category',
-    // 隐藏刻度线
-    axisLine: {
-      show: false,
-    },
-    axisTick: {
-      show: false,
-    },
-    axisLabel: {
-      show: false,
-    },
-    splitLine: {
-      show: false,
-    },
-  },
-  polar: {
-    center: ['50%', '50%'],
-    radius: ['50%', '100%'],
-  },
-  series: [{
-    type: 'bar',
-    data: [{
-      value: used,
+    series: [{
+      type: 'bar',
+      data: [{
+        value: used,
+      }],
+      itemStyle: {
+        color: typeof itemColors === 'string' ? itemColors : handleColor(itemColors?.used),
+        borderRadius: 5,
+        shadowColor: (() => {
+          if (config.nazhua.serverStatusLinear) {
+            return 'rgba(0, 0, 0, 0.5)';
+          }
+          if (config.nazhua.lightBackground) {
+            return 'rgba(0, 0, 0, 0.2)';
+          }
+          return undefined;
+        })(),
+        shadowBlur: isLinear ? 10 : undefined,
+      },
+      coordinateSystem: 'polar',
+      cursor: 'default',
+      roundCap: true,
+      barWidth: Math.ceil((size / 100) * 10),
+      barGap: '-100%', // 两环重叠
+      z: 10,
+    }, {
+      type: 'bar',
+      data: [{
+        value: total,
+      }],
+      itemStyle: {
+        color: handleColor(itemColors?.total) || 'rgba(255, 255, 255, 0.2)',
+      },
+      coordinateSystem: 'polar',
+      cursor: 'default',
+      barWidth: Math.ceil((size / 100) * 10),
+      barGap: '-100%', // 两环重叠
+      z: 5,
     }],
-    itemStyle: {
-      color: typeof itemColors === 'string' ? itemColors : handleColor(itemColors?.used),
-      borderRadius: 5,
-      shadowColor: (() => {
-        if (config.nazhua.serverStatusLinear) {
-          return 'rgba(0, 0, 0, 0.5)';
-        }
-        if (config.nazhua.lightBackground) {
-          return 'rgba(0, 0, 0, 0.2)';
-        }
-        return undefined;
-      })(),
-      shadowBlur: (config.nazhua.serverStatusLinear || config.nazhua.lightBackground) ? 10 : undefined,
-    },
-    coordinateSystem: 'polar',
-    cursor: 'default',
-    roundCap: true,
-    barWidth: Math.ceil((size / 100) * 10),
-    barGap: '-100%', // 两环重叠
-    z: 10,
-  }, {
-    type: 'bar',
-    data: [{
-      value: total,
-    }],
-    itemStyle: {
-      color: handleColor(itemColors?.total) || 'rgba(255, 255, 255, 0.2)',
-    },
-    coordinateSystem: 'polar',
-    cursor: 'default',
-    barWidth: Math.ceil((size / 100) * 10),
-    barGap: '-100%', // 两环重叠
-    z: 5,
-  }],
-});
+  };
+};

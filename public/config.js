@@ -15,7 +15,8 @@ window.$$nazhuaConfig = {
   // listServerStatusType: 'progress', // 服务器状态类型--列表
   // listServerRealTimeShowLoad: true, // 列表显示服务器实时负载
   // detailServerStatusType: 'progress', // 服务器状态类型--详情页
-  serverStatusLinear: true, // 服务器状态渐变线性显示
+  // simpleColorMode: true, // 服务器状态纯色显示
+  serverStatusLinear: true, // 服务器状态渐变线性显示 - 与pureColorMode互斥
   // disableSarasaTermSC: true, // 禁用Sarasa Term SC字体
   // hideWorldMap: false, // 隐藏地图
   // hideHomeWorldMap: false, // 隐藏首页地图

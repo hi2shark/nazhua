@@ -5,6 +5,32 @@ import config from '@/config';
 import validate from '@/utils/validate';
 import * as hostUtils from '@/utils/host';
 
+function getColor(type, mode) {
+  const colors = {
+    cpu: {
+      linear: ['#0088FF', '#72B7FF'],
+      default: '#0088FF',
+      simple: '#007B43',
+    },
+    mem: {
+      linear: ['#2B6939', '#0AA344'],
+      default: '#0AA344',
+      simple: '#007B43',
+    },
+    swap: {
+      linear: ['#FF8C00', '#F38100'],
+      default: '#FF8C00',
+      simple: '#007B43',
+    },
+    disk: {
+      linear: ['#00848F', '#70F3FF'],
+      default: '#70F3FF',
+      simple: '#007B43',
+    },
+  };
+  return colors[type][mode];
+}
+
 export default (params) => {
   const {
     props,
@@ -15,7 +41,15 @@ export default (params) => {
   }
 
   const lightBackground = computed(() => config.nazhua.lightBackground);
-  const serverStatusLinear = computed(() => config.nazhua.serverStatusLinear || lightBackground.value);
+  const serverStatusColorMode = computed(() => {
+    if (config.nazhua.simpleColorMode) {
+      return 'simple';
+    }
+    if (config.nazhua.serverStatusLinear || lightBackground.value) {
+      return 'linear';
+    }
+    return 'default';
+  });
 
   const cpuInfo = computed(() => {
     if (props.info?.Host?.CPU?.[0]) {
@@ -69,7 +103,7 @@ export default (params) => {
       case 'cpu':
       {
         const CoresVal = cpuInfo.value?.cores ? `${cpuInfo.value?.cores}C` : '-';
-        const usedColor = serverStatusLinear.value ? ['#0088FF', '#72B7FF'] : '#0088FF';
+        const usedColor = getColor('cpu', serverStatusColorMode.value);
         const valPercent = `${(props.info.State?.CPU || 0).toFixed(1) * 1}%`;
         const valText = valPercent;
         return {
@@ -102,7 +136,7 @@ export default (params) => {
         } else {
           contentVal = `${Math.ceil(useMemAndTotalMem.value.total.m)}M`;
         }
-        const usedColor = serverStatusLinear.value ? ['#2B6939', '#0AA344'] : '#0AA344';
+        const usedColor = getColor('mem', serverStatusColorMode.value);
         return {
           type: 'mem',
           used: useMemAndTotalMem.value.usePercent,
@@ -136,7 +170,7 @@ export default (params) => {
         } else {
           contentVal = `${Math.ceil(useSwapAndTotalSwap.value.total.m)}M`;
         }
-        const usedColor = serverStatusLinear.value ? ['#FF8C00', '#F38100'] : '#FF8C00';
+        const usedColor = getColor('swap', serverStatusColorMode.value);
         return {
           type: 'swap',
           used: useSwapAndTotalSwap.value.usePercent,
@@ -167,7 +201,7 @@ export default (params) => {
         } else {
           contentValue = `${Math.ceil(useDiskAndTotalDisk.value.total.g)}G`;
         }
-        const usedColor = serverStatusLinear.value ? ['#00848F', '#70F3FF'] : '#70F3FF';
+        const usedColor = getColor('disk', serverStatusColorMode.value);
         return {
           type: 'disk',
           used: useDiskAndTotalDisk.value.usePercent,

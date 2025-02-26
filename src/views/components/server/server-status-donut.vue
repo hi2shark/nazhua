@@ -114,18 +114,18 @@ defineProps({
   .server-status-val-text {
     line-height: 1.2em;
     font-size: var(--server-status-val-text-font-size, 14px);
-    color: #a1eafb;
+    color: var(--server-status-value-color);
   }
   .server-status-label {
     line-height: 1.1em;
     font-size: var(--server-status-label-font-size, 12px);
-    color: #ddd;
+    color: var(--server-status-label-color);
   }
 
   .server-status-content {
     line-height: 1.2em;
     font-size: var(--server-status-content-font-size, 14px);
-    color: #eee;
+    color: var(--server-status-content-color);
 
     .default-mobile {
       display: none;

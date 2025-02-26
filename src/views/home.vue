@@ -36,6 +36,7 @@
             v-model="listType"
             :options="listTypeOptions"
             :accpet-empty="false"
+            :mobile-show="false"
           />
         </div>
       </div>

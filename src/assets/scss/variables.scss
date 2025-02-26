@@ -26,8 +26,15 @@
   --list-item-price-color: #eee;
   --list-item-buy-link-color: #ffc300;
   --list-item-buy-link-color-hover: #ff9900;
-  --public-note-tag-color: #ddd;
-  --public-note-tag-bg: linear-gradient(125deg, #8f94fb, #4e54c8);
+  --public-note-tag-color: #ccc;
+  --public-note-tag-bg: linear-gradient(125deg, #676ef7, #41459c);
+
+  --option-high-color: #ff7500;
+  --option-high-color-active: rgba(255, 177, 0, 0.75);
+
+  --server-status-value-color: #a1eafb;
+  --server-status-label-color: #ddd;
+  --server-status-content-color: #eee;
 
   // 针对1440px以下的屏幕
   @media screen and (max-width: 1440px) {
@@ -53,4 +60,28 @@
     --list-container-width: 100vw;
     --detail-container-width: 100vw;
   }
+}
+
+body.simple-color-mode {
+
+  --world-map-point-color: #cbf1f5;
+  
+  --simple-color: #ccc;
+  --duration-color: var(--simple-color);
+  --transfer-color: var(--simple-color);
+  --transfer-in-color: var(--transfer-color);
+  --transfer-out-color: var(--simple-color);
+  --net-speed-in-color: var(--simple-color);
+  --net-speed-out-color: var(--simple-color);
+
+  --list-item-price-color: #eee;
+  --list-item-buy-link-color: var(--simple-color);
+  --list-item-buy-link-color-hover: draken(#cbf1f5, 10%);
+  --public-note-tag-color: #eee;
+  --public-note-tag-bg: transparent;
+
+  --option-high-color: rgb(93, 122, 126);
+  --option-high-color-active: rgba(93, 122, 126, 0.75);
+
+  --server-status-value-color: var(--simple-color);
 }

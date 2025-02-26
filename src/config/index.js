@@ -33,6 +33,15 @@ if (config.nazhua.nezhaVersion) {
   config.init = true;
 }
 
+function setColorMode() {
+  if (config.nazhua.simpleColorMode) {
+    document.body.classList.add('simple-color-mode');
+  } else {
+    document.body.classList.remove('simple-color-mode');
+  }
+}
+setColorMode();
+
 /**
  * 替换网站图标
  */
@@ -54,6 +63,7 @@ export function mergeNazhuaConfig(customConfig) {
     config.nazhua[key] = customConfig[key];
   });
   replaceFavicon();
+  setColorMode();
 }
 // 暴露合并配置方法
 window.$mergeNazhuaConfig = mergeNazhuaConfig;
