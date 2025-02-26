@@ -5,7 +5,7 @@
     <a
       :href="dashboardUrl"
       class="dashboard-url"
-      :title="userLogin ? '访问管理后台' : '登录管理后台'"
+      :title="userLogin ? $t('toDashboard') : $t('loginDashboard')"
       target="_blank"
     >
       <span
@@ -14,7 +14,7 @@
           'ri-user-line': !userLogin,
         }"
       />
-      <span>{{ userLogin ? '管理后台' : '登录' }}</span>
+      <span>{{ userLogin ? $t('dashboard') : $t('login') }}</span>
     </a>
   </div>
 </template>

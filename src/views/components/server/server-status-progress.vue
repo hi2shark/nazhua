@@ -10,7 +10,7 @@
       />
       <div
         class="progress-bar-label"
-        :title="label + '使用' + used + '%'"
+        :title="label + $t('used') + used + '%'"
       >
         <span class="server-status-label">
           {{ label }}:

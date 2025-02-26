@@ -78,10 +78,14 @@
 import {
   computed,
 } from 'vue';
-
+import {
+  useI18n,
+} from 'vue-i18n';
 import config from '@/config';
 
 import handleServerBillAndPlan from '@/views/composable/server-bill-and-plan';
+
+const i18n = useI18n();
 
 const props = defineProps({
   info: {
@@ -130,11 +134,11 @@ const tagList = computed(() => {
     list.push(...extra.split(','));
   }
   if (IPv4 === '1' && IPv6 === '1') {
-    list.push('双栈IP');
+    list.push(i18n.t('ipv4ipv6'));
   } else if (IPv4 === '1') {
-    list.push('仅IPv4');
+    list.push(i18n.t('ipv4'));
   } else if (IPv6 === '1') {
-    list.push('仅IPv6');
+    list.push(i18n.t('ipv6'));
   }
   // 列表最多显示5个标签
   return list.slice(0, 5);

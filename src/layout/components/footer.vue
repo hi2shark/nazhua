@@ -12,9 +12,9 @@
         <a
           ref="nofollow"
           href="https://nezha.wiki"
-          :title="'当前为哪吒监控' + $config.nazhua.nezhaVersion"
+          :title="$t('nezhawikiVersion') + $config.nazhua.nezhaVersion"
           target="_blank"
-        >哪吒监控</a>
+        >{{ $t('nezhawiki') }}</a>
       </span>
       <span class="text">
         Theme By <a

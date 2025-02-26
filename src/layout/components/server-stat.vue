@@ -8,7 +8,7 @@
       class="server-stat server-stat--transfer"
     >
       <span class="server-stat-label">
-        <span class="text">流量</span>
+        <span class="text">{{ $t('traffic') }}</span>
       </span>
       <div class="server-stat-content">
         <span class="server-stat-item server-stat-item--in">
@@ -36,7 +36,7 @@
       class="server-stat server-stat--net-speed"
     >
       <span class="server-stat-label">
-        <span class="text">网速</span>
+        <span class="text">{{ $t('netSpeed') }}</span>
       </span>
       <div class="server-stat-content">
         <span class="server-stat-item server-stat-item--in">
@@ -212,6 +212,11 @@ const serverStat = computed(() => {
     gap: 8px;
     line-height: 16px;
     font-size: 12px;
+
+    .server-stat-label {
+      min-width: 2.5em;
+      text-transform: uppercase;
+    }
 
     .server-stat-content {
       flex: 1;

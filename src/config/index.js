@@ -33,6 +33,13 @@ if (config.nazhua.nezhaVersion) {
   config.init = true;
 }
 
+function setLocale() {
+  if (config.nazhua.locale) {
+    document.body.classList.add(`locale-${config.nazhua.locale}`);
+  }
+}
+setLocale();
+
 function setColorMode() {
   if (config.nazhua.simpleColorMode) {
     document.body.classList.add('simple-color-mode');

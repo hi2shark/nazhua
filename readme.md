@@ -217,21 +217,25 @@ server {
 例如：(*参考内容在文档上不一定是最新，具体参考public/config.js或者[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)*)
 ```javascript
 window.$$nazhuaConfig = {
+  locale: 'en', // 国际化支持 en | zh-CN
   title: '哪吒监控', // 网站标题
-  footerSlogan: '不要年付！不要年付！不要年付！<span style="color: #f00;">欢迎访问Nazhua探针</span>',
+  footerSlogan: '不要年付！不要年付！不要年付！<span style="color: #f00;">欢迎访问Nazhua探针</span>', // 底部标语
   freeAmount: '白嫖', // 免费服务的费用名称
   infinityCycle: '长期有效', // 无限周期名称
   buyBtnText: '购买', // 购买按钮文案
+  buyBtnIcon: '', // 购买按钮图标，取自remixicon
   customBackgroundImage: '', // 自定义的背景图片地址
   lightBackground: true, // 启用了浅色系背景图，会强制关闭点点背景
   showFireworks: true, // 是否显示烟花，建议开启浅色系背景
   showLantern: true, // 是否显示灯笼
+  enableInnerSearch: true, // 启用内部搜索
   listServerItemTypeToggle: true, // 服务器列表项类型切换
   listServerItemType: 'row', // 服务器列表项类型 card/row row列表模式移动端自动切换至card
   listServerStatusType: 'progress', // 服务器状态类型--列表
   listServerRealTimeShowLoad: true, // 列表显示服务器实时负载
   detailServerStatusType: 'progress', // 服务器状态类型--详情页
-  serverStatusLinear: true, // 服务器状态渐变线性显示
+  simpleColorMode: true, // 服务器状态纯色显示
+  serverStatusLinear: true, // 服务器状态渐变线性显示 - 与pureColorMode互斥
   disableSarasaTermSC: true, // 禁用Sarasa Term SC字体
   hideWorldMap: false, // 隐藏地图
   hideHomeWorldMap: false, // 隐藏首页地图
@@ -260,6 +264,7 @@ window.$$nazhuaConfig = {
   v1DashboardUrl: '/dashboard', // v1版本控制台地址
   v1HideNezhaDashboardBtn: true, // v1版本导航栏控制台入口/登录按钮 在nezhaVersion为v1时有效
   routeMode: 'h5', // 路由模式
+  customFavicon: '', // 自定义favicon, 填写完整的url地址
 };
 ```
 可以通过[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)快速生成config.js配置文件

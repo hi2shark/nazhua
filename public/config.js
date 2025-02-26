@@ -1,4 +1,5 @@
 window.$$nazhuaConfig = {
+  // locale: 'en', // 国际化支持 en | zh-CN
   // title: '哪吒监控', // 网站标题
   // footerSlogan: '不要年付！不要年付！不要年付！<span style="color: #f00;">欢迎访问Nazhua探针</span>',
   // freeAmount: '白嫖', // 免费服务的费用名称

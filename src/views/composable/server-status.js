@@ -2,6 +2,7 @@ import {
   computed,
 } from 'vue';
 import config from '@/config';
+import i18n from '@/i18n';
 import validate from '@/utils/validate';
 import * as hostUtils from '@/utils/host';
 
@@ -115,7 +116,7 @@ export default (params) => {
           },
           valText,
           valPercent,
-          label: 'CPU',
+          label: i18n.global.t('cpu'),
           content: {
             default: cpuInfo.value?.core || CoresVal,
             mobile: CoresVal,
@@ -146,10 +147,14 @@ export default (params) => {
           },
           valText,
           valPercent: `${useMemAndTotalMem.value.usePercent.toFixed(1) * 1}%`,
-          label: '内存',
+          label: i18n.global.t('mem'),
           content: {
-            default: `运行内存${contentVal}`,
-            mobile: `内存${contentVal}`,
+            default: i18n.global.t('rams', {
+              ramComputed: contentVal,
+            }),
+            mobile: i18n.global.t('mems', {
+              memComputed: contentVal,
+            }),
           },
         };
       }
@@ -180,10 +185,14 @@ export default (params) => {
           },
           valText,
           valPercent: `${useSwapAndTotalSwap.value.usePercent.toFixed(1) * 1}%`,
-          label: '交换',
+          label: i18n.global.t('swap'),
           content: {
-            default: `交换内存${contentVal}`,
-            mobile: `交换${contentVal}`,
+            default: i18n.global.t('swapMem', {
+              swapComputed: contentVal,
+            }),
+            mobile: i18n.global.t('swaps', {
+              swapComputed: contentVal,
+            }),
           },
         };
       }
@@ -211,10 +220,14 @@ export default (params) => {
           },
           valText,
           valPercent: `${useDiskAndTotalDisk.value.usePercent.toFixed(1) * 1}%`,
-          label: '磁盘',
+          label: i18n.global.t('disk'),
           content: {
-            default: `磁盘容量${contentValue}`,
-            mobile: `磁盘${contentValue}`,
+            default: i18n.global.t('diskCapacity', {
+              diskComputed: contentValue,
+            }),
+            mobile: i18n.global.t('disks', {
+              diskComputed: contentValue,
+            }),
           },
         };
       }

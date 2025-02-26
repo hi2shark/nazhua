@@ -2,6 +2,7 @@ import {
   computed,
 } from 'vue';
 import dayjs from 'dayjs';
+import i18n from '@/i18n';
 import config from '@/config';
 import validate from '@/utils/validate';
 import * as dateUtils from '@/utils/date';
@@ -36,7 +37,7 @@ export default (params) => {
           case 'mo':
           case 'month':
           case 'monthly':
-            cycleLabel = '月';
+            cycleLabel = i18n.global.t('monthly');
             months = 1;
             break;
           case '年':
@@ -44,12 +45,12 @@ export default (params) => {
           case 'yr':
           case 'year':
           case 'annual':
-            cycleLabel = '年';
+            cycleLabel = i18n.global.t('yearly');
             months = 12;
             break;
           case '季':
           case 'quarterly':
-            cycleLabel = '季';
+            cycleLabel = i18n.global.t('quarterly');
             months = 3;
             break;
           case '半':
@@ -57,7 +58,7 @@ export default (params) => {
           case 'h':
           case 'half':
           case 'semi-annually':
-            cycleLabel = '半年';
+            cycleLabel = i18n.global.t('halfYearly');
             months = 6;
             break;
           default:
@@ -70,13 +71,13 @@ export default (params) => {
         let amountValue = billingDataMod.amount;
         let label;
         if (billingDataMod.amount.toString() === '-1') {
-          amountValue = '按量';
-          label = cycleLabel ? `每${cycleLabel}` : '';
+          amountValue = i18n.global.t('payg');
+          label = cycleLabel ? i18n.global.t('cycleLabel', { cycleLabel }) : '';
         } else if (billingDataMod.amount.toString() === '0') {
-          amountValue = config.nazhua.freeAmount || '免费';
+          amountValue = config.nazhua.freeAmount || i18n.global.t('free');
           isFree = true;
         } else {
-          label = cycleLabel ? `${cycleLabel}付` : '';
+          label = cycleLabel ? i18n.global.t('cycleLabelSuffix', { cycleLabel }) : '';
         }
         obj.billing = {
           label,
@@ -96,8 +97,8 @@ export default (params) => {
         const endTime = dayjs(endDate).valueOf();
         if (endDate.indexOf('0000-00-00') === 0) {
           obj.remainingTime = {
-            label: '剩余',
-            value: config.nazhua.infinityCycle || '长期有效',
+            label: i18n.global.t('remaining'),
+            value: config.nazhua.infinityCycle || i18n.global.t('infinityCycle'),
             type: 'infinity',
           };
         } else if (autoRenewal === '1') {
@@ -106,8 +107,8 @@ export default (params) => {
           if (endTime > nowTime) {
             const diff = dayjs(endTime).diff(dayjs(), 'day') + 1;
             obj.remainingTime = {
-              label: '剩余',
-              value: `${diff}天`,
+              label: i18n.global.t('remaining'),
+              value: i18n.global.t('days', { count: diff }),
               value2: diff,
               type: 'autoRenewal-endTime',
             };
@@ -116,8 +117,8 @@ export default (params) => {
             const nextTime = dateUtils.getNextCycleTime(endTime, months, nowTime);
             const diff = dayjs(nextTime).diff(dayjs(), 'day') + 1;
             obj.remainingTime = {
-              label: '剩余',
-              value: `${diff}天`,
+              label: i18n.global.t('remaining'),
+              value: i18n.global.t('days', { count: diff }),
               value2: diff,
               type: 'autoRenewal-nextTime',
             };
@@ -125,15 +126,15 @@ export default (params) => {
         } else if (endTime > nowTime) {
           const diff = dayjs(endTime).diff(dayjs(), 'day') + 1;
           obj.remainingTime = {
-            label: '剩余',
-            value: `${diff}天`,
+            label: i18n.global.t('remaining'),
+            value: i18n.global.t('days', { count: diff }),
             value2: diff,
             type: 'endTime',
           };
         } else {
           obj.remainingTime = {
-            label: '剩余',
-            value: '已过期',
+            label: i18n.global.t('remaining'),
+            value: i18n.global.t('expired'),
             type: 'expired',
           };
         }
@@ -142,19 +143,19 @@ export default (params) => {
       if (planDataMod) {
         if (planDataMod.bandwidth) {
           obj.bandwidth = {
-            label: '带宽',
+            label: i18n.global.t('bandwidth'),
             value: planDataMod.bandwidth,
           };
         }
         if (planDataMod.trafficVol) {
-          let trafficTypeLabel = '双向';
+          let trafficTypeLabel = i18n.global.t('trafficDouble');
           if (planDataMod.trafficType === '1') {
-            trafficTypeLabel = '单向出';
+            trafficTypeLabel = i18n.global.t('trafficSingleOut');
           } else if (planDataMod.trafficType === '3') {
-            trafficTypeLabel = '单向取最大';
+            trafficTypeLabel = i18n.global.t('trafficSingleMax');
           }
           obj.traffic = {
-            label: `${trafficTypeLabel}流量`,
+            label: trafficTypeLabel,
             value: planDataMod.trafficVol,
           };
         }

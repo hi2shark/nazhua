@@ -16,7 +16,7 @@
           ref="searchInputRef"
           v-model.trim="searchWord"
           type="text"
-          placeholder="可搜索服务器名称、标签、系统、国别代码"
+          :placeholder="$t('searchPlaceholder')"
           class="search-box-input"
           @input="onSearchInput"
           @keydown.enter="onSearchInput"

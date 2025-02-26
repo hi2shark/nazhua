@@ -2,6 +2,7 @@ import {
   computed,
 } from 'vue';
 import dayjs from 'dayjs';
+import i18n from '@/i18n';
 import validate from '@/utils/validate';
 import * as dateUtils from '@/utils/date';
 import * as hostUtils from '@/utils/host';
@@ -79,7 +80,7 @@ export default (params) => {
     let ruleStat;
     ruleStat = total;
     result.statType = 'Total';
-    result.statTypeLabel = '双向';
+    result.statTypeLabel = i18n.global.t('trafficDouble');
     if (props.info?.PublicNote && validate.isSet(props.info.PublicNote?.planDataMod?.trafficType)) {
       const {
         trafficType = 2,
@@ -88,17 +89,17 @@ export default (params) => {
         case 1:
           ruleStat = props.info.State.NetOutTransfer;
           result.statType = 'Out';
-          result.statTypeLabel = '单向出';
+          result.statTypeLabel = i18n.global.t('trafficSingleOut');
           break;
         case 3:
           if (props.info?.State?.NetOutTransfer >= props.info?.State?.NetInTransfer) {
             ruleStat = props.info.State.NetOutTransfer;
             result.statType = 'MaxOut';
-            result.statTypeLabel = '最大出';
+            result.statTypeLabel = i18n.global.t('trafficSingleMax');
           } else if (props.info?.State?.NetOutTransfer < props.info?.State?.NetInTransfer) {
             ruleStat = props.info.State.NetInTransfer;
             result.statType = 'MaxIn';
-            result.statTypeLabel = '最大入';
+            result.statTypeLabel = i18n.global.t('trafficSingleMax');
           }
           break;
         default:
@@ -209,12 +210,12 @@ export default (params) => {
       case 'duration':
         return {
           key,
-          label: '在线',
+          label: i18n.global.t('online'),
           value: duration.value?.value,
           unit: duration.value?.unit,
           show: validate.isSet(duration.value?.value),
         };
-      case 'transfer':
+      case 'traffic':
         return {
           key,
           label: `${transfer.value.statTypeLabel}流量`,
@@ -225,7 +226,7 @@ export default (params) => {
       case 'inTransfer':
         return {
           key,
-          label: '入网流量',
+          label: i18n.global.t('inTransfer'),
           value: inTransfer.value?.value,
           unit: inTransfer.value?.unit,
           show: validate.isSet(inTransfer.value?.value),
@@ -233,7 +234,7 @@ export default (params) => {
       case 'outTransfer':
         return {
           key,
-          label: '出网流量',
+          label: i18n.global.t('outTransfer'),
           value: outTransfer.value?.value,
           unit: outTransfer.value?.unit,
           show: validate.isSet(outTransfer.value?.value),
@@ -241,7 +242,7 @@ export default (params) => {
       case 'inSpeed':
         return {
           key,
-          label: '入网',
+          label: i18n.global.t('inSpeed'),
           value: netInSpeed.value?.value,
           unit: netInSpeed.value?.unit,
           show: validate.isSet(netInSpeed.value?.value),
@@ -249,7 +250,7 @@ export default (params) => {
       case 'outSpeed':
         return {
           key,
-          label: '出网',
+          label: i18n.global.t('outSpeed'),
           value: netOutSpeed.value?.value,
           unit: netOutSpeed.value?.unit,
           show: validate.isSet(netOutSpeed.value?.value),
@@ -257,18 +258,18 @@ export default (params) => {
       case 'speeds':
         return {
           key,
-          label: '网速',
+          label: i18n.global.t('speeds'),
           values: [
             {
               key: 'in',
-              label: '入网',
+              label: i18n.global.t('inSpeed'),
               value: netInSpeed.value?.value,
               unit: netInSpeed.value?.unit,
               show: validate.isSet(netInSpeed.value?.value),
             },
             {
               key: 'out',
-              label: '出网',
+              label: i18n.global.t('outSpeed'),
               value: netOutSpeed.value?.value,
               unit: netOutSpeed.value?.unit,
               show: validate.isSet(netOutSpeed.value?.value),
@@ -279,7 +280,7 @@ export default (params) => {
       case 'load':
         return {
           key,
-          label: '负载',
+          label: i18n.global.t('load'),
           value: (props.info.State?.Load1 || 0).toFixed(2),
           unit: '',
           show: validate.isSet(props.info.State?.Load1),

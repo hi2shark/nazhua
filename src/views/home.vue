@@ -84,6 +84,9 @@ import {
 import {
   useStore,
 } from 'vuex';
+import {
+  useI18n,
+} from 'vue-i18n';
 
 import config from '@/config';
 import {
@@ -100,7 +103,9 @@ import ServerListWarp from './components/server-list/server-list-warp.vue';
 import ServerCardItem from './components/server-list/card/server-list-item.vue';
 import ServerRowItem from './components/server-list/row/server-list-item.vue';
 
+const i18n = useI18n();
 const store = useStore();
+
 const worldMapWidth = ref();
 const windowWidth = ref(window.innerWidth);
 
@@ -163,21 +168,21 @@ const tagOptions = computed(() => store.state.serverGroup.map((i) => ({
   key: uuid(),
   label: i.name,
   value: i.name,
-  title: `${i.servers.length}台`,
+  title: i18n.t('servers', { count: i.servers.length }),
 })));
 
 const onlineOptions = computed(() => {
   if (serverCount.value?.total !== serverCount.value?.online) {
     return [{
       key: 'online',
-      label: '在线',
+      label: i18n.t('online'),
       value: '1',
-      title: `${serverCount.value.online}台`,
+      title: i18n.t('servers', { count: serverCount.value.online }),
     }, {
       key: 'offline',
-      label: '离线',
+      label: i18n.t('offline'),
       value: '-1',
-      title: `${serverCount.value.offline}台`,
+      title: i18n.t('servers', { count: serverCount.value.offline }),
     }];
   }
   return [];
@@ -185,12 +190,12 @@ const onlineOptions = computed(() => {
 
 const listTypeOptions = computed(() => [{
   key: 'card',
-  label: '卡片',
+  label: i18n.t('card'),
   value: 'card',
   icon: 'ri-gallery-view-2',
 }, {
   key: 'row',
-  label: '列表',
+  label: i18n.t('list'),
   value: 'row',
   icon: 'ri-list-view',
 }]);
@@ -281,7 +286,10 @@ const serverLocations = computed(() => {
         y,
         code,
         size: count2size(servers.length),
-        label: `${name},${servers.length}台`,
+        label: i18n.t('mapPointServerLabel', {
+          name,
+          count: servers.length,
+        }),
         servers,
       });
     }

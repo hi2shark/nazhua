@@ -4,6 +4,7 @@ import {
   createWebHashHistory,
 } from 'vue-router';
 import config from '@/config';
+import i18n from '@/i18n';
 import pageTitle from '@/utils/page-title';
 
 const constantRoutes = [{
@@ -15,7 +16,7 @@ const constantRoutes = [{
   path: '/:serverId(\\d+)',
   component: () => import('@/views/detail.vue'),
   meta: {
-    title: '节点详情',
+    title: () => i18n.global.t('serverDetail'),
   },
   props: true,
 }, {
@@ -42,7 +43,8 @@ const router = createRouter(routerOptions);
 
 router.beforeResolve((to, from, next) => {
   if (to?.meta?.title) {
-    pageTitle(to?.meta?.title);
+    const title = typeof to.meta.title === 'function' ? to.meta.title() : to.meta.title;
+    pageTitle(title);
   } else if (to.name === 'Home') {
     pageTitle(config.nazhua.title);
   }

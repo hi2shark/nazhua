@@ -2,7 +2,7 @@
   <dot-dot-box class="server-info-box">
     <div class="server-info-group server-info--cpu">
       <div class="server-info-label">
-        CPU
+        {{ $t('cpu') }}
       </div>
       <div class="server-info-content">
         <template v-if="info?.Host?.CPU?.length === 1">
@@ -33,7 +33,7 @@
       class="server-info-group server-info--gpu"
     >
       <div class="server-info-label">
-        GPU
+        {{ $t('gpu') }}
       </div>
       <div class="server-info-content">
         <template v-if="gpuList.length === 1">
@@ -64,7 +64,7 @@
       class="server-info-group server-info--temperature"
     >
       <div class="server-info-label">
-        温度
+        {{ $t('temperature') }}
       </div>
       <div class="server-info-content">
         <div class="server-info-item-group">
@@ -93,7 +93,7 @@
     </div>
     <div class="server-info-group server-info--system-os">
       <div class="server-info-label">
-        系统
+        {{ $t('systemOS') }}
       </div>
       <div class="server-info-content">
         <span class="server-info-item">
@@ -109,16 +109,16 @@
     </div>
     <div class="server-info-group server-info--load">
       <div class="server-info-label">
-        占用
+        {{ $t('occupancy') }}
       </div>
       <div class="server-info-content">
         <div class="server-info-item-group">
           <span class="server-info-item process-count">
-            <span class="server-info-item-label">进程数</span>
+            <span class="server-info-item-label">{{ $t('processCount') }}</span>
             <span class="server-info-item-value">{{ processCount }}</span>
           </span>
           <span class="server-info-item load">
-            <span class="server-info-item-label">负载</span>
+            <span class="server-info-item-label">{{ $t('load') }}</span>
             <span class="server-info-item-value">
               {{ sysLoadInfo }}
             </span>
@@ -128,19 +128,19 @@
     </div>
     <div class="server-info-group server-info--transfer">
       <div class="server-info-label">
-        流量
+        {{ $t('traffic') }}
       </div>
       <div class="server-info-content">
         <div class="server-info-item-group">
           <span class="server-info-item transfer--in">
-            <span class="server-info-item-label">入网</span>
+            <span class="server-info-item-label">{{ $t('inTransfer') }}</span>
             <span class="server-info-item-value">
               <span class="text-value">{{ transfer?.in?.value }}</span>
               <span class="text-unit">{{ transfer?.in?.unit }}</span>
             </span>
           </span>
           <span class="server-info-item transfer--out">
-            <span class="server-info-item-label">出网</span>
+            <span class="server-info-item-label">{{ $t('outTransfer') }}</span>
             <span class="server-info-item-value">
               <span class="text-value">{{ transfer?.out?.value }}</span>
               <span class="text-unit">{{ transfer?.out?.unit }}</span>
@@ -151,16 +151,16 @@
     </div>
     <div class="server-info-group server-info--conn">
       <div class="server-info-label">
-        连接
+        {{ $t('conn') }}
       </div>
       <div class="server-info-content">
         <div class="server-info-item-group">
           <span class="server-info-item conn--tcp">
-            <span class="server-info-item-label">TCP</span>
+            <span class="server-info-item-label">{{ $t('tcp') }}</span>
             <span class="server-info-item-value">{{ tcpConnCount }}</span>
           </span>
           <span class="server-info-item conn--tcp">
-            <span class="server-info-item-label">UDP</span>
+            <span class="server-info-item-label">{{ $t('udp') }}</span>
             <span class="server-info-item-value">{{ udpConnCount }}</span>
           </span>
         </div>
@@ -168,7 +168,7 @@
     </div>
     <div class="server-info-group server-info--boottime">
       <div class="server-info-label">
-        启动
+        {{ $t('boot') }}
       </div>
       <div class="server-info-content">
         <span class="server-info-item runtime--boottime">
@@ -178,7 +178,7 @@
     </div>
     <div class="server-info-group server-info--lasttime">
       <div class="server-info-label">
-        活跃
+        {{ $t('active') }}
       </div>
       <div class="server-info-content">
         <span class="server-info-item runtime--lasttime">
@@ -191,7 +191,7 @@
       class="server-info-group server-info--biil-plan"
     >
       <div class="server-info-label">
-        套餐
+        {{ $t('billPlan') }}
       </div>
       <div class="server-info-content">
         <div class="server-info-item-group">
@@ -214,7 +214,7 @@
       class="server-info-group server-info--tag-list"
     >
       <div class="server-info-label">
-        标签
+        {{ $t('tag') }}
       </div>
       <div class="server-info-content">
         <div class="server-info-tag-list">
@@ -257,12 +257,17 @@
 import {
   computed,
 } from 'vue';
+import {
+  useI18n,
+} from 'vue-i18n';
 import dayjs from 'dayjs';
+
 import config from '@/config';
 import * as hostUtils from '@/utils/host';
 
 import handleServerBillAndPlan from '@/views/composable/server-bill-and-plan';
 
+const i18n = useI18n();
 const props = defineProps({
   info: {
     type: Object,
@@ -357,14 +362,14 @@ const temperatureData = computed(() => {
 
     if (acpitz.length) {
       data.push({
-        label: '主板',
+        label: i18n.t('acpitz'),
         value: `${acpitz[0]}℃`,
         type: 'acpitz',
       });
       if (acpitz.length) {
         const acpitzMean = (acpitz.reduce((a, b) => a + b, 0) / acpitz.length).toFixed(1) * 1;
         data.push({
-          label: '主板平均',
+          label: i18n.t('acpitzMean'),
           value: `${acpitzMean}℃`,
           title: acpitz.map((i, index) => `传感器${index + 1}: ${i}℃`).join('\n'),
           type: 'acpitz-mean',
@@ -373,7 +378,7 @@ const temperatureData = computed(() => {
     }
     if (coretemp_package_id.length) {
       data.push({
-        label: 'CPU温度',
+        label: i18n.t('coretempPackage'),
         value: coretemp_package_id.map((i) => i.value).join(', '),
         title: coretemp_package_id.length > 1
           ? coretemp_package_id.map((i) => `CPU.${i.index + 1}: ${i.value}`).join('\n')
@@ -384,7 +389,7 @@ const temperatureData = computed(() => {
     if (coretemp_core.length) {
       const coretempCoreMean = (coretemp_core.reduce((a, b) => a + b.value, 0) / coretemp_core.length).toFixed(1) * 1;
       data.push({
-        label: '核心平均',
+        label: i18n.t('coretempCoreMean'),
         value: `${coretempCoreMean}℃`,
         title: coretemp_core.map((i) => `核心${i.index + 1}: ${i.value}℃`).join('\n'),
         type: 'coretemp-core',
@@ -401,19 +406,13 @@ const temperatureData = computed(() => {
       // 当最高温度的核心温度比平均温度高 20% 时，显示
       if (max / coretempCoreMean > 1.2) {
         data.push({
-          label: `最热核心.${maxCore + 1}`,
+          label: `${i18n.t('coretempMaxCore')}.${maxCore + 1}`,
           value: `${max}℃`,
           type: 'coretemp-max-core',
         });
       }
     }
     if (other.length) {
-      // data.push({
-      //   type: 'other',
-      //   label: '其它',
-      //   value: '...',
-      //   title: other.map((i) => `${i.label}: ${i.value}`).join('\n'),
-      // });
       other.forEach((i) => {
         data.push({
           label: i.label,
@@ -459,11 +458,11 @@ const tagList = computed(() => {
     list.push(...extra?.split?.(','));
   }
   if (IPv4 === '1' && IPv6 === '1') {
-    list.push('双栈IP');
+    list.push(i18n.t('ipv4ipv6'));
   } else if (IPv4 === '1') {
-    list.push('仅IPv4');
+    list.push(i18n.t('ipv4'));
   } else if (IPv6 === '1') {
-    list.push('仅IPv6');
+    list.push(i18n.t('ipv6'));
   }
   return list;
 });
@@ -541,6 +540,7 @@ const processCount = computed(() => props.info?.State?.ProcessCount);
       text-align: center;
       line-height: var(--server-info-item-size);
       color: #ccc;
+      text-transform: uppercase;
     }
 
     .server-info-content {
@@ -658,6 +658,14 @@ const processCount = computed(() => props.info?.State?.ProcessCount);
         line-height: 20px;
       }
     }
+  }
+}
+</style>
+
+<style lang="scss">
+body.locale-en {
+  .server-info-label {
+    text-align: left !important;
   }
 }
 </style>

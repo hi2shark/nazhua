@@ -1,3 +1,4 @@
+import i18n from './i18n';
 import './load';
 import './assets/scss/base.scss';
 import router from './router';
@@ -8,6 +9,7 @@ import DotDotBox from './components/dot-dot-box.vue';
 import Popover from './components/popover.vue';
 
 export default (app) => {
+  app.use(i18n);
   app.use(router);
   app.use(store);
   app.component('DotDotBox', DotDotBox);

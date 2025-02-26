@@ -11,7 +11,7 @@
       :used="item.used"
       :colors="item.colors"
       :val-text="item.valPercent"
-      :val-percent="`${item.label}使用${item.valText}`"
+      :val-percent="`${item.label}${$t('used')}${item.valText}`"
       :label="item.label"
     />
   </div>

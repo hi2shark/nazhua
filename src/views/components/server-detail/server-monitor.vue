@@ -7,16 +7,16 @@
     <div class="module-head-group">
       <div class="left-box">
         <span class="module-title">
-          网络监控
+          {{ $t('networkMonitor') }}
         </span>
       </div>
       <div class="right-box">
         <div
           class="refresh-data-group"
-          title="是否自动刷新"
+          :title="$t('networkMonitorRefresh')"
           @click="switchRefresh"
         >
-          <span class="label-text">刷新</span>
+          <span class="label-text">{{ $t('refreshLabel') }}</span>
           <div
             class="switch-box"
             :class="{
@@ -28,10 +28,10 @@
         </div>
         <div
           class="peak-shaving-group"
-          title="过滤太高或太低的数据"
+          :title="$t('networkMonitorPeakShavingTips')"
           @click="switchPeakShaving"
         >
-          <span class="label-text">削峰</span>
+          <span class="label-text">{{ $t('networkMonitorPeakShaving') }}</span>
           <div
             class="switch-box"
             :class="{
@@ -43,7 +43,7 @@
         </div>
         <div class="last-update-time-group">
           <span class="last-update-time-label">
-            最近
+            {{ $t('networkMonitorLast') }}
           </span>
           <div class="minutes">
             <div
@@ -126,6 +126,9 @@ import {
   onUnmounted,
 } from 'vue';
 import { useStore } from 'vuex';
+import {
+  useI18n,
+} from 'vue-i18n';
 import config from '@/config';
 import request from '@/utils/request';
 import validate from '@/utils/validate';
@@ -136,6 +139,8 @@ import {
   getThreshold,
   getLineColor,
 } from '@/views/composable/server-monitor';
+
+const i18n = useI18n();
 
 const props = defineProps({
   info: {
@@ -148,22 +153,22 @@ const store = useStore();
 
 const minute = ref(1440);
 const minutes = [{
-  label: '30分钟',
+  label: i18n.t('minutes', { count: 30 }),
   value: 30,
 }, {
-  label: '1小时',
+  label: i18n.t('hours', { count: 1 }),
   value: 60,
 }, {
-  label: '3小时',
+  label: i18n.t('hours', { count: 3 }),
   value: 180,
 }, {
-  label: '6小时',
+  label: i18n.t('hours', { count: 6 }),
   value: 360,
 }, {
-  label: '12小时',
+  label: i18n.t('hours', { count: 12 }),
   value: 720,
 }, {
-  label: '24小时',
+  label: i18n.t('hours', { count: 24 }),
   value: 1440,
 }];
 const refreshData = ref(true);
@@ -275,8 +280,8 @@ const monitorChartData = computed(() => {
       }
       const titles = [
         cateItem.name,
-        cateItem.avg === 0 ? '' : `平均延迟：${cateItem.avg}ms`,
-        `成功率：${cateItem.over}%`,
+        cateItem.avg === 0 ? '' : `${i18n.t('avgDelay')}: ${cateItem.avg}ms`,
+        `${i18n.t('successRate')}: ${cateItem.over}%`,
       ];
       cateItem.title = titles.filter((s) => s).join('\n');
       cateList.push(cateItem);

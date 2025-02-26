@@ -28,17 +28,17 @@
     </div>
     <server-list-column
       prop="server-flag"
-      label="地区"
+      :label="$t('region')"
       :value="info?.Host?.CountryCode?.toUpperCase() || 'UN'"
     />
     <server-list-column
       prop="server-system"
-      label="系统"
+      :label="$t('system')"
       :value="platformSystemLabel || '-'"
     />
     <server-list-column
       prop="cpu-mem"
-      label="配置"
+      :label="$t('config')"
       :value="cpuAndMemAndDisk || '-'"
     />
     <server-list-item-status

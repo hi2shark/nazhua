@@ -4,21 +4,19 @@
     class="server-count-group"
   >
     <span class="server-count server-count--total">
-      <span class="text">共</span>
-      <span class="value">{{ serverCount.total }}</span>
-      <span class="text">台服务器</span>
+      <span class="text">{{ $t('serverTotal', { count: serverCount.total }) }}</span>
     </span>
     <template v-if="serverCount.online !== serverCount.total">
       <span
         class="server-count server-count--online"
       >
-        <span class="text">在线</span>
+        <span class="text">{{ $t('online') }}</span>
         <span class="value">{{ serverCount.online }}</span>
       </span>
       <span
         class="server-count server-count--offline"
       >
-        <span class="text">离线</span>
+        <span class="text">{{ $t('offline') }}</span>
         <span class="value">{{ serverCount.offline }}</span>
       </span>
     </template>

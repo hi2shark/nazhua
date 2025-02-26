@@ -2,19 +2,19 @@
   <server-list-column
     v-if="extraFields?.remainingTime"
     prop="remaining-time"
-    label="剩余"
+    :label="$t('remainingTime')"
     :value="billAndPlan?.remainingTime?.value || '-'"
   />
   <server-list-column
     v-if="extraFields?.billing"
     prop="billing"
-    label="费用"
+    :label="$t('billing')"
     :value="billAndPlan?.billing?.value || '-'"
   />
   <server-list-column
     v-if="extraFields?.orderLink"
     prop="order-link"
-    label="链接"
+    :label="$t('orderLink')"
     :slot-content="true"
   >
     <span
@@ -36,12 +36,17 @@ import {
   inject,
   computed,
 } from 'vue';
+import {
+  useI18n,
+} from 'vue-i18n';
 
 import config from '@/config';
 
 import handleServerBillAndPlan from '@/views/composable/server-bill-and-plan';
 
 import ServerListColumn from './server-list-column.vue';
+
+const i18n = useI18n();
 
 const props = defineProps({
   info: {
@@ -66,7 +71,7 @@ const buyBtnText = computed(() => {
   if (props.info?.PublicNote?.customData?.buyBtnText) {
     return props.info?.PublicNote?.customData?.buyBtnText;
   }
-  return config.nazhua.buyBtnText || '购买';
+  return config.nazhua.buyBtnText || i18n.t('buy');
 });
 const showBuyBtn = computed(() => !!props.info?.PublicNote?.customData?.orderLink);
 

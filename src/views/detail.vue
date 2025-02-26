@@ -48,6 +48,9 @@ import {
 import {
   useRouter,
 } from 'vue-router';
+import {
+  useI18n,
+} from 'vue-i18n';
 
 import config from '@/config';
 import {
@@ -61,6 +64,8 @@ import ServerName from './components/server-detail/server-name.vue';
 import ServerStatusBox from './components/server-detail/server-status-box.vue';
 import ServerInfoBox from './components/server-detail/server-info-box.vue';
 import ServerMonitor from './components/server-detail/server-monitor.vue';
+
+const i18n = useI18n();
 
 const props = defineProps({
   serverId: {
@@ -132,7 +137,7 @@ function handleWorldMapWidth() {
 
 watch(() => info.value, (oldValue, newValue) => {
   if (!oldValue && newValue && router.currentRoute.value.name === 'ServerDetail') {
-    pageTitle(newValue?.Name, '节点详情');
+    pageTitle(newValue?.Name, i18n.t('serverDetail'));
     handleWorldMapWidth();
   }
 });
@@ -147,7 +152,7 @@ watch(() => dataInit.value, () => {
 
 onMounted(() => {
   if (info.value) {
-    pageTitle(info.value?.Name, '节点详情');
+    pageTitle(info.value?.Name, i18n.t('serverDetail'));
     handleWorldMapWidth();
   }
   window.addEventListener('resize', handleWorldMapWidth);
