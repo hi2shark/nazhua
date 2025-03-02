@@ -26,6 +26,7 @@ window.$$nazhuaConfig = {
   // hideListItemStatusDonut: false, // 隐藏列表项的饼图
   // hideListItemStat: false, // 隐藏列表项的统计信息
   // hideListItemBill: false, // 隐藏列表项的账单信息
+  hideListItemLink: true, // 隐藏列表项的购买链接
   // hideFilter: false, // 隐藏筛选
   // hideTag: false, // 隐藏标签
   // hideDotBG: true, // 隐藏框框里面的点点背景
