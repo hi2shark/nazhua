@@ -73,6 +73,8 @@ export default {
   coretempPackage: 'CPU Temp',
   coretempCore: 'Core Average',
   coretempMaxCore: 'Hottest Core',
+  sensor: 'Sensor',
+  core: 'Core',
 
   // System Status
   systemOS: 'Sys',

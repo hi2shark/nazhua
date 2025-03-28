@@ -92,7 +92,7 @@
                       class="ri-hard-drive-3-line"
                     />
                     <i
-                      v-else-if="ttItem.type === 'motherboard'"
+                      v-else-if="ttItem.type === 'acpitz'"
                       class="ri-instance-line"
                     />
                     <i
@@ -401,11 +401,16 @@ const temperatureData = computed(() => {
         });
         return;
       }
-      if (name.includes('motherboard') || name.includes('mainboard') || name.includes('board')) {
+      if (
+        name.includes('motherboard')
+        || name.includes('mainboard')
+        || name.includes('board')
+        || name.includes('acpitz')
+      ) {
         other.push({
-          label: '主板',
+          label: i18n.t('acpitz'),
           value: temp,
-          type: 'motherboard',
+          type: 'acpitz',
         });
         return;
       }
@@ -422,7 +427,7 @@ const temperatureData = computed(() => {
       data.push({
         label: i18n.t('acpitz'),
         value: `${acpitzMean}℃`,
-        title: acpitz.map((i, index) => `传感器${index + 1}: ${parseFloat(i).toFixed(1)}℃`).join('\n'),
+        title: acpitz.map((i, index) => `${i18n.t('sensor')}${index + 1}: ${parseFloat(i).toFixed(1)}℃`).join('\n'),
         type: 'acpitz',
       });
     }
@@ -443,7 +448,9 @@ const temperatureData = computed(() => {
       if (coretemp_core.length) {
         const coreMean = (coretemp_core.reduce((a, b) => a + b.value, 0) / coretemp_core.length).toFixed(1);
         temps.push(`${parseFloat(coreMean).toFixed(1)}℃`);
-        details.push(...coretemp_core.map((i) => `核心${i.index + 1}: ${parseFloat(i.value).toFixed(1)}℃`));
+        details.push(
+          ...coretemp_core.map((i) => `${i18n.t('core')}${i.index + 1}: ${parseFloat(i.value).toFixed(1)}℃`),
+        );
       }
 
       data.push({

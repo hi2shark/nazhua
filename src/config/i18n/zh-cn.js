@@ -72,6 +72,8 @@ export default {
   coretempPackage: 'CPU温度',
   coretempCore: '核心平均',
   coretempMaxCore: '最热核心',
+  sensor: '传感器',
+  core: '核心',
 
   // 系统状态
   systemOS: '系统',
