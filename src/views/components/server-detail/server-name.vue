@@ -211,9 +211,16 @@ const platformLogoIconClassName = computed(() => hostUtils.getPlatformLogoIconCl
         font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
         font-weight: 600;
       }
+
       &--amd {
         font-weight: bold;
         font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+      }
+
+      &--apple {
+        font-weight: 600;
+        font-family: PingFang SC, Arial, "Helvetica Neue", Helvetica, sans-serif;
+        border-radius: 3px;
       }
     }
 

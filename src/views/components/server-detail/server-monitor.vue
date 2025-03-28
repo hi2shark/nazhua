@@ -82,6 +82,9 @@
                 '--cate-color': cateItem.color,
               }"
               @click="toggleShowCate(cateItem.id)"
+              @touchstart="handleTouchStart(cateItem.id)"
+              @touchend="handleTouchEnd(cateItem.id)"
+              @touchmove="handleTouchMove(cateItem.id)"
             >
               <span class="cate-legend" />
               <span
@@ -174,8 +177,8 @@ const minutes = [{
 const refreshData = ref(true);
 const peakShaving = ref(false);
 const showCates = ref({});
-
 const monitorData = ref([]);
+const longPressTimer = ref(null);
 
 const now = ref(Date.now());
 const accpetShowTime = computed(() => now.value - (minute.value * 60 * 1000));
@@ -322,7 +325,30 @@ function toggleMinute(value) {
 }
 
 function toggleShowCate(id) {
+  if (window.innerWidth < 768) {
+    return;
+  }
   showCates.value[id] = !showCates.value[id];
+}
+
+function handleTouchStart(id) {
+  longPressTimer.value = setTimeout(() => {
+    showCates.value[id] = !showCates.value[id];
+  }, 500);
+}
+
+function handleTouchEnd() {
+  if (longPressTimer.value) {
+    clearTimeout(longPressTimer.value);
+    longPressTimer.value = null;
+  }
+}
+
+function handleTouchMove() {
+  if (longPressTimer.value) {
+    clearTimeout(longPressTimer.value);
+    longPressTimer.value = null;
+  }
 }
 
 async function loadMonitor() {
@@ -552,6 +578,10 @@ onUnmounted(() => {
     // background: rgba(#fff, 0.2);
     border-radius: 4px;
     cursor: pointer;
+
+    @media screen and (max-width: 768px) {
+      cursor: default;
+    }
 
     .cate-legend {
       width: 0.5em;

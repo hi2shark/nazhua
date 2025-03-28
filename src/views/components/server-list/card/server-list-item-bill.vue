@@ -112,7 +112,12 @@ const buyBtnText = computed(() => {
   }
   return config.nazhua.buyBtnText || '购买';
 });
-const showBuyBtn = computed(() => !!props.info?.PublicNote?.customData?.orderLink);
+const showBuyBtn = computed(() => {
+  if (config.nazhua.hideListItemLink === true) {
+    return false;
+  }
+  return !!props.info?.PublicNote?.customData?.orderLink;
+});
 
 function toBuy() {
   const decodeUrl = decodeURIComponent(props.info?.PublicNote?.customData?.orderLink);

@@ -234,7 +234,7 @@ const filterServerList = computed(() => {
       if (validate.isSet(planDataMod?.bandwidth)) {
         fields.bandwidth = true;
       }
-      if (validate.isSet(customData?.orderLink)) {
+      if (validate.isSet(customData?.orderLink) && config.nazhua.hideListItemLink !== true) {
         fields.orderLink = true;
       }
     }

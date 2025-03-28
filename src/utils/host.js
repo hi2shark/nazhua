@@ -46,68 +46,146 @@ export function getCPUInfo(text = '') {
     [cpuInfo.model] = modelMatch;
   }
   if (text.includes('Ryzen')) {
-    // 5900X 5950X 7900X 7950X 9900X 9950X
-    const modelNumReg = /Ryzen.*(\d{4}X)/;
+    // 匹配各种Ryzen型号：
+    // - 标准型号: 5900X, 5950X, 7900X, 7950X, 9900X, 9950X
+    // - 普通型号: 3600, 5600, 7600
+    // - G系列APU: 5700G, 3400G
+    // - XT系列: 3600XT, 5600XT
+    // - 移动版: 4800U, 5800H, 6800HS
+    const modelNumReg = /Ryzen\s*(?:\d|(?:TR))\s*(?:\d{4}(?:[A-Z]{1,2})?)/;
     const modelNumMatch = text.match(modelNumReg);
     if (modelNumMatch) {
-      [, cpuInfo.modelNum] = modelNumMatch;
+      cpuInfo.modelNum = modelNumMatch[0].replace(/Ryzen\s*(?:\d|(?:TR))\s*/, '');
+    } else {
+      // 备用正则表达式，尝试匹配其他可能的格式
+      const altModelNumReg = /Ryzen.*?(\d{3,4}(?:[A-Z]{0,2}))/;
+      const altModelNumMatch = text.match(altModelNumReg);
+      if (altModelNumMatch) {
+        [, cpuInfo.modelNum] = altModelNumMatch;
+      }
     }
   }
   if (text.includes('EPYC')) {
-    // 7B13 7B13 9654...
-    const modelNumReg = /EPYC (\w{4})/;
+    // 匹配各种EPYC型号：
+    // - 第一代: 7001系列 (7351, 7551, 7601)
+    // - 第二代: 7002系列 (7252, 7542, 7742)
+    // - 第三代: 7003系列 (7313, 7543, 7763)
+    // - 第四代: 9004系列 (9124, 9354, 9654)
+    // - 特殊系列: 7Fxx, 7Hxx, 7Bxx (7F72, 7H12, 7B13)
+    const modelNumReg = /EPYC\s+(\d[A-Z0-9]{2,4})/i;
     const modelNumMatch = text.match(modelNumReg);
     if (modelNumMatch) {
       [, cpuInfo.modelNum] = modelNumMatch;
+    } else {
+      // 备用匹配，处理可能的其他格式
+      const altModelNumReg = /EPYC.*?(\d{4,5}[A-Z]?)/i;
+      const altModelNumMatch = text.match(altModelNumReg);
+      if (altModelNumMatch) {
+        [, cpuInfo.modelNum] = altModelNumMatch;
+      }
     }
   }
   // 匹配特定的CPU型号编号
   if (text.includes('Xeon')) {
+    // 匹配所有Xeon处理器系列
+    // - E系列: E3, E5, E7等
+    // - 金属系列: Platinum, Gold, Silver, Bronze
+    // - 数字系列: W-1290, D-1653N等
+    // - 扩展名系列: L, X, M, D等(如X7560, L5640)
     if (text.includes(' E')) {
-      // Xeon型号
-      const modelNumReg = /(E\d-\w+)/;
+      const modelNumReg = /(E\d-\d{4}(?:\s?v\d)?)/;
       const modelNumMatch = text.match(modelNumReg);
       if (modelNumMatch) {
         [, cpuInfo.modelNum] = modelNumMatch;
       }
-    }
-    if (text.includes('Gold')) {
-      // Xeon型号
-      const modelNumReg = /(Gold\s\w+)/;
+    } else if (text.includes('Platinum')) {
+      const modelNumReg = /(?:Platinum\s+)(\d{4}(?:\w)?)/;
       const modelNumMatch = text.match(modelNumReg);
       if (modelNumMatch) {
         [, cpuInfo.modelNum] = modelNumMatch;
       }
+    } else if (text.includes('Gold')) {
+      const modelNumReg = /(?:Gold\s+)(\d{4}(?:\w)?)/;
+      const modelNumMatch = text.match(modelNumReg);
+      if (modelNumMatch) {
+        [, cpuInfo.modelNum] = modelNumMatch;
+      }
+    } else if (text.includes('Silver')) {
+      const modelNumReg = /(?:Silver\s+)(\d{4}(?:\w)?)/;
+      const modelNumMatch = text.match(modelNumReg);
+      if (modelNumMatch) {
+        [, cpuInfo.modelNum] = modelNumMatch;
+      }
+    } else if (text.includes('Bronze')) {
+      const modelNumReg = /(?:Bronze\s+)(\d{4}(?:\w)?)/;
+      const modelNumMatch = text.match(modelNumReg);
+      if (modelNumMatch) {
+        [, cpuInfo.modelNum] = modelNumMatch;
+      }
+    } else {
+      // 通用Xeon型号匹配
+      const genericXeonReg = /Xeon(?:\(R\))?\s+(?:\w+-)?((?:W|D)?-?\d{4,5}(?:\w)?)/;
+      const genericMatch = text.match(genericXeonReg);
+      if (genericMatch) {
+        [, cpuInfo.modelNum] = genericMatch;
+      }
     }
   }
-  if (text.includes('Core(TM)')) {
-    const modelNumReg = /Core\(TM\) (\w+-\w+)/;
+
+  if (text.includes('Core')) {
+    if (text.includes('Core(TM)')) {
+      // 匹配如 Core(TM) i7-10700K 等格式
+      const modelNumReg = /Core\(TM\)\s+(\w\d+-\w+)/;
+      const modelNumMatch = text.match(modelNumReg);
+      if (modelNumMatch) {
+        [, cpuInfo.modelNum] = modelNumMatch;
+      }
+    } else {
+      // 匹配如 Core i9-12900K, Core i5-13600K 等格式
+      const coreReg = /Core\s+(i[3579]-\d{4,5}(?:\w+)?)/i;
+      const coreMatch = text.match(coreReg);
+      if (coreMatch) {
+        [, cpuInfo.modelNum] = coreMatch;
+      }
+    }
+  }
+
+  if (text.includes('Celeron')) {
+    const modelNumReg = /Celeron(?:\(R\))?\s+(\w+\d+(?:\w+)?)/;
     const modelNumMatch = text.match(modelNumReg);
     if (modelNumMatch) {
       [, cpuInfo.modelNum] = modelNumMatch;
     }
   }
-  if (text.includes('Celeron(R)')) {
-    const modelNumReg = /Celeron\(R\) (\w+)/;
+
+  if (text.includes('Pentium')) {
+    const modelNumReg = /Pentium(?:\(R\))?\s+(\w+\d+(?:\w+)?)/;
     const modelNumMatch = text.match(modelNumReg);
     if (modelNumMatch) {
       [, cpuInfo.modelNum] = modelNumMatch;
     }
   }
-  if (text.includes('Pentium(R)')) {
-    const modelNumReg = /Pentium\(R\) (\w+)/;
-    const modelNumMatch = text.match(modelNumReg);
-    if (modelNumMatch) {
-      [, cpuInfo.modelNum] = modelNumMatch;
-    }
-  }
+
   if (text.includes('Intel(R) N')) {
-    const modelNumReg = /Intel\(R\) (N\d+)/;
+    const modelNumReg = /Intel\(R\)\s+(N\d+(?:\w+)?)/;
     const modelNumMatch = text.match(modelNumReg);
     if (modelNumMatch) {
       [, cpuInfo.modelNum] = modelNumMatch;
     }
   }
+
+  // 匹配Apple M系列芯片
+  if (text.includes('Apple') && text.match(/M\d/)) {
+    // 匹配各种Apple Silicon M系列芯片：
+    // - 基本型号: M1, M2, M3等
+    // - 变种型号: M1 Pro, M2 Max, M3 Ultra等
+    const appleChipReg = /Apple\s+(?:Silicon\s+)?M(\d+(?:\s+(?:Pro|Max|Ultra|Extreme))?)/i;
+    const appleChipMatch = text.match(appleChipReg);
+    if (appleChipMatch) {
+      [, cpuInfo.modelNum] = appleChipMatch;
+    }
+  }
+
   if (coresMatch) {
     [cpuInfo.core, cpuInfo.cores] = coresMatch;
   }
