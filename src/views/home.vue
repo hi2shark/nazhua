@@ -20,9 +20,9 @@
       >
         <div class="left-box">
           <server-option-box
-            v-if="showTag && tagOptions.length"
+            v-if="showTag && serverGroupOptions.length"
             v-model="filterFormData.tag"
-            :options="tagOptions"
+            :options="serverGroupOptions"
           />
         </div>
         <div class="right-box">
@@ -158,13 +158,21 @@ const showTag = computed(() => {
 const serverList = computed(() => store.state.serverList);
 // 服务器总数
 const serverCount = computed(() => store.state.serverCount);
-
-const tagOptions = computed(() => store.state.serverGroup.map((i) => ({
-  key: uuid(),
-  label: i.name,
-  value: i.name,
-  title: `${i.servers.length}台`,
-})));
+// 分组标签
+const serverGroupOptions = computed(() => {
+  const options = [];
+  store.state.serverGroup.forEach((i) => {
+    if (i.servers && i.servers.length > 0) {
+      options.push({
+        key: uuid(),
+        label: i.name,
+        value: i.name,
+        title: `${i.servers.length}台`,
+      });
+    }
+  });
+  return options;
+});
 
 const onlineOptions = computed(() => {
   if (serverCount.value?.total !== serverCount.value?.online) {
