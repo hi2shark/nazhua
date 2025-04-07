@@ -2,10 +2,10 @@
   <div class="index-container">
     <div class="scroll-container">
       <div
-        class="world-map-box"
+        v-if="worldMapPosition === 'top' && showWorldMap"
+        class="world-map-box top-world-map"
       >
         <world-map
-          v-if="showWorldMap"
           :locations="serverLocations || []"
           :width="worldMapWidth"
         />
@@ -62,6 +62,15 @@
           :info="item"
         />
       </server-list-warp>
+      <div
+        v-if="worldMapPosition === 'bottom' && showWorldMap"
+        class="world-map-box bottom-world-map"
+      >
+        <world-map
+          :locations="serverLocations || []"
+          :width="worldMapWidth"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -310,6 +319,13 @@ const showWorldMap = computed(() => {
   return true;
 });
 
+const worldMapPosition = computed(() => {
+  if (Object.keys(config.nazhua).includes('homeWorldMapPosition')) {
+    return config.nazhua.homeWorldMapPosition;
+  }
+  return 'top';
+});
+
 /**
  * 处理窗口大小变化
  */
@@ -364,6 +380,10 @@ onActivated(() => {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .bottom-world-map {
+    margin-top: 30px;
   }
 }
 

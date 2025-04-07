@@ -6,11 +6,12 @@
       'server--offline': info?.online !== 1,
     }"
   >
-    <world-map
-      v-if="showWorldMap"
-      :width="worldMapWidth"
-      :locations="locations"
-    />
+    <template v-if="showWorldMap && worldMapPosition === 'top'">
+      <world-map
+        :width="worldMapWidth"
+        :locations="locations"
+      />
+    </template>
     <server-name
       :key="`${info.ID}_name`"
       :info="info"
@@ -27,6 +28,12 @@
       :key="`${info.ID}_monitor`"
       :info="info"
     />
+    <template v-if="showWorldMap && worldMapPosition === 'bottom'">
+      <world-map
+        :width="worldMapWidth"
+        :locations="locations"
+      />
+    </template>
   </div>
 </template>
 
@@ -117,6 +124,13 @@ const showWorldMap = computed(() => {
     return false;
   }
   return true;
+});
+
+const worldMapPosition = computed(() => {
+  if (Object.keys(config.nazhua).includes('detailWorldMapPosition')) {
+    return config.nazhua.detailWorldMapPosition;
+  }
+  return 'bottom';
 });
 
 function handleWorldMapWidth() {

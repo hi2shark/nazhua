@@ -21,6 +21,8 @@ window.$$nazhuaConfig = {
   // hideWorldMap: false, // 隐藏地图
   // hideHomeWorldMap: false, // 隐藏首页地图
   // hideDetailWorldMap: false, // 隐藏详情地图
+  // homeWorldMapPosition: 'top', // 首页地图位置 top/bottom
+  // detailWorldMapPosition: 'top', // 详情页地图位置 top/bottom
   // hideNavbarServerCount: false, // 隐藏服务器数量
   // hideNavbarServerStat: false, // 隐藏服务器统计
   // hideListItemStatusDonut: false, // 隐藏列表项的饼图
