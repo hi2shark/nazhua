@@ -130,7 +130,7 @@ const worldMapPosition = computed(() => {
   if (Object.keys(config.nazhua).includes('detailWorldMapPosition')) {
     return config.nazhua.detailWorldMapPosition;
   }
-  return 'bottom';
+  return 'top';
 });
 
 function handleWorldMapWidth() {

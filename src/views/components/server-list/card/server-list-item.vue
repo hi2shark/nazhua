@@ -15,14 +15,7 @@
       @click="openDetail"
     >
       <div class="server-name-group left-box">
-        <span
-          class="server-flag"
-        >
-          <span
-            class="fi"
-            :class="'fi-' + (info?.Host?.CountryCode || 'un')"
-          />
-        </span>
+        <server-flag :info="info" />
         <span class="server-name">
           {{ info.Name }}
         </span>

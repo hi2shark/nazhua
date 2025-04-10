@@ -9,14 +9,7 @@
     @click="openDetail"
   >
     <div class="list-column-item list-column-item--server-flag">
-      <span
-        class="server-flag"
-      >
-        <span
-          class="fi"
-          :class="'fi-' + (info?.Host?.CountryCode || 'un')"
-        />
-      </span>
+      <server-flag :info="info" />
     </div>
     <div class="list-column-item list-column-item--server-name">
       <span

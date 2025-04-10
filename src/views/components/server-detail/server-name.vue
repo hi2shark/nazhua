@@ -3,13 +3,8 @@
     class="server-head"
     padding="16px"
   >
-    <div class="server-flag">
-      <div class="server-flag-font">
-        <span
-          class="fi"
-          :class="'fi-' + (info?.Host?.CountryCode || 'un')"
-        />
-      </div>
+    <div class="server-flag-box">
+      <server-flag :info="info" />
     </div>
     <div class="server-name-and-slogan">
       <div class="server-name-group">
@@ -97,7 +92,7 @@ const platformLogoIconClassName = computed(() => hostUtils.getPlatformLogoIconCl
   gap: 12px;
   transition: 0.3s;
 
-  .server-flag {
+  .server-flag-box {
     --flag-size: 72px;
     position: relative;
     width: calc(var(--flag-size) * 1.33333333);
@@ -105,7 +100,7 @@ const platformLogoIconClassName = computed(() => hostUtils.getPlatformLogoIconCl
     border-radius: 12px;
     overflow: hidden;
 
-    .server-flag-font {
+    .server-flag {
       position: absolute;
       top: 50%;
       left: 50%;
