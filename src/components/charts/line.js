@@ -3,7 +3,6 @@ import { SVGRenderer } from 'echarts/renderers';
 import { LineChart } from 'echarts/charts';
 import {
   TooltipComponent,
-  // LegendComponent,
   GridComponent,
   DataZoomComponent,
 } from 'echarts/components';
@@ -15,13 +14,11 @@ use([
   SVGRenderer,
   LineChart,
   TooltipComponent,
-  // LegendComponent,
   GridComponent,
   DataZoomComponent,
 ]);
 
 export default (
-  cateList,
   dateList,
   valueList,
   mode = 'dark',
@@ -69,23 +66,6 @@ export default (
         fontSize: 14,
       },
     },
-    // legend: {
-    //   show: false,
-    //   data: cateList.map((i) => ({
-    //     name: i.name,
-    //     itemStyle: {
-    //       color: i.color,
-    //     },
-    //     lineStyle: {
-    //       color: i.color,
-    //     },
-    //   })),
-    //   textStyle: {
-    //     color: mode === 'dark' ? '#ddd' : '#222',
-    //     fontFamily,
-    //     fontSize: 14,
-    //   },
-    // },
     grid: {
       top: 10,
       left: 5,

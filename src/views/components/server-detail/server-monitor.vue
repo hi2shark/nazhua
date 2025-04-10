@@ -12,6 +12,22 @@
       </div>
       <div class="right-box">
         <div
+          v-if="config.nazhua.monitorChartTypeToggle"
+          class="chart-type-switch-group"
+          title="监控折线图是否聚合"
+          @click="switchChartType"
+        >
+          <span class="label-text">聚合</span>
+          <div
+            class="switch-box"
+            :class="{
+              active: monitorChartType === 'multi',
+            }"
+          >
+            <span class="switch-dot" />
+          </div>
+        </div>
+        <div
           class="refresh-data-group"
           title="是否自动刷新"
           @click="switchRefresh"
@@ -66,55 +82,104 @@
       </div>
     </div>
 
-    <div class="monitor-cate-group">
-      <template
-        v-for="cateItem in monitorChartData.cateList"
-        :key="cateItem.id"
-      >
-        <popover :title="cateItem.title">
-          <template #trigger>
-            <div
-              class="monitor-cate-item"
-              :class="{
-                disabled: showCates[cateItem.id] === false,
-              }"
-              :style="{
-                '--cate-color': cateItem.color,
-              }"
-              @click="toggleShowCate(cateItem.id)"
-              @touchstart="handleTouchStart(cateItem.id)"
-              @touchend="handleTouchEnd(cateItem.id)"
-              @touchmove="handleTouchMove(cateItem.id)"
-            >
-              <span class="cate-legend" />
-              <span
-                class="cate-name"
+    <template v-if="monitorChartType === 'single'">
+      <div class="monitor-chart-group">
+        <div
+          v-for="(cateItem, index) in monitorChartData.cateList"
+          :key="cateItem.id"
+          class="monitor-chart-item"
+        >
+          <div class="cate-name-box">
+            <popover :title="cateItem.title">
+              <template #trigger>
+                <div
+                  class="monitor-cate-item"
+                  :class="{
+                    disabled: showCates[cateItem.id] === false,
+                  }"
+                  :style="{
+                    '--cate-color': cateItem.color,
+                  }"
+                >
+                  <span class="cate-legend" />
+                  <span
+                    class="cate-name"
+                  >
+                    {{ cateItem.name }}
+                  </span>
+                  <span
+                    v-if="cateItem.avg !== 0"
+                    class="cate-avg-ms"
+                  >
+                    {{ cateItem.avg }}ms
+                  </span>
+                  <span
+                    v-else
+                    class="cate-avg-ms"
+                  >
+                    -ms
+                  </span>
+                </div>
+              </template>
+            </popover>
+          </div>
+          <line-chart
+            :date-list="monitorChartData.dateList"
+            :value-list="[monitorChartData.valueList[index]]"
+          />
+        </div>
+      </div>
+    </template>
+    <template v-else>
+      <div class="monitor-cate-group">
+        <template
+          v-for="cateItem in monitorChartData.cateList"
+          :key="cateItem.id"
+        >
+          <popover :title="cateItem.title">
+            <template #trigger>
+              <div
+                class="monitor-cate-item"
+                :class="{
+                  disabled: showCates[cateItem.id] === false,
+                }"
+                :style="{
+                  '--cate-color': cateItem.color,
+                }"
+                @click="toggleShowCate(cateItem.id)"
+                @touchstart="handleTouchStart(cateItem.id)"
+                @touchend="handleTouchEnd(cateItem.id)"
+                @touchmove="handleTouchMove(cateItem.id)"
               >
-                {{ cateItem.name }}
-              </span>
-              <span
-                v-if="cateItem.avg !== 0"
-                class="cate-avg-ms"
-              >
-                {{ cateItem.avg }}ms
-              </span>
-              <span
-                v-else
-                class="cate-avg-ms"
-              >
-                -ms
-              </span>
-            </div>
-          </template>
-        </popover>
-      </template>
-    </div>
+                <span class="cate-legend" />
+                <span
+                  class="cate-name"
+                >
+                  {{ cateItem.name }}
+                </span>
+                <span
+                  v-if="cateItem.avg !== 0"
+                  class="cate-avg-ms"
+                >
+                  {{ cateItem.avg }}ms
+                </span>
+                <span
+                  v-else
+                  class="cate-avg-ms"
+                >
+                  -ms
+                </span>
+              </div>
+            </template>
+          </popover>
+        </template>
+      </div>
 
-    <line-chart
-      :cate-list="monitorChartData.cateList"
-      :date-list="monitorChartData.dateList"
-      :value-list="monitorChartData.valueList"
-    />
+      <line-chart
+        :date-list="monitorChartData.dateList"
+        :value-list="monitorChartData.valueList"
+      />
+    </template>
   </dot-dot-box>
 </template>
 
@@ -174,6 +239,14 @@ const peakShaving = ref(false);
 const showCates = ref({});
 const monitorData = ref([]);
 const longPressTimer = ref(null);
+
+const chartType = ref(config.nazhua.monitorChartType === 'single' ? 'single' : 'multi');
+const monitorChartType = computed(() => {
+  if (config.nazhua.monitorChartTypeToggle) {
+    return chartType.value;
+  }
+  return config.nazhua.monitorChartType;
+});
 
 const now = ref(Date.now());
 const accpetShowTime = computed(() => now.value - (minute.value * 60 * 1000));
@@ -314,6 +387,10 @@ function switchRefresh() {
   refreshData.value = !refreshData.value;
 }
 
+function switchChartType() {
+  chartType.value = chartType.value === 'single' ? 'multi' : 'single';
+}
+
 function toggleMinute(value) {
   now.value = store.state.serverTime || Date.now();
   minute.value = value;
@@ -400,6 +477,51 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .server-monitor-group {
   --line-chart-size: 300px;
+
+  .monitor-cate-item {
+    --cate-item-height: 28px;
+    --cate-item-font-size: 14px;
+    --cate-color: #fff;
+
+    display: flex;
+    align-items: center;
+    width: var(--cate-item-width);
+    height: var(--cate-item-height);
+    gap: 6px;
+    padding: 0 6px;
+    font-size: var(--cate-item-font-size);
+    border-radius: 4px;
+    cursor: pointer;
+
+    @media screen and (max-width: 768px) {
+      cursor: default;
+    }
+
+    .cate-legend {
+      width: 0.5em;
+      height: 0.5em;
+      background: var(--cate-color);
+    }
+
+    .cate-name {
+      // flex: 1;
+      height: var(--cate-item-height);
+      line-height: calc(var(--cate-item-height) + 2px);
+      color: #eee;
+    }
+
+    .cate-avg-ms {
+      height: var(--cate-item-height);
+      line-height: calc(var(--cate-item-height) + 2px);
+      text-align: right;
+      color: #fff;
+    }
+
+    &.disabled {
+      filter: grayscale(1);
+      opacity: 0.5;
+    }
+  }
 }
 
 .module-head-group {
@@ -425,7 +547,8 @@ onUnmounted(() => {
   }
 
   .peak-shaving-group,
-  .refresh-data-group {
+  .refresh-data-group,
+  .chart-type-switch-group {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -553,63 +676,30 @@ onUnmounted(() => {
   margin: 10px 0;
   display: flex;
   flex-wrap: wrap;
-  // justify-content: center;
   gap: var(--gap-size);
   margin-right: calc(var(--gap-size) * -1);
+}
 
-  .monitor-cate-item {
-    // --cate-item-width: calc(20% - var(--gap-size));
-    --cate-item-height: 28px;
-    --cate-item-font-size: 14px;
-    --cate-color: #fff;
+.monitor-chart-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 0;
 
+  .monitor-chart-item {
+    width: 50%;
+    height: calc(var(--line-chart-size) + 28px);
+  }
+
+  @media screen and (max-width: 768px) {
+    .monitor-chart-item {
+      width: 100%;
+    }
+  }
+
+  .cate-name-box {
     display: flex;
     align-items: center;
-    width: var(--cate-item-width);
-    height: var(--cate-item-height);
-    gap: 6px;
-    padding: 0 6px;
-    font-size: var(--cate-item-font-size);
-    // background: rgba(#fff, 0.2);
-    border-radius: 4px;
-    cursor: pointer;
-
-    @media screen and (max-width: 768px) {
-      cursor: default;
-    }
-
-    .cate-legend {
-      width: 0.5em;
-      height: 0.5em;
-      // border-radius: 50%;
-      // width: 6px;
-      // height: calc(var(--cate-item-height) - 10px);
-      // margin-left: -6px;
-      background: var(--cate-color);
-    }
-
-    .cate-name {
-      // flex: 1;
-      height: var(--cate-item-height);
-      line-height: calc(var(--cate-item-height) + 2px);
-      // text-overflow: ellipsis;
-      // white-space: nowrap;
-      // overflow: hidden;
-      color: #eee;
-    }
-
-    .cate-avg-ms {
-      // width: 55px;
-      height: var(--cate-item-height);
-      line-height: calc(var(--cate-item-height) + 2px);
-      text-align: right;
-      color: #fff;
-    }
-
-    &.disabled {
-      filter: grayscale(1);
-      opacity: 0.5;
-    }
+    justify-content: center;
   }
 }
 </style>

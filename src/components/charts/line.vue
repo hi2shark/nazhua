@@ -25,10 +25,6 @@ import VChart from 'vue-echarts';
 import lineChart from './line';
 
 const props = defineProps({
-  cateList: {
-    type: Array,
-    default: () => [],
-  },
   dateList: {
     type: Array,
     default: () => [],
@@ -45,9 +41,8 @@ const props = defineProps({
 
 const chartRef = ref();
 const option = computed(() => {
-  if (props.cateList && props.dateList && props.valueList) {
+  if (props.dateList && props.valueList) {
     return lineChart(
-      props.cateList,
       props.dateList,
       props.valueList,
     );
