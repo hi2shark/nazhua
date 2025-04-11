@@ -2,6 +2,7 @@
   <div
     v-if="option"
     class="line-box"
+    :style="boxStyle"
   >
     <v-chart
       ref="chartRef"
@@ -48,6 +49,13 @@ const option = computed(() => {
     );
   }
   return null;
+});
+const boxStyle = computed(() => {
+  const style = {};
+  if (props.size > 0) {
+    style.height = `${props.size}px`;
+  }
+  return style;
 });
 
 function handleResize() {

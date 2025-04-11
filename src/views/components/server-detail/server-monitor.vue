@@ -2,6 +2,10 @@
   <dot-dot-box
     v-if="monitorData.length"
     class="server-monitor-group"
+    :class="{
+      'chart-type--multi': config.nazhua.monitorChartTypeToggle && monitorChartType === 'multi',
+      'chart-type--single': config.nazhua.monitorChartTypeToggle && monitorChartType === 'single',
+    }"
     padding="16px 20px"
   >
     <div class="module-head-group">
@@ -126,6 +130,7 @@
           <line-chart
             :date-list="monitorChartData.dateList"
             :value-list="[monitorChartData.valueList[index]]"
+            :size="240"
           />
         </div>
       </div>
@@ -234,13 +239,21 @@ const minutes = [{
   label: '24小时',
   value: 1440,
 }];
-const refreshData = ref(true);
-const peakShaving = ref(false);
+const localData = {
+  peakShaving: window.localStorage.getItem('nazhua_monitor_peak_shaving'),
+  refreshData: window.localStorage.getItem('nazhua_monitor_refresh_data'),
+  chartType: window.localStorage.getItem('nazhua_monitor_chart_type'),
+};
+
+const peakShaving = validate.isSet(localData.peakShaving) ? ref(localData.peakShaving) : ref(false);
+const refreshData = validate.isSet(localData.refreshData) ? ref(localData.refreshData) : ref(true);
 const showCates = ref({});
 const monitorData = ref([]);
 const longPressTimer = ref(null);
 
-const chartType = ref(config.nazhua.monitorChartType === 'single' ? 'single' : 'multi');
+const chartType = validate.isSet(localData.chartType)
+  ? ref(localData.chartType)
+  : ref(config.nazhua.monitorChartType === 'single' ? 'single' : 'multi');
 const monitorChartType = computed(() => {
   if (config.nazhua.monitorChartTypeToggle) {
     return chartType.value;
@@ -381,14 +394,17 @@ const monitorChartData = computed(() => {
 
 function switchPeakShaving() {
   peakShaving.value = !peakShaving.value;
+  window.localStorage.setItem('nazhua_monitor_peak_shaving', peakShaving.value);
 }
 
 function switchRefresh() {
   refreshData.value = !refreshData.value;
+  window.localStorage.setItem('nazhua_monitor_refresh_data', refreshData.value);
 }
 
 function switchChartType() {
   chartType.value = chartType.value === 'single' ? 'multi' : 'single';
+  window.localStorage.setItem('nazhua_monitor_chart_type', chartType.value);
 }
 
 function toggleMinute(value) {
@@ -477,6 +493,10 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .server-monitor-group {
   --line-chart-size: 300px;
+
+  &.chart-type--single {
+    --line-chart-size: 240px;
+  }
 
   .monitor-cate-item {
     --cate-item-height: 28px;
