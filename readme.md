@@ -1,4 +1,10 @@
 # Nazhua
+<div align="center">
+  <img src="./.github/images/nazhua-main.webp" alt="Nazhua"/>
+  <img src="./.github/images/nazhua-mobile.webp" width="300px" alt="Nazhua"/>
+</div>
+
+
 **使用前，请务必阅读Readme的内容，对你有帮助**  
 > 基于哪吒监控(nezha.wiki)v0版本构建的前端主题，目前兼容与v0相同数据结构的v1版本。  
 > ~~主题有点**重**，因为内置了一个带中文的`SarasaTermSC-SemiBold`字体。~~  
