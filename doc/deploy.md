@@ -1,15 +1,23 @@
+# 🚀 部署指南
 
-## 部署
-> Nazhua主题是一个纯前端项目，可以部署在纯静态服务器上；  
-> v0需要解决`/api/v1/monitor/${id}`监控数据、`/ws`WS服务和`/`主页的跨域访问。  
-> v1需要解决`/api/xxx`等数据接口、`/api/v1/ws/server`WS服务的跨域访问。  
-> 简单的处理方法就是采用nginx或caddy反代请求，以此解决跨域问题。  
+## 部署概述
+> Nazhua主题是纯前端项目，可部署在静态服务器上
+> 
+> **跨域解决注重点**：
+> - **V0版本**：需解决 `/api/v1/monitor/${id}`、`/ws` 和 `/` 的跨域
+> - **V1版本**：需解决 `/api/xxx` 和 `/api/v1/ws/server` 的跨域
+> 
+> 推荐使用 Nginx 或 Caddy 反向代理解决跨域问题
 
-### Docker Compose + Cloudflare Tunnels部署
-**请关注配置文件备注中的提示内容**  
-`favicon.ico`可以映射进去，也可以通过配置文件设置，默认不存在该文件  
-`config.js`需要单独映射进去，可以通过[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)直接生成并下载  
-`style.css`用于自定义css样式，如果不出现页面结构大规模变更的情况下，我会尽可能保证选择器不变  
+## 🐳 Docker Compose + Cloudflare Tunnels 部署
+此方案便于后续更新，只需通过 `docker compose pull` 命令即可更新主题（镜像）。
+
+### 配置说明
+- **favicon.ico**：可通过挂载或配置文件指定（默认无）
+- **config.js**：需单独挂载，建议使用[配置生成器](https://hi2shark.github.io/nazhua-generator/)生成
+- **style.css**：用于自定义CSS样式，尽量保持选择器稳定
+
+### 部署示例
 ```yaml
 services:
   nazhua:
@@ -23,20 +31,25 @@ services:
       # - ./style.css:/home/wwwroot/html/style.css:ro # 自定义样式文件
     environment:
       - DOMAIN=_ # 监听的域名，默认为_（监听所有）
-      - NEZHA=http://nezha-dashboard.example.com/ # 可以被反代nezha主页地址
+      - NEZHA=http://nezha-dashboard.example.com/ # 可以被反向代理nezha主页地址
     restart: unless-stopped
 ```
-Tips: 建议通过docker-compose部署nazhua与nezha，然后通过cloudflare的tunnels向外提供服务，也可以不用自己配置https证书。  
-Tips: 如果不想加载完整的内置库，可以使用cdn引用镜像  
-> 例如：`ghcr.io/hi2shark/nazhua:latest`替换为`ghcr.io/hi2shark/nazhua:cdn`  
------
-> 如果你想隐藏原面板，只暴露nazhua出来，你可以用Zero Trust的Tunnels；  
-> 三个容器：Tunnels、nezha-dashboard、nazhua  
-> nazhua用docker内的地址访问nezha-dashboard，然后Tunnels绑定nazhua给公开访问的域名  
-> Tunnels绑定nezha-dashboard到私密域名，需要邮箱|IP等匹配的才能访问  
------
 
-### 单独使用NGINX的配置示例（Caddy可以通过这个配置进行AI推理生成）
+### 💡 小贴士
+- 推荐使用 docker-compose 部署 Nazhua 与 Nezha Dashboard，并通过 Cloudflare Tunnels 对外提供服务
+- 如需减少内置库体积，可使用 CDN 版本镜像：`ghcr.io/hi2shark/nazhua:cdn`
+- 隐藏原面板方案：使用 Zero Trust Tunnels 部署三个容器 (Tunnels、nezha-dashboard、nazhua)
+  - nazhua 通过 docker 内部地址访问 nezha-dashboard
+  - Tunnels 绑定 nazhua 到公开域名
+  - Tunnels 绑定 nezha-dashboard 到需要邮箱/IP验证的私密域名
+
+## 🌐 自定义Web服务部署
+
+### 安装步骤
+1. 在 [Releases页面](https://github.com/hi2shark/nazhua/releases) 下载最新版 `v{Nazhua版本号}-all.zip`
+2. 解压后将 `dist` 目录文件上传到Web服务目录
+
+### Nginx配置示例
 ```nginx
 map $http_upgrade $connection_upgrade {
   default upgrade;
@@ -92,10 +105,16 @@ server {
   }
 }
 ```
+----  
+**Tips:** V0环境下若想与面板使用同域名，下载 `v0-nazhua.zip` 并将文件上传至面板目录下的 `nazhua` 文件夹
+
+----  
+
+## ⚙️ 配置文件
 
 ### config.js 配置说明
-`config.js`建议通过[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)生成，然后通过docker的volumes映射到容器内。  
-例如：(*参考内容在文档上不一定是最新，具体参考public/config.js*)
+建议使用 [Nazhua 配置生成器](https://hi2shark.github.io/nazhua-generator/) 生成配置文件。
+
 ```javascript
 window.$$nazhuaConfig = {
   title: '哪吒监控', // 网站标题
@@ -136,7 +155,7 @@ window.$$nazhuaConfig = {
   monitorChartTypeToggle: true, // 监控图表类型切换
   filterGPUKeywords: ['Virtual Display'], // 如果GPU名称中包含这些关键字，则过滤掉
   customCodeMap: {}, // 自定义的地图点信息
-  nezhaVersion: 'v1', // 哪吒版本
+  nezhaVersion: 'v1', // 哪吒版本 不填写则尝试自动识别
   apiMonitorPath: '/api/v1/monitor/{id}',
   wsPath: '/ws',
   nezhaPath: '/nezha/',
@@ -152,10 +171,10 @@ window.$$nazhuaConfig = {
   customFavicon: '', // 自定义favicon, 填写完整的url地址
 };
 ```
-可以通过[Nazhua配置生成器](https://hi2shark.github.io/nazhua-generator/)快速生成config.js配置文件
 
-通过修改根目录下的`style.css`文件来自定义样式  
-例如：
+### 🎨 自定义样式
+通过修改根目录下的 `style.css` 文件实现样式定制：
+
 ```css
 :root {
   /* 修改颜色 */
@@ -166,18 +185,15 @@ window.$$nazhuaConfig = {
   /* 购买链接的主要颜色 */
   --list-item-buy-link-color: #f00;
 }
-```
-自定义背景图的实例：
-```css
+
+/* 自定义背景图示例 */
 :root {
-  /* 图片太亮了，需要图片前面的前景色（也是背景色）更暗一些 */
+  /* 图片太亮时，增加背景遮罩透明度 */
   --layout-main-bg-color: rgba(0, 0, 0, 0.75);
 }
-/* 自定义背景图 */
 .layout-group .layout-bg {
-  /* 添加important强制背景图替换，此处的替换设计不是很优雅，后期会改进 */
+  /* 添加!important强制背景图替换 */
   background: url(./bg.jpg) no-repeat 50% 50% !important;
   background-size: cover;
 }
 ```
-`./bg.jpg` 这个是图片地址，可以替换为外链图片；也可以把背景图片放到项目里面去，通常是docker的volumes映射，根据你自己的实际情况来。  
