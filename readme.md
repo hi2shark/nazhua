@@ -40,8 +40,6 @@ Nazhua提供了丰富的配置选项：
 
 ## 🤝 赞助商
 
-> 按服务商字母排序，不分先后
-
 <table>
   <tr>
     <td align="center">
@@ -50,13 +48,6 @@ Nazhua提供了丰富的配置选项：
       </a>
       <br />
       <strong>VMISS</strong>
-    </td>
-    <td align="center">
-      <a href="https://yxvm.com" target="_blank" title="YXVM，提供香港、新加坡、日本的云服务器与物理服务器">
-        <img src="./.github/images/yxvm-logo.jpg" width="200px;" alt="YXVM"/>
-      </a>
-      <br />
-      <strong>YXVM</strong>
     </td>
   </tr>
 </table>
