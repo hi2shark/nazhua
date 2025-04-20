@@ -244,9 +244,11 @@ const localData = {
   refreshData: window.localStorage.getItem('nazhua_monitor_refresh_data'),
   chartType: window.localStorage.getItem('nazhua_monitor_chart_type'),
 };
+localData.peakShaving = validate.isSet(localData.peakShaving) ? localData.peakShaving === 'true' : false;
+localData.refreshData = validate.isSet(localData.refreshData) ? localData.refreshData === 'true' : true;
 
-const peakShaving = validate.isSet(localData.peakShaving) ? ref(localData.peakShaving) : ref(false);
-const refreshData = validate.isSet(localData.refreshData) ? ref(localData.refreshData) : ref(true);
+const peakShaving = ref(localData.peakShaving);
+const refreshData = ref(localData.refreshData);
 const showCates = ref({});
 const monitorData = ref([]);
 const longPressTimer = ref(null);
