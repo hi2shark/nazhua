@@ -89,6 +89,7 @@ import {
   onActivated,
   onDeactivated,
   nextTick,
+  watch,
 } from 'vue';
 import {
   useStore,
@@ -198,6 +199,20 @@ const onlineOptions = computed(() => {
     }];
   }
   return [];
+});
+
+/**
+ * 筛选离线时，离线数量变为0时，自动清空在线筛选
+ */
+watch(() => serverCount.value, () => {
+  if (filterFormData.value.online === '-1' && serverCount.value.offline === 0) {
+    filterFormData.value.online = '';
+  }
+  if (filterFormData.value.online === '1' && serverCount.value.online === 0) {
+    filterFormData.value.online = '';
+  }
+}, {
+  immediate: true,
 });
 
 const listTypeOptions = computed(() => [{
