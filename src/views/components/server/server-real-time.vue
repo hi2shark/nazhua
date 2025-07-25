@@ -22,13 +22,19 @@
             </span>
             <span class="item-content-sub-content">
               <span class="item-value">{{ subItem.show ? subItem?.value : '-' }}</span>
-              <span class="item-unit item-text">{{ subItem.show ? subItem?.unit : '' }}</span>
+              <span
+                v-if="subItem.show"
+                class="item-unit item-text"
+              >{{ subItem?.unit }}</span>
             </span>
           </span>
         </div>
         <template v-else>
           <span class="item-value">{{ item.show ? item?.value : '-' }}</span>
-          <span class="item-unit item-text">{{ item.show ? item?.unit : '' }}</span>
+          <span
+            v-if="item.show"
+            class="item-unit item-text"
+          >{{ item?.unit }}</span>
         </template>
       </div>
       <span
@@ -120,7 +126,14 @@ const {
         flex: 1;
         display: flex;
         align-items: center;
-        gap: 2px;
+        gap: 0.2em;
+      }
+
+      --real-time-label-line-height: calc(var(--real-time-label-font-size, 14px) * 1.8);
+
+      .item-content-sub-label {
+        height: var(--real-time-label-line-height);
+        line-height: var(--real-time-label-line-height);
       }
 
       .item-content-sub-content {
@@ -128,19 +141,34 @@ const {
         align-items: center;
       }
 
-      .item-value {
-        line-height: 1em;
-        font-size: var(--real-time-label-font-size, 14px);
-      }
-
-      .item-text {
-        line-height: 1em;
-        font-size: var(--real-time-label-font-size, 14px);
-      }
-
+      .item-value,
+      .item-text,
       .item-label {
-        line-height: 1em;
+        height: var(--real-time-label-line-height);
+        line-height: var(--real-time-label-line-height);
         font-size: var(--real-time-label-font-size, 14px);
+      }
+
+      .item-content-sub-item--L-A-P-load {
+        .item-value {
+          color: var(--load-color);
+        }
+      }
+      .item-content-sub-item--L-A-P-process {
+        .item-value {
+          color: var(--process-color);
+        }
+      }
+
+      .item-content-sub-item--D-A-T-duration {
+        .item-value {
+          color: var(--duration-color);
+        }
+      }
+      .item-content-sub-item--D-A-T-transfer {
+        .item-value {
+          color: var(--transfer-color);
+        }
       }
 
       .item-content-sub-item--speeds-in {
@@ -151,6 +179,17 @@ const {
       .item-content-sub-item--speeds-out {
         .item-value {
           color: var(--net-speed-out-color);
+        }
+      }
+
+      .item-content-sub-item--conn-tcp {
+        .item-value {
+          color: var(--conn-tcp-color);
+        }
+      }
+      .item-content-sub-item--conn-udp {
+        .item-value {
+          color: var(--conn-udp-color);
         }
       }
     }

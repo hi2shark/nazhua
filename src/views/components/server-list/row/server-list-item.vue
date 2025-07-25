@@ -41,7 +41,7 @@
     <server-list-item-real-time
       v-if="$config.nazhua.hideListItemStat !== true"
       :info="info"
-      server-real-time-list-tpls="load,inSpeed,outSpeed,transfer,duration"
+      server-real-time-list-tpls="load,conns,inSpeed,outSpeed,transfer,duration"
     />
     <server-list-item-bill
       v-if="$config.nazhua.hideListItemBill !== true"

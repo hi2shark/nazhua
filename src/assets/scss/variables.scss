@@ -16,12 +16,17 @@
   
   --world-map-point-color: #fff143;
 
-  --duration-color: #cbf1f5;
+  --duration-color: #89c3eb;
   --transfer-color: #f9ed69;
   --transfer-in-color: var(--transfer-color);
   --transfer-out-color: #90f2ff;
   --net-speed-in-color: #f5b199;
   --net-speed-out-color: #89c3eb;
+  --conn-color: #89c3eb;
+  --conn-tcp-color: var(--conn-color);
+  --conn-udp-color: #2ca9e1;
+  --load-color: #90f2ff;
+  --process-color: #f5b199;
 
   --list-item-price-color: #eee;
   --list-item-buy-link-color: #ffc300;

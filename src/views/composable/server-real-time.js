@@ -254,7 +254,35 @@ export default (params) => {
           unit: netOutSpeed.value?.unit,
           show: validate.isSet(netOutSpeed.value?.value),
         };
-      case 'speeds':
+      case 'load':
+        return {
+          key,
+          label: '负载',
+          value: (props.info.State?.Load1 || 0).toFixed(2),
+          show: validate.isSet(props.info.State?.Load1),
+        };
+      case 'conns':
+        return {
+          key,
+          label: '连接',
+          value: `${props.info.State?.TcpConnCount || 0}|${props.info.State?.UdpConnCount || 0}`,
+          show: true,
+        };
+      case 'tcp':
+        return {
+          key,
+          label: 'TCP',
+          value: props.info.State?.TcpConnCount || 0,
+          show: validate.isSet(props.info.State?.TcpConnCount),
+        };
+      case 'udp':
+        return {
+          key,
+          label: 'UDP',
+          value: props.info.State?.UdpConnCount || 0,
+          show: validate.isSet(props.info.State?.UdpConnCount),
+        };
+      case 'I-A-O':
         return {
           key,
           label: '网速',
@@ -276,13 +304,68 @@ export default (params) => {
           ],
           show: validate.isSet(netInSpeed.value?.value) && validate.isSet(netOutSpeed.value?.value),
         };
-      case 'load':
+      case 'L-A-P':
         return {
           key,
           label: '负载',
-          value: (props.info.State?.Load1 || 0).toFixed(2),
-          unit: '',
-          show: validate.isSet(props.info.State?.Load1),
+          values: [
+            {
+              key: 'load',
+              label: '负载',
+              value: (props.info.State?.Load1 || 0).toFixed(2),
+              show: validate.isSet(props.info.State?.Load1),
+            },
+            {
+              key: 'process',
+              label: '进程',
+              value: props.info.State?.ProcessCount || 0,
+              show: validate.isSet(props.info.State?.ProcessCount),
+            },
+          ],
+          show: validate.isSet(props.info.State?.Load1) || validate.isSet(props.info.State?.ProcessCount),
+        };
+      case 'T-A-U':
+        return {
+          key,
+          label: '连接',
+          values: [
+            {
+              key: 'tcp',
+              label: 'TCP',
+              value: (props.info.State?.TcpConnCount || 0).toString().padEnd(3, ' '),
+              show: validate.isSet(props.info.State?.TcpConnCount),
+            },
+            {
+              key: 'udp',
+              label: 'UDP',
+              value: (props.info.State?.UdpConnCount || 0).toString().padEnd(3, ' '),
+              show: validate.isSet(props.info.State?.UdpConnCount),
+            },
+          ],
+          show: validate.isSet(props.info.State?.TcpConnCount) || validate.isSet(props.info.State?.UdpConnCount),
+        };
+      case 'D-A-T':
+        return {
+          key,
+          label: '统计',
+          values: [
+            {
+              key: 'duration',
+              label: '在线',
+              value: duration.value?.value,
+              unit: duration.value?.unit,
+              show: validate.isSet(duration.value?.value),
+            },
+            {
+              key: 'transfer',
+              label: '流量',
+              title: `${transfer.value.statTypeLabel}流量`,
+              value: transfer.value?.value,
+              unit: transfer.value?.unit,
+              show: validate.isSet(transfer.value?.value),
+            },
+          ],
+          show: validate.isSet(duration.value?.value) || validate.isSet(transfer.value?.value),
         };
       default:
     }

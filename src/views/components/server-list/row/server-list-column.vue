@@ -23,7 +23,10 @@
         </template>
         <template v-else>
           <span class="item-text item-value">{{ value }}</span>
-          <span class="item-text item-unit">{{ unit }}</span>
+          <span
+            v-if="unit"
+            class="item-text item-unit"
+          >{{ unit }}</span>
         </template>
       </div>
     </div>
@@ -205,6 +208,24 @@ const columnStyle = computed(() => {
   &--billing {
     .value-text {
       color: var(--list-item-price-color);
+    }
+  }
+
+  &--tcp {
+    .item-value {
+      color: var(--conn-tcp-color);
+    }
+  }
+
+  &--udp {
+    .item-value {
+      color: var(--conn-udp-color);
+    }
+  }
+
+  &--conns {
+    .item-value {
+      color: var(--conn-color);
     }
   }
 }

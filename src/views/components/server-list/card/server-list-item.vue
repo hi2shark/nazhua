@@ -91,7 +91,7 @@ const platformLogoIconClassName = computed(() => hostUtils.getPlatformLogoIconCl
 
 const serverRealTimeListTpls = computed(() => {
   if (config.nazhua?.listServerRealTimeShowLoad) {
-    return 'duration,load,transfer,speeds';
+    return 'D-A-T,T-A-U,L-A-P,I-A-O';
   }
   return 'duration,transfer,inSpeed,outSpeed';
 });
