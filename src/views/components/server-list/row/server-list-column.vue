@@ -187,6 +187,12 @@ const columnStyle = computed(() => {
     }
   }
 
+  &--speeds {
+    .item-value {
+      color: var(--net-speed-color);
+    }
+  }
+
   &--inSpeed {
     .item-value {
       color: var(--net-speed-in-color);

@@ -254,6 +254,16 @@ export default (params) => {
           unit: netOutSpeed.value?.unit,
           show: validate.isSet(netOutSpeed.value?.value),
         };
+      case 'speeds':
+        return {
+          key,
+          label: '网速',
+          value: [
+            `${netInSpeed.value?.value}${netInSpeed.value?.unit}`,
+            `${netOutSpeed.value?.value}${netOutSpeed.value?.unit}`,
+          ].join('|'),
+          show: validate.isSet(netInSpeed.value?.value) && validate.isSet(netOutSpeed.value?.value),
+        };
       case 'load':
         return {
           key,
