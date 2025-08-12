@@ -18,11 +18,13 @@ use([
   DataZoomComponent,
 ]);
 
-export default (
-  dateList,
-  valueList,
-  mode = 'dark',
-) => {
+export default (options) => {
+  const {
+    dateList,
+    valueList,
+    mode = 'dark',
+    connectNulls = true,
+  } = options || {};
   const fontFamily = config.nazhua.disableSarasaTermSC === true ? undefined : 'Sarasa Term SC';
   const option = {
     darkMode: mode === 'dark',
@@ -36,7 +38,7 @@ export default (
         let res = `<p style="font-weight: bold; color: #ff6;">${time}</p>`;
         if (params.length < 10) {
           params.forEach((i) => {
-            res += `${i.marker} ${i.seriesName}: ${i.value[1]}ms<br>`;
+            res += i.value[1] ? `${i.marker} ${i.seriesName}: ${i.value[1]}ms<br>` : '';
           });
         } else {
           res += '<table>';
@@ -45,7 +47,9 @@ export default (
             if (index % 2 === 0) {
               res += '<tr>';
             }
-            res += `<td style="padding: 0 4px;">${i.marker} ${i.seriesName}: ${i.value[1]}ms</td>`;
+            res += i.value[1]
+              ? `<td style="padding: 0 4px;">${i.marker} ${i.seriesName}: ${i.value[1]}ms</td>`
+              : '<td style="padding: 0 4px;"></td>';
             if (index % 2 === 1) {
               res += '</tr>';
               trEnd = true;
@@ -108,7 +112,7 @@ export default (
       ...i,
       type: 'line',
       smooth: true,
-      connectNulls: true,
+      connectNulls,
       legendHoverLink: false,
       symbol: 'none',
     })),

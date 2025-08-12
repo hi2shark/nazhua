@@ -38,15 +38,20 @@ const props = defineProps({
     type: [Number, String],
     default: null,
   },
+  connectNulls: {
+    type: [Boolean, String],
+    default: true,
+  },
 });
 
 const chartRef = ref();
 const option = computed(() => {
   if (props.dateList && props.valueList) {
-    return lineChart(
-      props.dateList,
-      props.valueList,
-    );
+    return lineChart({
+      dateList: props.dateList,
+      valueList: props.valueList,
+      connectNulls: props.connectNulls,
+    });
   }
   return null;
 });

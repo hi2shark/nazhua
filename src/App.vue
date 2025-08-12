@@ -42,10 +42,9 @@ provide('currentTime', currentTime);
  */
 function refreshTime() {
   currentTime.value = Date.now();
-  setTimeout(() => {
-    refreshTime();
-  }, 1000);
+  window.requestAnimationFrame(refreshTime);
 }
+refreshTime();
 
 // 是否为Windows系统
 const isWindows = /windows|win32/i.test(navigator.userAgent);

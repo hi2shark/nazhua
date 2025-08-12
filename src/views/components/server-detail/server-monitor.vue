@@ -118,10 +118,10 @@
                     {{ cateItem.avg }}ms
                   </span>
                   <span
-                    v-else
-                    class="cate-avg-ms"
+                    v-if="cateItem.over !== 0"
+                    class="cate-over-rate"
                   >
-                    -ms
+                    {{ cateItem.over }}%
                   </span>
                 </div>
               </template>
@@ -131,6 +131,7 @@
             :date-list="monitorChartData.dateList"
             :value-list="[monitorChartData.valueList[index]]"
             :size="240"
+            :connect-nulls="false"
           />
         </div>
       </div>
@@ -168,12 +169,6 @@
                 >
                   {{ cateItem.avg }}ms
                 </span>
-                <span
-                  v-else
-                  class="cate-avg-ms"
-                >
-                  -ms
-                </span>
               </div>
             </template>
           </popover>
@@ -183,6 +178,7 @@
       <line-chart
         :date-list="monitorChartData.dateList"
         :value-list="monitorChartData.valueList"
+        :connect-nulls="false"
       />
     </template>
   </dot-dot-box>
@@ -263,8 +259,9 @@ const monitorChartType = computed(() => {
   return config.nazhua.monitorChartType;
 });
 
-const now = ref(Date.now());
-const accpetShowTime = computed(() => now.value - (minute.value * 60 * 1000));
+// 服务器时间（后面来自接口）
+const nowServerTime = computed(() => store.state.serverTime || Date.now());
+const accpetShowTime = computed(() => (Math.floor(nowServerTime.value / 60000) - minute.value) * 60000);
 
 const minuteActiveArrowStyle = computed(() => {
   const index = minutes.findIndex((i) => i.value === minute.value);
@@ -302,13 +299,25 @@ const monitorChartData = computed(() => {
       };
     }
     const showAvgDelay = [];
-    const showCreateTime = i.created_at.filter((o, index) => {
+    const showCreateTime = [];
+    const accpeTimeMap = {};
+    i.created_at.forEach((o, index) => {
       const status = o >= accpetShowTime.value;
       if (status) {
-        showAvgDelay.push(i.avg_delay[index]);
+        accpeTimeMap[o] = i.avg_delay[index];
       }
-      return status;
     });
+    const allMintues = Math.floor((Date.now() - accpetShowTime.value) / 60000);
+    for (let j = 0; j < allMintues; j += 1) {
+      const time = accpetShowTime.value + j * 60000;
+      showCreateTime.push(time);
+      const timeProp = accpeTimeMap[time];
+      if (timeProp) {
+        showAvgDelay.push(timeProp);
+      } else {
+        showAvgDelay.push(null);
+      }
+    }
     const {
       threshold,
       mean,
@@ -316,19 +325,21 @@ const monitorChartData = computed(() => {
       min,
     } = peakShaving.value ? getThreshold(showAvgDelay, 2) : {};
     showCreateTime.forEach((o, index) => {
-      if (dateMap[o]) {
+      if (Object.prototype.hasOwnProperty.call(dateMap, o)) {
         return;
       }
       const avgDelay = showAvgDelay[index];
       if (peakShaving.value) {
         if (avgDelay === 0) {
+          dateMap[o] = null;
           return;
         }
         if (Math.abs(avgDelay - mean) > threshold && max / min > 2) {
+          dateMap[o] = null;
           return;
         }
       }
-      dateMap[o] = (avgDelay).toFixed(2) * 1;
+      dateMap[o] = avgDelay ? (avgDelay).toFixed(2) * 1 : null;
     });
   });
   let dateList = [];
@@ -351,9 +362,9 @@ const monitorChartData = computed(() => {
         showCates.value[id] = true;
       }
       // 计算平均延迟和成功率
-      const validAvgs = avgs.filter((a) => a[1] !== 0);
+      const validAvgs = avgs.filter((a) => a[1] !== 0 && a[1] !== null);
       const avg = validAvgs.reduce((a, b) => a + b[1], 0) / validAvgs.length;
-      const over = avgs.filter((a) => a[1] !== 0).length / avgs.length;
+      const over = avgs.filter((a) => a[1] !== 0 && a[1] !== null).length / avgs.length;
       const cateItem = {
         id,
         name: i,
@@ -384,8 +395,7 @@ const monitorChartData = computed(() => {
       });
     }
   });
-  // 去重
-  dateList = Array.from(new Set(dateList)).sort((a, b) => a - b);
+  dateList = dateList.sort((a, b) => a - b);
   valueList = valueList.filter((i) => showCates.value[i.id]);
   return {
     dateList,
@@ -410,7 +420,6 @@ function switchChartType() {
 }
 
 function toggleMinute(value) {
-  now.value = store.state.serverTime || Date.now();
   minute.value = value;
 }
 
@@ -454,7 +463,6 @@ async function loadMonitor() {
   }).catch((err) => {
     console.error(err);
   });
-  now.value = store.state.serverTime || Date.now();
 }
 
 let loadMonitorTimer = null;
@@ -539,8 +547,15 @@ onUnmounted(() => {
       color: #fff;
     }
 
+    .cate-over-rate {
+      height: var(--cate-item-height);
+      line-height: calc(var(--cate-item-height) + 2px);
+      text-align: right;
+      color: #fffbd8;
+    }
+
     &.disabled {
-      filter: grayscale(1);
+      filter: grayscale(1) brightness(0.8);
       opacity: 0.5;
     }
   }

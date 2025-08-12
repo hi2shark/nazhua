@@ -11,15 +11,15 @@ import uniqolor from 'uniqolor';
  */
 export function getThreshold(data, tolerance = 2) {
   // 计算数据的平均值
-  const mean = data.reduce((sum, value) => sum + value, 0) / data.length;
+  const mean = data.reduce((sum, value) => sum + (value || 0), 0) / data.length;
   // 计算数据的方差
-  const variance = data.reduce((sum, value) => sum + (value - mean) ** 2, 0) / data.length;
+  const variance = data.reduce((sum, value) => sum + ((value || 0) - mean) ** 2, 0) / data.length;
   // 计算标准差
   const stdDev = Math.sqrt(variance);
   // 计算阈值
   const threshold = tolerance * stdDev;
   // 过滤掉值为0的数据
-  const filteredData = data.filter((value) => value !== 0);
+  const filteredData = data.filter((value) => value !== 0 && value !== null);
   // 计算过滤后数据的最小值
   const min = Math.min(...filteredData);
   // 计算过滤后数据的最大值
