@@ -334,8 +334,8 @@ const monitorChartData = computed(() => {
           dateMap[o] = null;
           return;
         }
+        // 削峰过滤：检测到异常值时直接跳过，不加入dateMap，避免影响成功率计算
         if (Math.abs(avgDelay - mean) > threshold && max / min > 2) {
-          dateMap[o] = null;
           return;
         }
       }
