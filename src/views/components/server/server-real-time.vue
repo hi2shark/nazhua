@@ -134,11 +134,13 @@ const {
       .item-content-sub-label {
         height: var(--real-time-label-line-height);
         line-height: var(--real-time-label-line-height);
+        white-space: nowrap;
       }
 
       .item-content-sub-content {
         display: flex;
         align-items: center;
+        white-space: nowrap;
       }
 
       .item-value,
