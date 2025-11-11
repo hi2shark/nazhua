@@ -280,13 +280,6 @@ const monitorChartData = computed(() => {
    * - valueList {Array}: 包含以下内容的对象列表：
    *   - name {String}: 监控名称。
    *   - data {Array}: [时间戳, 平均延迟] 对的数组。
-   *
-   * 该函数执行以下步骤：
-   * 1. 遍历监控数据以分类和过滤平均延迟。
-   * 2. 如果启用了削峰，则应用削峰以过滤异常值。
-   * 3. 构建监控名称到其各自时间戳和平均延迟的映射。
-   * 4. 将映射转换为监控名称、时间戳和平均延迟数据的列表。
-   * 5. 删除重复的时间戳并对其进行排序。
    */
   const cateMap = {};
   monitorData.value.forEach((i) => {
@@ -319,27 +312,30 @@ const monitorChartData = computed(() => {
       }
     }
     const {
-      threshold,
-      mean,
-      max,
-      min,
-    } = peakShaving.value ? getThreshold(showAvgDelay, 2) : {};
+      median,
+      tolerancePercent,
+    } = peakShaving.value ? getThreshold(showAvgDelay) : {};
     showCreateTime.forEach((o, index) => {
       if (Object.prototype.hasOwnProperty.call(dateMap, o)) {
         return;
       }
       const avgDelay = showAvgDelay[index];
+      // 没有数据或延迟为0，算作监控失败，计入成功率
+      if (avgDelay === null || avgDelay === 0) {
+        dateMap[o] = undefined;
+        return;
+      }
+      // 只对有效的延迟值进行削峰判断
       if (peakShaving.value) {
-        if (avgDelay === 0) {
-          dateMap[o] = null;
-          return;
-        }
-        // 削峰过滤：检测到异常值时直接跳过，不加入dateMap，避免影响成功率计算
-        if (Math.abs(avgDelay - mean) > threshold && max / min > 2) {
+        // 削峰过滤：根据中位数和动态容差百分比判断异常值
+        const threshold = median * tolerancePercent;
+        // 当偏离中位数超过阈值时，视为异常值
+        if (Math.abs(avgDelay - median) > threshold) {
+          dateMap[o] = undefined;
           return;
         }
       }
-      dateMap[o] = avgDelay ? (avgDelay).toFixed(2) * 1 : null;
+      dateMap[o] = (avgDelay).toFixed(2) * 1;
     });
   });
   let dateList = [];
@@ -362,9 +358,11 @@ const monitorChartData = computed(() => {
         showCates.value[id] = true;
       }
       // 计算平均延迟和成功率
-      const validAvgs = avgs.filter((a) => a[1] !== 0 && a[1] !== null);
+      // 排除被削峰过滤的点(undefined)，只统计真实的监控数据
+      const realAvgs = avgs.filter((a) => a[1] !== undefined);
+      const validAvgs = realAvgs.filter((a) => a[1] !== 0 && a[1] !== null);
       const avg = validAvgs.reduce((a, b) => a + b[1], 0) / validAvgs.length;
-      const over = avgs.filter((a) => a[1] !== 0 && a[1] !== null).length / avgs.length;
+      const over = validAvgs.length / realAvgs.length;
       const cateItem = {
         id,
         name: i,
@@ -567,6 +565,12 @@ onUnmounted(() => {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+
+  @media screen and (min-width: 768px) {
+    position: sticky;
+    top: var(--layout-header-height);
+    z-index: 1000;
+  }
 
   .module-title {
     width: max-content;

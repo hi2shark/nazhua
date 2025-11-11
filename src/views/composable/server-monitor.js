@@ -1,33 +1,75 @@
 import uniqolor from 'uniqolor';
 
 /**
- * 计算数据的阈值和平均值
+ * 计算数据的统计信息，使用截尾中位数作为基准值
+ * 根据平均延迟的不同范围，使用不同的容差百分比进行削峰
  *
  * @param {number[]} data - 要计算的数据数组
- * @param {number} [tolerance=2] - 容差倍数，默认值为2
- * @returns {{threshold: number, mean: number}} 返回包含阈值和平均值的对象
- * @property {number} threshold - 计算得到的阈值
- * @property {number} mean - 数据的平均值
+ * @returns {{median: number, tolerancePercent: number, min: number, max: number}}
+ *          返回包含统计信息的对象
+ * @property {number} median - 截尾中位数(去掉极端值后的中位数)
+ * @property {number} tolerancePercent - 根据中位数计算的容差百分比
+ * @property {number} min - 最小值
+ * @property {number} max - 最大值
  */
-export function getThreshold(data, tolerance = 2) {
-  // 计算数据的平均值
-  const mean = data.reduce((sum, value) => sum + (value || 0), 0) / data.length;
-  // 计算数据的方差
-  const variance = data.reduce((sum, value) => sum + ((value || 0) - mean) ** 2, 0) / data.length;
-  // 计算标准差
-  const stdDev = Math.sqrt(variance);
-  // 计算阈值
-  const threshold = tolerance * stdDev;
-  // 过滤掉值为0的数据
+export function getThreshold(data) {
+  // 过滤掉null和0的数据，只对有效延迟值计算统计量
   const filteredData = data.filter((value) => value !== 0 && value !== null);
-  // 计算过滤后数据的最小值
-  const min = Math.min(...filteredData);
-  // 计算过滤后数据的最大值
-  const max = Math.max(...filteredData);
-  // 返回包含阈值、平均值、最小值和最大值的对象
+
+  if (filteredData.length === 0) {
+    return {
+      median: 0,
+      tolerancePercent: 0.2,
+      min: 0,
+      max: 0,
+    };
+  }
+
+  // 排序数据
+  const sortedData = [...filteredData].sort((a, b) => Math.ceil(a) - Math.ceil(b));
+  const len = sortedData.length;
+
+  // 计算需要裁剪的数量（10%）
+  const trimCount = Math.floor(len * 0.1);
+
+  // 用于计算中位数的数据：如果10%的数量>=1，则去掉最大和最小的10%
+  let dataForMedian;
+  if (trimCount >= 1) {
+    // 截尾：去掉最小的10%和最大的10%
+    dataForMedian = sortedData.slice(trimCount, len - trimCount);
+  } else {
+    // 数据量太少，不裁剪
+    dataForMedian = sortedData;
+  }
+
+  // 计算截尾中位数
+  const medianLen = dataForMedian.length;
+  const median = medianLen % 2 === 0
+    ? (dataForMedian[medianLen / 2 - 1] + dataForMedian[medianLen / 2]) / 2
+    : dataForMedian[Math.floor(medianLen / 2)];
+
+  // 根据中位数确定容差百分比，延迟越小容差越大
+  let tolerancePercent;
+  if (median <= 10) {
+    tolerancePercent = 0.50; // 50%
+  } else if (median <= 30) {
+    tolerancePercent = 0.35; // 35%
+  } else if (median <= 50) {
+    tolerancePercent = 0.25; // 25%
+  } else if (median <= 100) {
+    tolerancePercent = 0.20; // 20%
+  } else {
+    tolerancePercent = 0.15; // 15%
+  }
+
+  const min = sortedData[0];
+  const max = sortedData[len - 1];
+
+  // console.log(min, max, median, sortedData);
+
   return {
-    threshold,
-    mean,
+    median,
+    tolerancePercent,
     min,
     max,
   };
