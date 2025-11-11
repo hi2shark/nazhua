@@ -77,6 +77,12 @@ const codeMaps = {
     name: '吉隆坡',
     country: '马来西亚',
   },
+  BKK: {
+    name: '曼谷',
+    country: '泰国',
+    x: 985,
+    y: 296,
+  },
   HAN: {
     x: 998,
     y: 274,
@@ -88,6 +94,24 @@ const codeMaps = {
     y: 314,
     name: '胡志明市',
     country: '越南',
+  },
+  BOM: {
+    name: '孟买',
+    country: '印度',
+    x: 874,
+    y: 284,
+  },
+  DEL: {
+    name: '新德里',
+    country: '印度',
+    x: 886,
+    y: 246,
+  },
+  DXB: {
+    name: '迪拜',
+    country: '阿联酋',
+    x: 794.5,
+    y: 252,
   },
   LAX: {
     x: 95,
@@ -136,6 +160,12 @@ const codeMaps = {
     y: 179,
     name: '纽约',
     country: '美国',
+  },
+  IAD: {
+    name: '阿什本',
+    country: 'US',
+    x: 265,
+    y: 186,
   },
   DFW: {
     x: 172,
@@ -251,6 +281,30 @@ const codeMaps = {
     name: '布加勒斯特',
     country: '罗马尼亚',
   },
+  SOF: {
+    name: '索菲亚',
+    country: '保加利亚',
+    x: 662.5,
+    y: 167,
+  },
+  VNO: {
+    name: '维尔纽斯',
+    country: '立陶宛',
+    x: 657.5,
+    y: 110.5,
+  },
+  OSL: {
+    name: '奥斯陆',
+    country: '挪威',
+    x: 615.5,
+    y: 93,
+  },
+  RBA: {
+    name: '拉巴特',
+    country: '摩洛哥',
+    x: 545,
+    y: 212,
+  },
   IST: {
     x: 676,
     y: 176,
@@ -275,6 +329,7 @@ export const aliasMapping = {
   HK: 'HKG',
   MO: 'MFM',
   TW: 'TPE',
+  ASH: 'IAD',
 };
 
 export const countryCodeMapping = {
@@ -284,6 +339,9 @@ export const countryCodeMapping = {
   KR: 'SEL',
   MY: 'KUL',
   VN: 'HAN',
+  IN: 'DEL',
+  TH: 'BKK',
+  AE: 'DXB',
   TR: 'IST',
   RO: 'OTP',
   LU: 'LUX',
@@ -302,6 +360,10 @@ export const countryCodeMapping = {
   IT: 'MXP',
   ES: 'MAD',
   PL: 'WAW',
+  BG: 'SOF',
+  LT: 'VNO',
+  NO: 'OSL',
+  MA: 'RBA',
 };
 
 export default codeMaps;
