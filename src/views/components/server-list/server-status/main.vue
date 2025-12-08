@@ -1,6 +1,7 @@
 <template>
   <dot-dot-box
     v-if="tableData"
+    border-radius="6px"
     class="server-status"
   >
     <table class="server-status-table">
@@ -118,11 +119,6 @@ function openDetail(info) {
   --server-status-td-height: 32px;
 
   --progress-bar-height: 18px;
-
-  @media screen and (max-width: 350px) {
-    --progress-bar-height: 16px;
-    padding: 0 15px;
-  }
 }
 .server-status-table {
   width: 100%;

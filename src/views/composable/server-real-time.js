@@ -128,7 +128,13 @@ export default (params) => {
       value: 0,
       unit: '',
     };
-    if (inStats.g > 1) {
+    if (inStats.p > 1) {
+      result.value = (inStats.p).toFixed(1) * 1;
+      result.unit = 'P';
+    } else if (inStats.t > 1) {
+      result.value = (inStats.t).toFixed(1) * 1;
+      result.unit = 'T';
+    } else if (inStats.g > 1) {
       result.value = (inStats.g).toFixed(1) * 1;
       result.unit = 'G';
     } else if (inStats.m > 1) {
@@ -147,7 +153,13 @@ export default (params) => {
       value: 0,
       unit: '',
     };
-    if (outStats.g > 1) {
+    if (outStats.p > 1) {
+      result.value = (outStats.p).toFixed(1) * 1;
+      result.unit = 'P';
+    } else if (outStats.t > 1) {
+      result.value = (outStats.t).toFixed(1) * 1;
+      result.unit = 'T';
+    } else if (outStats.g > 1) {
       result.value = (outStats.g).toFixed(1) * 1;
       result.unit = 'G';
     } else if (outStats.m > 1) {

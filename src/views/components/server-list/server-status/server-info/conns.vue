@@ -61,7 +61,7 @@ const udpConnCount = computed(() => {
   }
 
   .split-line {
-    width: 4px;
+    width: 6px;
     text-align: center;
   }
 }

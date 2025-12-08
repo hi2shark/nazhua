@@ -160,28 +160,36 @@ function isSet(value) {
       }
     }
 
-    &--cpu {
+    &--cpuText {
       .text--value {
         color: var(--cpu-text-color);
       }
     }
 
-    &--mem {
+    &--memText {
       .text--value {
         color: var(--mem-text-color);
       }
     }
 
-    &--swap {
+    &--swapText {
       .text--value {
         color: var(--swap-text-color);
       }
     }
 
-    &--disk {
+    &--diskText {
       .text--value {
         color: var(--disk-text-color);
       }
+    }
+
+    &--billing {
+      font-size: 12px;
+    }
+
+    &--remainingTime {
+      font-size: 12px;
     }
   }
 }

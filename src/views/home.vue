@@ -14,8 +14,9 @@
         v-if="showFilter"
         class="fitler-group"
         :class="{
-          'list-is-row': showListRow,
-          'list-is-card': showListCard,
+          'list-is--row': showListRow,
+          'list-is--card': showListCard,
+          'list-is--server-status': showListRowByServerStatus,
         }"
       >
         <div class="left-box">
@@ -54,11 +55,11 @@
       </server-list-warp>
       <!-- ServerStatus模式 -->
       <server-list-warp
-        v-if="showListByServerStatus"
+        v-if="showListRowByServerStatus"
         :show-transition="showTransition"
-        :show-list-by-server-status="showListByServerStatus"
+        :show-list-by-server-status="showListRowByServerStatus"
       >
-        <server-list-by-server-status
+        <server-status-main
           :server-list="filterServerList.list"
         />
       </server-list-warp>
@@ -121,7 +122,7 @@ import ServerOptionBox from './components/server-list/server-option-box.vue';
 import ServerListWarp from './components/server-list/server-list-warp.vue';
 import ServerCardItem from './components/server-list/card/server-list-item.vue';
 import ServerRowItem from './components/server-list/row/server-list-item.vue';
-import ServerListByServerStatus from './components/server-list-by-server-status/main.vue';
+import ServerStatusMain from './components/server-list/server-status/main.vue';
 
 const store = useStore();
 const worldMapWidth = ref();
@@ -150,6 +151,15 @@ const showListRow = computed(() => {
   }
   return false;
 });
+const showListRowByServerStatus = computed(() => {
+  if (windowWidth.value > 1024) {
+    if (config.nazhua.listServerItemTypeToggle) {
+      return listType.value === 'server-status';
+    }
+    return config.nazhua.listServerItemType === 'server-status';
+  }
+  return false;
+});
 const showListCard = computed(() => {
   if (windowWidth.value > 1024) {
     if (config.nazhua.listServerItemTypeToggle) {
@@ -158,15 +168,6 @@ const showListCard = computed(() => {
     return config.nazhua.listServerItemType === 'card';
   }
   return true;
-});
-const showListByServerStatus = computed(() => {
-  if (windowWidth.value > 1024) {
-    if (config.nazhua.listServerItemTypeToggle) {
-      return listType.value === 'server-status';
-    }
-    return config.nazhua.listServerItemType === 'server-status';
-  }
-  return false;
 });
 
 const showFilter = computed(() => config.nazhua.hideFilter !== true);

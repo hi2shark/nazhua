@@ -12,12 +12,12 @@ import handleServerRealTime from '@/views/composable/server-real-time';
 import handleServerBillAndPlan from '@/views/composable/server-bill-and-plan';
 
 import ServerStatusProgress from '@/views/components/server/server-status-progress.vue';
-import StatusIcon from '@/views/components/server-list-by-server-status/server-info/status-icon.vue';
-import SystemOS from '@/views/components/server-list-by-server-status/server-info/system-os.vue';
-import Country from '@/views/components/server-list-by-server-status/server-info/country.vue';
-import NetSpeed from '@/views/components/server-list-by-server-status/server-info/net-speed.vue';
-import Transfer from '@/views/components/server-list-by-server-status/server-info/transfer.vue';
-import Conns from '@/views/components/server-list-by-server-status/server-info/conns.vue';
+import StatusIcon from '@/views/components/server-list/server-status/server-info/status-icon.vue';
+import SystemOS from '@/views/components/server-list/server-status/server-info/system-os.vue';
+import Country from '@/views/components/server-list/server-status/server-info/country.vue';
+import NetSpeed from '@/views/components/server-list/server-status/server-info/net-speed.vue';
+import Transfer from '@/views/components/server-list/server-status/server-info/transfer.vue';
+import Conns from '@/views/components/server-list/server-status/server-info/conns.vue';
 
 const COLUMN_MAP = Object.freeze({
   status: {
@@ -145,7 +145,7 @@ const COLUMN_MAP = Object.freeze({
   },
   billing: {
     label: '价格',
-    width: 110,
+    width: 100,
     align: 'right',
   },
   remainingTime: {
@@ -294,9 +294,8 @@ export const handleServerItemData = (params) => {
       };
     }
     case 'billing':
-    case 'remainingTime':
     {
-      const item = billAndPlan?.value?.[column.prop];
+      const item = billAndPlan?.value?.billing;
       const texts = [];
       if (item?.value) {
         texts.push(item.value || '-');
@@ -307,7 +306,17 @@ export const handleServerItemData = (params) => {
       return {
         prop: column.prop,
         type: 'text',
-        text: texts.join('/'),
+        text: texts.length ? texts.join('/') : '-',
+        originalData: params,
+      };
+    }
+    case 'remainingTime':
+    {
+      const item = billAndPlan?.value?.remainingTime;
+      return {
+        prop: column.prop,
+        type: 'text',
+        text: item?.value || '-',
         originalData: params,
       };
     }
@@ -400,7 +409,6 @@ export const handleServerListColumn = (serverList, columnTpls = DEFAULT_COLUMNS)
         showBilling = true;
       }
       if (billAndPlan?.value?.remainingTime) {
-        console.log('remainingTime', billAndPlan.value.remainingTime);
         showRemainingTime = true;
       }
     }

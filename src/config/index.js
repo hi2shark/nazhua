@@ -32,6 +32,9 @@ const config = reactive({
 if (config.nazhua.nezhaVersion) {
   config.init = true;
 }
+if (window.$$serverStatus) {
+  config.nazhua.listServerItemType = 'server-status';
+}
 
 function setColorMode() {
   if (config.nazhua.simpleColorMode) {
@@ -64,6 +67,9 @@ export function mergeNazhuaConfig(customConfig) {
   });
   replaceFavicon();
   setColorMode();
+  if (window.$$serverStatus) {
+    config.nazhua.listServerItemType = 'server-status';
+  }
 }
 // 暴露合并配置方法
 window.$mergeNazhuaConfig = mergeNazhuaConfig;
