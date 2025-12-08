@@ -261,6 +261,8 @@ const monitorChartType = computed(() => {
 
 // 服务器时间（后面来自接口）
 const nowServerTime = computed(() => store.state.serverTime || Date.now());
+// const nowServerTime = computed(() => Date.now());
+// console.log(store.state.serverTime);
 const accpetShowTime = computed(() => (Math.floor(nowServerTime.value / 60000) - minute.value) * 60000);
 
 const minuteActiveArrowStyle = computed(() => {
@@ -281,109 +283,161 @@ const monitorChartData = computed(() => {
    *   - name {String}: 监控名称。
    *   - data {Array}: [时间戳, 平均延迟] 对的数组。
    */
+  const cateList = [];
   const cateMap = {};
+  const dateSet = new Set();
+  let valueList = [];
   monitorData.value.forEach((i) => {
-    const dateMap = {};
-    if (!cateMap[i.monitor_name]) {
-      cateMap[i.monitor_name] = {
-        id: i.monitor_id,
-        dateMap,
-        avgs: [],
+    const dateMap = new Map();
+    const {
+      monitor_name,
+      monitor_id,
+      created_at,
+      avg_delay,
+    } = i;
+    if (!cateMap[monitor_name]) {
+      cateMap[monitor_name] = {
+        id: monitor_id,
       };
     }
-    const showAvgDelay = [];
-    const showCreateTime = [];
-    const accpeTimeMap = {};
-    i.created_at.forEach((o, index) => {
-      const status = o >= accpetShowTime.value;
+    const cateDelayMap = new Map();
+    const cateAcceptTimeMap = new Map();
+    const cateCreateTime = new Set();
+
+    // 实际数据的最早时间戳
+    let earliestTimestamp = nowServerTime.value;
+    created_at.forEach((time, index) => {
+      if (time < earliestTimestamp) {
+        earliestTimestamp = time;
+      }
+      const status = time >= accpetShowTime.value;
+
+      // 允许显示的数据，记录到cateAcceptTime
       if (status) {
-        accpeTimeMap[o] = i.avg_delay[index];
+        if (import.meta.env.VITE_MONITOR_DEBUG === '1' && cateAcceptTimeMap.has(time)) {
+          console.log(`${monitor_name} ${time} 重复，值对比： ${avg_delay[index]} vs ${cateAcceptTimeMap.get(time)}`);
+        }
+        cateAcceptTimeMap.set(time, avg_delay[index]);
       }
     });
-    const allMintues = Math.floor((Date.now() - accpetShowTime.value) / 60000);
-    for (let j = 0; j < allMintues; j += 1) {
-      const time = accpetShowTime.value + j * 60000;
-      showCreateTime.push(time);
-      const timeProp = accpeTimeMap[time];
-      if (timeProp) {
-        showAvgDelay.push(timeProp);
-      } else {
-        showAvgDelay.push(null);
-      }
+    if (import.meta.env.VITE_MONITOR_DEBUG === '1') {
+      console.log(`${monitor_name} created_at`, earliestTimestamp);
+      console.log(`${monitor_name} created_at`, JSON.parse(JSON.stringify(created_at)));
+      console.log(`${monitor_name} avg_delay`, JSON.parse(JSON.stringify(avg_delay)));
     }
+
+    // 允许显示的最早时间戳，用于生成显示时间范围内的数据
+    const actualStartTime = Math.max(
+      accpetShowTime.value,
+      earliestTimestamp,
+    );
+
+    // 显示时间范围内的分钟数
+    const allMintues = Math.floor((Date.now() - actualStartTime) / 60000);
+
+    // 合成分钟数据
+    for (let j = 0; j < allMintues; j += 1) {
+      const time = actualStartTime + j * 60000;
+      // 记录创建时间
+      cateCreateTime.add(time);
+      // 记录延迟数据
+      const timeProp = cateAcceptTimeMap.get(time);
+      cateDelayMap.set(time, timeProp ?? undefined);
+    }
+
+    // 计算削峰阈值
     const {
       median,
       tolerancePercent,
-    } = peakShaving.value ? getThreshold(showAvgDelay) : {};
-    showCreateTime.forEach((o, index) => {
-      if (Object.prototype.hasOwnProperty.call(dateMap, o)) {
-        return;
-      }
-      const avgDelay = showAvgDelay[index];
-      // 没有数据或延迟为0，算作监控失败，计入成功率
-      if (avgDelay === null || avgDelay === 0) {
-        dateMap[o] = undefined;
-        return;
-      }
+    } = peakShaving.value ? getThreshold(Array.from(cateDelayMap.values())) : {};
+
+    // 合成分钟数据
+    cateCreateTime.values().forEach((time) => {
+      const avgDelay = cateDelayMap.get(time) * 1;
+
       // 只对有效的延迟值进行削峰判断
       if (peakShaving.value) {
         // 削峰过滤：根据中位数和动态容差百分比判断异常值
         const threshold = median * tolerancePercent;
         // 当偏离中位数超过阈值时，视为异常值
         if (Math.abs(avgDelay - median) > threshold) {
-          dateMap[o] = undefined;
+          dateMap.set(time, null);
           return;
         }
       }
-      dateMap[o] = (avgDelay).toFixed(2) * 1;
+      // 无数据或无效数据的情况，设置为undefined
+      if (Number.isNaN(avgDelay)) {
+        dateMap.set(time, undefined);
+      } else {
+        dateMap.set(time, (avgDelay).toFixed(2) * 1);
+      }
     });
-  });
-  let dateList = [];
-  let valueList = [];
-  const cateList = [];
-  Object.keys(cateMap).forEach((i) => {
-    const {
-      id,
-      dateMap,
-      avgs,
-    } = cateMap[i];
-    Object.entries(dateMap).forEach(([key, value]) => {
-      const time = parseInt(key, 10);
-      avgs.push([time, value]);
-      dateList.push(time);
+
+    const lineData = [];
+    const validatedData = [];
+    const overValidatedData = [];
+    let delayTotal = 0;
+    dateMap.forEach((val, key) => {
+      const time = parseInt(key, 10); // 时间戳
+      lineData.push([time, val || null]);
+      if (val) {
+        dateSet.add(time);
+        validatedData.push([time, val]);
+        delayTotal += val;
+      }
+      if (val !== undefined) {
+        overValidatedData.push([time, val]);
+      }
     });
-    const color = getLineColor(id);
-    if (avgs.length) {
+
+    if (import.meta.env.VITE_MONITOR_DEBUG === '1') {
+      cateMap[monitor_name].origin = {
+        cateCreateTime,
+        cateDelayMap,
+        cateAcceptTimeMap,
+        dateMap,
+        lineData,
+        validatedData,
+        overValidatedData,
+        delayTotal,
+      };
+    }
+
+    const id = monitor_id;
+    // 计算平均延迟
+    const avgDelay = delayTotal / validatedData.length || 0;
+
+    if (lineData && lineData.length) {
       if (!validate.hasOwn(showCates.value, id)) {
         showCates.value[id] = true;
       }
-      // 计算平均延迟和成功率
-      // 排除被削峰过滤的点(undefined)，只统计真实的监控数据
-      const realAvgs = avgs.filter((a) => a[1] !== undefined);
-      const validAvgs = realAvgs.filter((a) => a[1] !== 0 && a[1] !== null);
-      const avg = validAvgs.reduce((a, b) => a + b[1], 0) / validAvgs.length;
-      const over = validAvgs.length / realAvgs.length;
+      const color = getLineColor(id);
+      // 成功率 = 有效数据点 / 所有数据点
+      const over = overValidatedData.length > 0 ? overValidatedData.length / lineData.length : 0;
+      const validRate = 1 - ((validatedData.length > 0 && overValidatedData.length > 0)
+        ? validatedData.length / overValidatedData.length : 0);
       const cateItem = {
         id,
-        name: i,
+        name: monitor_name,
         color,
-        avg: avg.toFixed(2) * 1,
+        avg: avgDelay.toFixed(2) * 1,
         over: (over * 100).toFixed(2) * 1,
+        validRate: (validRate * 100).toFixed(2) * 1,
       };
-      if (Number.isNaN(cateItem.avg)) {
-        cateItem.avg = 0;
-      }
       const titles = [
         cateItem.name,
         cateItem.avg === 0 ? '' : `平均延迟：${cateItem.avg}ms`,
         `成功率：${cateItem.over}%`,
       ];
+      if (peakShaving.value) {
+        titles.push(`削峰率: ${cateItem.validRate}%`);
+      }
       cateItem.title = titles.filter((s) => s).join('\n');
       cateList.push(cateItem);
       valueList.push({
         id,
-        name: i,
-        data: avgs,
+        name: monitor_name,
+        data: lineData,
         itemStyle: {
           color,
         },
@@ -393,8 +447,15 @@ const monitorChartData = computed(() => {
       });
     }
   });
-  dateList = dateList.sort((a, b) => a - b);
+
+  const dateList = Array.from(dateSet).sort((a, b) => a - b);
   valueList = valueList.filter((i) => showCates.value[i.id]);
+
+  if (import.meta.env.VITE_MONITOR_DEBUG === '1') {
+    window._cateMap = cateMap;
+    console.log(window._cateMap);
+    console.log(dateList, cateList, valueList);
+  }
   return {
     dateList,
     cateList,
