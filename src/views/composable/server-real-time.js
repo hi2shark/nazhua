@@ -221,6 +221,18 @@ export default (params) => {
           value: transfer.value?.value,
           unit: transfer.value?.unit,
           show: validate.isSet(transfer.value?.value),
+          data: {
+            in: {
+              value: inTransfer.value?.value,
+              unit: inTransfer.value?.unit,
+              show: validate.isSet(inTransfer.value?.value),
+            },
+            out: {
+              value: outTransfer.value?.value,
+              unit: outTransfer.value?.unit,
+              show: validate.isSet(outTransfer.value?.value),
+            },
+          },
         };
       case 'inTransfer':
         return {
@@ -263,6 +275,18 @@ export default (params) => {
             `${netOutSpeed.value?.value}${netOutSpeed.value?.unit}`,
           ].join('|'),
           show: validate.isSet(netInSpeed.value?.value) && validate.isSet(netOutSpeed.value?.value),
+          data: {
+            in: {
+              value: netInSpeed.value?.value,
+              unit: netInSpeed.value?.unit,
+              show: validate.isSet(netInSpeed.value?.value),
+            },
+            out: {
+              value: netOutSpeed.value?.value,
+              unit: netOutSpeed.value?.unit,
+              show: validate.isSet(netOutSpeed.value?.value),
+            },
+          },
         };
       case 'load':
         return {
@@ -271,12 +295,49 @@ export default (params) => {
           value: (props.info.State?.Load1 || 0).toFixed(2),
           show: validate.isSet(props.info.State?.Load1),
         };
+      case 'loads':
+      {
+        const loads = [];
+        loads.push((props.info.State?.Load1 || 0).toFixed(2));
+        loads.push((props.info.State?.Load5 || 0).toFixed(2));
+        loads.push((props.info.State?.Load15 || 0).toFixed(2));
+        return {
+          key,
+          label: '负载',
+          value: loads.join(','),
+          show: loads.some((load) => validate.isSet(load)),
+          data: {
+            load1: {
+              value: (props.info.State?.Load1 || 0).toFixed(2),
+              show: validate.isSet(props.info.State?.Load1),
+            },
+            load5: {
+              value: (props.info.State?.Load5 || 0).toFixed(2),
+              show: validate.isSet(props.info.State?.Load5),
+            },
+            load15: {
+              value: (props.info.State?.Load15 || 0).toFixed(2),
+              show: validate.isSet(props.info.State?.Load15),
+            },
+          },
+        };
+      }
       case 'conns':
         return {
           key,
           label: '连接',
           value: `${props.info.State?.TcpConnCount || 0}|${props.info.State?.UdpConnCount || 0}`,
           show: true,
+          data: {
+            tcp: {
+              value: props.info.State?.TcpConnCount || 0,
+              show: validate.isSet(props.info.State?.TcpConnCount),
+            },
+            udp: {
+              value: props.info.State?.UdpConnCount || 0,
+              show: validate.isSet(props.info.State?.UdpConnCount),
+            },
+          },
         };
       case 'tcp':
         return {
@@ -292,6 +353,7 @@ export default (params) => {
           value: props.info.State?.UdpConnCount || 0,
           show: validate.isSet(props.info.State?.UdpConnCount),
         };
+      // 入网和出网
       case 'I-A-O':
         return {
           key,
@@ -314,6 +376,7 @@ export default (params) => {
           ],
           show: validate.isSet(netInSpeed.value?.value) && validate.isSet(netOutSpeed.value?.value),
         };
+      // 负载和进程
       case 'L-A-P':
         return {
           key,
@@ -334,6 +397,7 @@ export default (params) => {
           ],
           show: validate.isSet(props.info.State?.Load1) || validate.isSet(props.info.State?.ProcessCount),
         };
+      // 连接 TCP和UDP
       case 'T-A-U':
         return {
           key,
@@ -354,6 +418,7 @@ export default (params) => {
           ],
           show: validate.isSet(props.info.State?.TcpConnCount) || validate.isSet(props.info.State?.UdpConnCount),
         };
+      // 在线和流量
       case 'D-A-T':
         return {
           key,

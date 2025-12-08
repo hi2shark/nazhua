@@ -7,6 +7,7 @@
     :class="{
       'server-list--row': showListRow,
       'server-list--card': showListCard,
+      'server-list--status': showListByServerStatus,
     }"
   >
     <slot />
@@ -17,6 +18,7 @@
     :class="{
       'server-list--row': showListRow,
       'server-list--card': showListCard,
+      'server-list--status': showListByServerStatus,
     }"
   >
     <slot />
@@ -38,6 +40,10 @@ defineProps({
     default: false,
   },
   showListCard: {
+    type: Boolean,
+    default: false,
+  },
+  showListByServerStatus: {
     type: Boolean,
     default: false,
   },
@@ -83,6 +89,18 @@ defineProps({
 }
 
 .server-list-container.server-list--row {
+  --list-padding: 20px;
+  --list-gap-size: 12px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--list-gap-size);
+  width: var(--list-container-width);
+  padding: 0 var(--list-padding);
+  margin: auto;
+}
+
+.server-list-container.server-list--status {
   --list-padding: 20px;
   --list-gap-size: 12px;
   position: relative;

@@ -12,7 +12,10 @@
         class="progress-bar-label"
         :title="label + '使用' + used + '%'"
       >
-        <span class="server-status-label">
+        <span
+          v-if="label"
+          class="server-status-label"
+        >
           {{ label }}:
         </span>
         <span class="server-status-val-text">

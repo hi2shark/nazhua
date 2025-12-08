@@ -11,7 +11,8 @@ window.$$nazhuaConfig = {
   // showLantern: true, // 是否显示灯笼
   enableInnerSearch: true, // 启用内部搜索
   // listServerItemTypeToggle: true, // 服务器列表项类型切换
-  // listServerItemType: 'row', // 服务器列表项类型 card/row row列表模式移动端自动切换至card
+  listServerItemType: 'row', // 服务器列表项类型 card/row/status row列表模式移动端自动切换至card
+  // serverStatusColumnsTpl: null, // 服务器状态列配置模板
   // listServerStatusType: 'progress', // 服务器状态类型--列表
   // listServerRealTimeShowLoad: true, // 列表显示服务器实时负载
   // detailServerStatusType: 'progress', // 服务器状态类型--详情页

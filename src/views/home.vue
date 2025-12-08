@@ -40,6 +40,7 @@
           />
         </div>
       </div>
+      <!-- 列表模式 -->
       <server-list-warp
         v-if="showListRow"
         :show-transition="showTransition"
@@ -51,6 +52,17 @@
           :info="item"
         />
       </server-list-warp>
+      <!-- ServerStatus模式 -->
+      <server-list-warp
+        v-if="showListByServerStatus"
+        :show-transition="showTransition"
+        :show-list-by-server-status="showListByServerStatus"
+      >
+        <server-list-by-server-status
+          :server-list="filterServerList.list"
+        />
+      </server-list-warp>
+      <!-- 卡片模式 -->
       <server-list-warp
         v-if="showListCard"
         :show-transition="showTransition"
@@ -109,6 +121,7 @@ import ServerOptionBox from './components/server-list/server-option-box.vue';
 import ServerListWarp from './components/server-list/server-list-warp.vue';
 import ServerCardItem from './components/server-list/card/server-list-item.vue';
 import ServerRowItem from './components/server-list/row/server-list-item.vue';
+import ServerListByServerStatus from './components/server-list-by-server-status/main.vue';
 
 const store = useStore();
 const worldMapWidth = ref();
@@ -140,11 +153,20 @@ const showListRow = computed(() => {
 const showListCard = computed(() => {
   if (windowWidth.value > 1024) {
     if (config.nazhua.listServerItemTypeToggle) {
-      return listType.value !== 'row';
+      return listType.value === 'card';
     }
-    return config.nazhua.listServerItemType !== 'row';
+    return config.nazhua.listServerItemType === 'card';
   }
   return true;
+});
+const showListByServerStatus = computed(() => {
+  if (windowWidth.value > 1024) {
+    if (config.nazhua.listServerItemTypeToggle) {
+      return listType.value === 'status';
+    }
+    return config.nazhua.listServerItemType === 'status';
+  }
+  return false;
 });
 
 const showFilter = computed(() => config.nazhua.hideFilter !== true);
@@ -217,14 +239,19 @@ watch(() => serverCount.value, () => {
 
 const listTypeOptions = computed(() => [{
   key: 'card',
-  label: '卡片',
+  label: '卡片模式',
   value: 'card',
   icon: 'ri-gallery-view-2',
 }, {
   key: 'row',
-  label: '列表',
+  label: '列表模式',
   value: 'row',
   icon: 'ri-list-view',
+}, {
+  key: 'status',
+  label: 'ServerStatus模式',
+  value: 'status',
+  icon: 'ri-server-line',
 }]);
 
 const filterServerList = computed(() => {
