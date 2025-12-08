@@ -162,11 +162,23 @@ const show = computed(() => {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  height: 40px;
   border-bottom-left-radius: var(--list-item-border-radius);
   border-bottom-right-radius: var(--list-item-border-radius);
   background: rgba(#000, 0.3);
   box-shadow: 0 -2px 4px rgba(#000, 0.5);
+
+  --list-item-bill-height: 40px;
+  --list-item-bill-font-size: 14px;
+  --list-item-bill-icon-font-size: 16px;
+
+  height: var(--list-item-bill-height);
+  font-size: var(--list-item-bill-font-size);
+
+  @media screen and (max-width: 720px) {
+    --list-item-bill-height: 30px;
+    --list-item-bill-font-size: 12px;
+    --list-item-bill-icon-font-size: 14px;
+  }
 
   &.dot-dot-box--hide {
     box-shadow: none;
@@ -186,22 +198,26 @@ const show = computed(() => {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 30px;
-      height: 30px;
+      width: calc(var(--list-item-bill-height) * 0.75);
+      height: calc(var(--list-item-bill-height) * 0.75);
       line-height: 1;
-      font-size: 16px;
+      font-size: var(--list-item-bill-icon-font-size);
       color: #74dbef;
     }
 
     .text {
       display: flex;
       align-items: center;
-      line-height: 30px;
+      line-height: var(--list-item-bill-height);
       color: #ddd;
     }
 
     .value-text {
       color: #74dbef;
+    }
+
+    @media screen and (max-width: 720px) {
+      padding-left: 6px;
     }
   }
 

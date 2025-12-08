@@ -99,13 +99,13 @@ const progressStyle = computed(() => {
 
   @media screen and (max-width: 480px) {
     flex: none;
-    width: calc(50% - 5px);
+    width: var(--progress-bar-width, calc(50% - 5px));
   }
 
-  @media screen and (max-width: 350px) {
-    flex: none;
-    width: 100%;
-  }
+  // @media screen and (max-width: 350px) {
+  //   flex: none;
+  //   width: 100%;
+  // }
 
   .progress-bar-box {
     position: relative;

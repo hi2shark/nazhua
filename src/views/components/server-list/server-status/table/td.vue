@@ -118,6 +118,7 @@ function isSet(value) {
     align-items: center;
     justify-content: var(--td-content-justify-content);
     width: 100%;
+    line-height: var(--server-status-td-height);
 
     &--transfer {
       .text--value {
@@ -145,6 +146,18 @@ function isSet(value) {
     &--outSpeed {
       .text--value {
         color: var(--net-speed-out-color);
+      }
+    }
+
+    &--tcp {
+      .text--value {
+        color: var(--conn-tcp-color);
+      }
+    }
+
+    &--udp {
+      .text--value {
+        color: var(--conn-udp-color);
       }
     }
 

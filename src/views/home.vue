@@ -1,5 +1,8 @@
 <template>
-  <div class="index-container">
+  <div
+    class="index-container"
+    :class="indexContainerClass"
+  >
     <div class="scroll-container">
       <div
         v-if="worldMapPosition === 'top' && showWorldMap"
@@ -168,6 +171,20 @@ const showListCard = computed(() => {
     return config.nazhua.listServerItemType === 'card';
   }
   return true;
+});
+
+const indexContainerClass = computed(() => {
+  const className = {};
+  if (showListRow.value) {
+    className['list-is--row'] = true;
+  }
+  if (showListCard.value) {
+    className['list-is--card'] = true;
+  }
+  if (showListRowByServerStatus.value) {
+    className['list-is--server-status'] = true;
+  }
+  return className;
 });
 
 const showFilter = computed(() => config.nazhua.hideFilter !== true);
@@ -410,6 +427,7 @@ onActivated(() => {
 .index-container {
   width: 100%;
   height: 100%;
+  overflow: hidden;
 
   .scroll-container {
     display: flex;
@@ -427,6 +445,19 @@ onActivated(() => {
 
   .bottom-world-map {
     margin-top: 30px;
+  }
+
+  &.list-is--server-status {
+    --list-container-width: 1300px;
+    // 针对1440px以下的屏幕
+    @media screen and (max-width: 1440px) {
+      --list-container-width: 1300px;
+    }
+
+    // 针对1280px以下的屏幕
+    @media screen and (max-width: 1280px) {
+      --list-container-width: 1200px;
+    }
   }
 }
 

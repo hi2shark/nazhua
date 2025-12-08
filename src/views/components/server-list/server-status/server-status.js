@@ -159,7 +159,7 @@ const COLUMN_MAP = Object.freeze({
  * 默认列配置
  */
 // eslint-disable-next-line max-len, vue/max-len
-const DEFAULT_COLUMNS = 'status,name,country,system,config,duration,speeds,transfer,conns,load,cpuText,memText,diskText,billing,remainingTime';
+const DEFAULT_COLUMNS = 'status,name,country,system,config,duration,speeds,transfer,tcp,udp,load,cpuText,memText,diskText,billing,remainingTime';
 
 /**
  * 需要实时更新的数据

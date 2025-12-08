@@ -32,9 +32,14 @@ const config = reactive({
 if (config.nazhua.nezhaVersion) {
   config.init = true;
 }
-if (window.$$serverStatus) {
-  config.nazhua.listServerItemType = 'server-status';
+
+function handle$$serverStatus() {
+  if (window.$$serverStatus) {
+    config.nazhua.listServerItemType = 'server-status';
+    config.nazhua.homeWorldMapPosition = 'bottom';
+  }
 }
+handle$$serverStatus();
 
 function setColorMode() {
   if (config.nazhua.simpleColorMode) {
@@ -67,9 +72,7 @@ export function mergeNazhuaConfig(customConfig) {
   });
   replaceFavicon();
   setColorMode();
-  if (window.$$serverStatus) {
-    config.nazhua.listServerItemType = 'server-status';
-  }
+  handle$$serverStatus();
 }
 // 暴露合并配置方法
 window.$mergeNazhuaConfig = mergeNazhuaConfig;

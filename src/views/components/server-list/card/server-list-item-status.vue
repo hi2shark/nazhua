@@ -1,7 +1,7 @@
 <template>
   <div
     class="server-list-item-status"
-    :class="'type--' + componentName"
+    :class="classNames"
   >
     <component
       :is="componentMaps[componentName]"
@@ -21,6 +21,10 @@
  * 服务器状态盒子
  */
 
+import {
+  computed,
+} from 'vue';
+
 import config from '@/config';
 
 import handleServerStatus from '@/views/composable/server-status';
@@ -39,10 +43,13 @@ const componentMaps = {
   progress: ServerStatusProgress,
 };
 
-const componentName = [
-  'donut',
-  'progress',
-].includes(config.nazhua.listServerStatusType) ? config.nazhua.listServerStatusType : 'donut';
+const componentName = computed(() => {
+  const name = [
+    'donut',
+    'progress',
+  ].includes(config.nazhua.listServerStatusType) ? config.nazhua.listServerStatusType : 'donut';
+  return config.nazhua.listServerItemType === 'server-status' ? 'progress' : name;
+});
 
 const {
   serverStatusList,
@@ -50,6 +57,13 @@ const {
   props,
   statusListTpl: 'cpu,mem,disk',
   statusListItemContent: false,
+});
+
+const classNames = computed(() => {
+  const names = {};
+  names[`type--${componentName.value}`] = true;
+  names[`len--${serverStatusList.value?.length}`] = true;
+  return names;
 });
 </script>
 
@@ -63,11 +77,16 @@ const {
     flex-wrap: wrap;
     gap: 10px;
 
+    --progress-bar-width: calc(50% - 5px);
     --progress-bar-height: 20px;
 
-    @media screen and (max-width: 350px) {
+    @media screen and (max-width: 400px) {
       --progress-bar-height: 16px;
-      padding: 0 15px;
+      padding: 0 10px;
+    }
+
+    &.len--3 {
+      --progress-bar-width: calc((100% - 20px) / 3);
     }
   }
 

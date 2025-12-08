@@ -90,7 +90,7 @@ const { cpuAndMemAndDisk } = handleServerInfo({
 const platformLogoIconClassName = computed(() => hostUtils.getPlatformLogoIconClassName(props.info?.Host?.Platform));
 
 const serverRealTimeListTpls = computed(() => {
-  if (config.nazhua?.listServerRealTimeShowLoad) {
+  if (config.nazhua?.listServerRealTimeShowLoad || config.nazhua.listServerItemType === 'server-status') {
     return 'D-A-T,T-A-U,L-A-P,I-A-O';
   }
   return 'duration,transfer,inSpeed,outSpeed';
@@ -114,12 +114,12 @@ function openDetail() {
   transition: 0.3s;
 
   .server-info-group {
+    --list-item-head-height: 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
     padding: 0 15px;
-    height: 50px;
     border-top-left-radius: var(--list-item-border-radius);
     border-top-right-radius: var(--list-item-border-radius);
     background: rgba(#000, 0.3);
@@ -128,6 +128,7 @@ function openDetail() {
 
     @media screen and (max-width: 768px) {
       cursor: default;
+      --list-item-head-height: 40px;
     }
 
     &.dot-dot-box--hide {
@@ -138,6 +139,7 @@ function openDetail() {
     &.server-list-item-head {
       flex-wrap: wrap;
       overflow: hidden;
+      height: var(--list-item-head-height, 50px);
     }
 
     .left-box,
@@ -196,6 +198,8 @@ function openDetail() {
   --real-time-text-font-size: 12px;
   --real-time-label-font-size: 14px;
 
+  font-size: var(--real-time-label-font-size);
+
   @media screen and (max-width: 1280px) {
     padding: 10px 0 15px;
 
@@ -210,8 +214,12 @@ function openDetail() {
     --real-time-value-font-size: 20px;
   }
 
-  @media screen and (max-width: 680px) {
+  @media screen and (max-width: 720px) {
     --real-time-value-font-size: 24px;
+    --real-time-text-font-size: 12px;
+    --real-time-label-font-size: 12px;
+
+    padding: 5px 0;
   }
 
   @media screen and (max-width: 320px) {
