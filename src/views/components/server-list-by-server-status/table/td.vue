@@ -64,7 +64,9 @@ const getCssLengthUnit = (value) => {
 };
 
 const columnClass = computed(() => {
-  const className = {};
+  const className = {
+    [`server-status-td--${props.column.prop}`]: true,
+  };
   if (props.column.align) {
     className[`server-status-td--align-${props.column.align}`] = true;
   }

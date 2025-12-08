@@ -162,9 +162,9 @@ const showListCard = computed(() => {
 const showListByServerStatus = computed(() => {
   if (windowWidth.value > 1024) {
     if (config.nazhua.listServerItemTypeToggle) {
-      return listType.value === 'status';
+      return listType.value === 'server-status';
     }
-    return config.nazhua.listServerItemType === 'status';
+    return config.nazhua.listServerItemType === 'server-status';
   }
   return false;
 });
@@ -248,9 +248,9 @@ const listTypeOptions = computed(() => [{
   value: 'row',
   icon: 'ri-list-view',
 }, {
-  key: 'status',
+  key: 'server-status',
   label: 'ServerStatus模式',
-  value: 'status',
+  value: 'server-status',
   icon: 'ri-server-line',
 }]);
 

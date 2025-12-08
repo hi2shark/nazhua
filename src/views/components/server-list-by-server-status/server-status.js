@@ -56,7 +56,7 @@ const COLUMN_MAP = Object.freeze({
   },
   speeds: {
     label: '网速',
-    width: 112,
+    width: 120,
     align: 'center',
   },
   inSpeed: {
@@ -71,7 +71,7 @@ const COLUMN_MAP = Object.freeze({
   },
   transfer: {
     label: '流量',
-    width: 112,
+    width: 120,
     align: 'center',
   },
   inTransfer: {

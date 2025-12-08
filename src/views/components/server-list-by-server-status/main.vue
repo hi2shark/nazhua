@@ -34,10 +34,11 @@
           :key="itemData.info.ID"
           class="server-status-table-body-row"
           :class="{
-            'server-status-table-body-row--offline': itemData.info?.Online === -1,
-            'server-status-table-body-row--online': itemData.info?.Online === 1,
+            'server-status-table-body-row--offline': itemData.info?.online === -1,
+            'server-status-table-body-row--online': itemData.info?.online === 1,
             [`server-item--${itemData.info?.ID}`]: true,
           }"
+          @click="openDetail(itemData.info)"
         >
           <template
             v-for="column in itemData.columnData"
@@ -73,6 +74,9 @@
 import {
   computed,
 } from 'vue';
+import {
+  useRouter,
+} from 'vue-router';
 
 import config from '@/config';
 
@@ -90,10 +94,21 @@ const props = defineProps({
   },
 });
 
+const router = useRouter();
+
 const tableData = computed(() => {
   const result = handleServerListColumn(props.serverList, config.nazhua.serverStatusColumnsTpl);
   return result;
 });
+
+function openDetail(info) {
+  router.push({
+    name: 'ServerDetail',
+    params: {
+      serverId: info.ID,
+    },
+  });
+}
 
 </script>
 
@@ -114,8 +129,17 @@ const tableData = computed(() => {
   border-collapse: collapse;
 
   .server-status-table-body-row {
-    &--offline {
+    @media screen and (min-width: 1025px) {
+      cursor: pointer;
+      background-color: rgba(255, 255, 255, 0);
+      transition: background-color 500ms ease-in-out;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+    &--offline td:not(.server-status-td--status) {
       filter: grayscale(1);
+      opacity: 0.75;
     }
   }
 }
