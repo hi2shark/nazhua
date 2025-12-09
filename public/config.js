@@ -11,7 +11,7 @@ window.$$nazhuaConfig = {
   // showLantern: true, // 是否显示灯笼
   enableInnerSearch: true, // 启用内部搜索
   // listServerItemTypeToggle: true, // 服务器列表项类型切换
-  listServerItemType: 'row', // 服务器列表项类型 card/row/status row列表模式移动端自动切换至card
+  // listServerItemType: 'server-status', // 服务器列表项类型 card/row/server-status row列表模式移动端自动切换至card
   // serverStatusColumnsTpl: null, // 服务器状态列配置模板
   // listServerStatusType: 'progress', // 服务器状态类型--列表
   // listServerRealTimeShowLoad: true, // 列表显示服务器实时负载
@@ -31,6 +31,7 @@ window.$$nazhuaConfig = {
   // hideListItemBill: false, // 隐藏列表项的账单信息
   hideListItemLink: true, // 隐藏列表项的购买链接
   // hideFilter: false, // 隐藏筛选
+  // hideSort: false, // 隐藏排序
   // hideTag: false, // 隐藏标签
   // hideDotBG: true, // 隐藏框框里面的点点背景
   // monitorRefreshTime: 10, // 监控刷新时间间隔，单位s（秒）, 0为不刷新，为保证不频繁请求源站，最低生效值为10s

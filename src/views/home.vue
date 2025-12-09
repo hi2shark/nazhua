@@ -30,6 +30,11 @@
           />
         </div>
         <div class="right-box">
+          <server-sort-box
+            v-if="showSort"
+            v-model="sortData"
+            :options="sortOptions"
+          />
           <server-option-box
             v-if="onlineOptions.length"
             v-model="filterFormData.online"
@@ -122,10 +127,16 @@ import validate from '@/utils/validate';
 
 import WorldMap from '@/components/world-map/world-map.vue';
 import ServerOptionBox from './components/server-list/server-option-box.vue';
+import ServerSortBox from './components/server-list/server-sort-box.vue';
 import ServerListWarp from './components/server-list/server-list-warp.vue';
 import ServerCardItem from './components/server-list/card/server-list-item.vue';
 import ServerRowItem from './components/server-list/row/server-list-item.vue';
 import ServerStatusMain from './components/server-list/server-status/main.vue';
+
+import {
+  serverSortOptions,
+  serverSortHandler,
+} from './composable/server-sort';
 
 const store = useStore();
 const worldMapWidth = ref();
@@ -272,6 +283,16 @@ const listTypeOptions = computed(() => [{
   icon: 'ri-server-line',
 }]);
 
+/**
+ * 排序处理
+ */
+const showSort = computed(() => config.nazhua.hideSort !== true);
+const sortData = ref({
+  prop: 'DisplayIndex',
+  order: 'desc',
+});
+const sortOptions = computed(() => serverSortOptions());
+
 const filterServerList = computed(() => {
   const fields = {};
   const locationMap = {};
@@ -332,6 +353,7 @@ const filterServerList = computed(() => {
 
     return true;
   });
+  list.sort((a, b) => serverSortHandler(a, b, sortData.value.prop, sortData.value.order));
   return {
     fields,
     list,

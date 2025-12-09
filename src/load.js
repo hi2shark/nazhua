@@ -30,7 +30,7 @@ function useCdnCss(item) {
 if (import.meta.env.VITE_USE_CDN) {
   Object.entries({
     remixicon: {
-      jsdelivr: 'https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css',
+      jsdelivr: 'https://cdn.jsdelivr.net/npm/remixicon@4.7.0/fonts/remixicon.css',
       cdnjs: 'https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css',
     },
     flagIcons: {
