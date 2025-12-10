@@ -15,7 +15,7 @@
       </div>
       <div
         v-if="showFilter"
-        class="fitler-group"
+        class="filter-group"
         :class="{
           'list-is--row': showListRow,
           'list-is--card': showListCard,
@@ -44,7 +44,7 @@
             v-if="config.nazhua.listServerItemTypeToggle"
             v-model="listType"
             :options="listTypeOptions"
-            :accpet-empty="false"
+            :accept-empty="false"
             :mobile-show="false"
           />
         </div>
@@ -412,7 +412,10 @@ const worldMapPosition = computed(() => {
  * 处理窗口大小变化
  */
 function handleResize() {
-  worldMapWidth.value = document.querySelector('.server-list-container').clientWidth - 40;
+  const serverListContainer = document.querySelector('.server-list-container');
+  if (serverListContainer) {
+    worldMapWidth.value = serverListContainer.clientWidth - 40;
+  }
   windowWidth.value = window.innerWidth;
 }
 
@@ -471,6 +474,7 @@ onActivated(() => {
 
   &.list-is--server-status {
     --list-container-width: 1300px;
+
     // 针对1440px以下的屏幕
     @media screen and (max-width: 1440px) {
       --list-container-width: 1300px;
@@ -483,7 +487,7 @@ onActivated(() => {
   }
 }
 
-.fitler-group {
+.filter-group {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;

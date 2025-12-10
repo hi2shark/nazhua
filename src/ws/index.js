@@ -2,7 +2,7 @@ import config from '@/config';
 import MessageSubscribe from '@/utils/subscribe';
 import v1TransformV0 from '@/utils/transform-v1-2-v0';
 
-import WSService from './service';
+import WSService, { WS_CONNECTION_STATUS } from './service';
 
 /**
  * 获取不同版本的WebSocket路径
@@ -50,7 +50,7 @@ const wsService = new WSService({
 });
 
 function restart() {
-  if (wsService.connected !== 0) {
+  if (wsService.connected !== WS_CONNECTION_STATUS.DISCONNECTED) {
     wsService.close();
   }
   wsService.active();
@@ -63,7 +63,7 @@ export {
 };
 
 export default (actived) => {
-  if (wsService.connected === 2) {
+  if (wsService.connected === WS_CONNECTION_STATUS.CONNECTED) {
     if (actived) {
       actived();
     }
@@ -75,7 +75,7 @@ export default (actived) => {
     }
   });
   // 如果已经连接中，则不再连接
-  if (wsService.connected === 1) {
+  if (wsService.connected === WS_CONNECTION_STATUS.CONNECTING) {
     return;
   }
   wsService.active();

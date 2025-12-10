@@ -32,6 +32,7 @@
 import {
   ref,
   computed,
+  onUnmounted,
 } from 'vue';
 import config from '@/config';
 import Fireworks from '@/components/fireworks.vue';
@@ -73,8 +74,14 @@ const enableInnerSearch = computed(() => {
   return config.nazhua.enableInnerSearch;
 });
 
-window.addEventListener('resize', () => {
+const handleResize = () => {
   windowWidth.value = window.innerWidth;
+};
+
+window.addEventListener('resize', handleResize);
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
 });
 </script>
 

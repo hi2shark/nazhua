@@ -35,7 +35,13 @@ export default async () => fetch(getNezhaConfigUrl()).then((res) => res.text()).
   if (!configStr) {
     return null;
   }
-  const remoteConfig = JSON.parse(unescaped(configStr));
+  let remoteConfig;
+  try {
+    remoteConfig = JSON.parse(unescaped(configStr));
+  } catch (error) {
+    console.error('Failed to parse nezha config:', error);
+    return null;
+  }
   if (remoteConfig?.servers) {
     remoteConfig.servers = remoteConfig.servers.map((i) => {
       const item = {
@@ -43,7 +49,8 @@ export default async () => fetch(getNezhaConfigUrl()).then((res) => res.text()).
       };
       try {
         item.PublicNote = JSON.parse(i.PublicNote);
-      } catch {
+      } catch (error) {
+        console.warn('Failed to parse PublicNote for server:', i.ID || i.id, error);
         item.PublicNote = {};
       }
       return item;
@@ -51,7 +58,10 @@ export default async () => fetch(getNezhaConfigUrl()).then((res) => res.text()).
     return remoteConfig;
   }
   return null;
-}).catch(() => null);
+}).catch((error) => {
+  console.error('Failed to load nezha config:', error);
+  return null;
+});
 
 /**
  * 获取标签列表

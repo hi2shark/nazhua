@@ -56,7 +56,7 @@ const COLUMN_MAP = Object.freeze({
   },
   speeds: {
     label: '网速',
-    width: 120,
+    width: 122,
     align: 'center',
   },
   inSpeed: {
@@ -71,7 +71,7 @@ const COLUMN_MAP = Object.freeze({
   },
   transfer: {
     label: '流量',
-    width: 120,
+    width: 122,
     align: 'center',
   },
   inTransfer: {
@@ -159,7 +159,7 @@ const COLUMN_MAP = Object.freeze({
  * 默认列配置
  */
 // eslint-disable-next-line max-len, vue/max-len
-const DEFAULT_COLUMNS = 'status,name,country,system,config,duration,speeds,transfer,tcp,udp,load,cpuText,memText,diskText,billing,remainingTime';
+const DEFAULT_COLUMNS = 'status,name,country,system,config,duration,speeds,transfer,load,cpu,mem,disk,billing,remainingTime';
 
 /**
  * 需要实时更新的数据

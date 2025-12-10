@@ -8,7 +8,8 @@
     "build:cdn": "cross-env VITE_SARASA_TERM_SC_USE_CDN=1 VITE_USE_CDN=1 vite build",
     "build:nazhua": "cross-env VITE_BASE_PATH=/nazhua/ VITE_NEZHA_VERSION=v0 VITE_SARASA_TERM_SC_USE_CDN=1 VITE_USE_CDN=1 vite build",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "axios": "^1.13.2",

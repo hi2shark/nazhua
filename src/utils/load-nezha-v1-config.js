@@ -21,7 +21,10 @@ export const loadServerGroup = async () => request({
     });
   }
   return null;
-}).catch(() => null);
+}).catch((error) => {
+  console.error('Failed to load server group:', error);
+  return null;
+});
 
 /**
  * 加载网站配置
@@ -37,7 +40,10 @@ export const loadSetting = async () => request({
     return res.data?.data || {};
   }
   return null;
-}).catch(() => null);
+}).catch((error) => {
+  console.error('Failed to load setting:', error);
+  return null;
+});
 
 /**
  * 加载个人信息
@@ -53,4 +59,7 @@ export const loadProfile = async (check) => request({
     return res.data?.data || {};
   }
   return null;
-}).catch(() => null);
+}).catch((error) => {
+  console.error('Failed to load profile:', error);
+  return null;
+});

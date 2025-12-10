@@ -263,7 +263,7 @@ const monitorChartType = computed(() => {
 const nowServerTime = computed(() => store.state.serverTime || Date.now());
 // const nowServerTime = computed(() => Date.now());
 // console.log(store.state.serverTime);
-const accpetShowTime = computed(() => (Math.floor(nowServerTime.value / 60000) - minute.value) * 60000);
+const acceptShowTime = computed(() => (Math.floor(nowServerTime.value / 60000) - minute.value) * 60000);
 
 const minuteActiveArrowStyle = computed(() => {
   const index = minutes.findIndex((i) => i.value === minute.value);
@@ -310,7 +310,7 @@ const monitorChartData = computed(() => {
       if (time < earliestTimestamp) {
         earliestTimestamp = time;
       }
-      const status = time >= accpetShowTime.value;
+      const status = time >= acceptShowTime.value;
 
       // 允许显示的数据，记录到cateAcceptTime
       if (status) {
@@ -328,7 +328,7 @@ const monitorChartData = computed(() => {
 
     // 允许显示的最早时间戳，用于生成显示时间范围内的数据
     const actualStartTime = Math.max(
-      accpetShowTime.value,
+      acceptShowTime.value,
       earliestTimestamp,
     );
 

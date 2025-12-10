@@ -187,6 +187,10 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeyDown);
   window.removeEventListener('keydown', handleEscKey);
+  if (handleSearchTimer) {
+    clearTimeout(handleSearchTimer);
+    handleSearchTimer = null;
+  }
 });
 </script>
 

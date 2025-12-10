@@ -1,3 +1,11 @@
+// WebSocket 连接状态常量
+export const WS_CONNECTION_STATUS = {
+  DISCONNECTED: 0, // 未连接
+  CONNECTING: 1, // 连接中
+  CONNECTED: 2, // 已连接
+  CLOSED: -1, // 已关闭
+};
+
 class WSService {
   constructor(options) {
     const {
@@ -23,16 +31,15 @@ class WSService {
       messageError: onMessageError || (() => {}),
     };
 
-    // 单例模式 遇到重复的ws服务，不再允许建立新的ws消息处理，如果遇到问题，等待用户自行刷新页面（破罐子破摔解决方法）
+    // 单例模式：防止重复创建 WebSocket 连接
+    // 如果检测到已有实例，触发错误回调并返回，避免资源浪费
     if (WSService.instance) {
-      // 抛出错误，防止重复创建 WebSocket 连接
       this.$on.error(new Error('WebSocket connection already exists'));
       return;
     }
 
     WSService.instance = this;
-    // 0: 未连接，1: 连接中，2: 已连接，-1: 已关闭
-    this.connected = 0;
+    this.connected = WS_CONNECTION_STATUS.DISCONNECTED;
     this.ws = undefined;
     this.evt = (event) => {
       if (this.debug) {
@@ -52,18 +59,18 @@ class WSService {
   }
 
   get isConnected() {
-    return this.connected === 2;
+    return this.connected === WS_CONNECTION_STATUS.CONNECTED;
   }
 
   active() {
     // 如果已经连接中或已连接，则不再连接
-    if (this.connected > 0) {
+    if (this.connected > WS_CONNECTION_STATUS.DISCONNECTED) {
       console.warn('WebSocket connection already exists or is connecting');
       return;
     }
 
     // 标记为正在连接中
-    this.connected = 1;
+    this.connected = WS_CONNECTION_STATUS.CONNECTING;
 
     // 创建 WebSocket 连接
     this.ws = new WebSocket(this.$wsUrl);
@@ -71,14 +78,14 @@ class WSService {
       if (this.debug) {
         console.log('socket connected', event);
       }
-      this.connected = 2;
+      this.connected = WS_CONNECTION_STATUS.CONNECTED;
       this.$on.connect(event);
     });
     this.ws.addEventListener('close', (event) => {
       if (this.debug) {
         console.log('socket closed', event);
       }
-      this.connected = -1;
+      this.connected = WS_CONNECTION_STATUS.CLOSED;
       WSService.instance = null; // 清除实例引用
       this.$on.close(event);
     });

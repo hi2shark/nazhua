@@ -49,7 +49,7 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  accpetEmpty: {
+  acceptEmpty: {
     type: Boolean,
     default: true,
   },
@@ -74,7 +74,7 @@ const activeValue = computed({
 
 function toggleModelValue(item) {
   if (activeValue.value === item.value) {
-    if (props.accpetEmpty) {
+    if (props.acceptEmpty) {
       activeValue.value = '';
     }
   } else {

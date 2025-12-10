@@ -15,6 +15,7 @@ import {
   watch,
   provide,
   onMounted,
+  onUnmounted,
 } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
@@ -24,6 +25,7 @@ import config, {
 import sleep from '@/utils/sleep';
 import LayoutMain from './layout/main.vue';
 
+import { WS_CONNECTION_STATUS } from './ws/service';
 import activeWebsocketService, {
   wsService,
   restart,
@@ -39,9 +41,16 @@ provide('currentTime', currentTime);
 
 /**
  * 刷新当前时间
+ * 使用 requestAnimationFrame 持续更新时间，但只在秒级变化时更新值以减少不必要的响应式更新
  */
+let lastUpdateTime = 0;
 function refreshTime() {
-  currentTime.value = Date.now();
+  const now = Date.now();
+  // 只在秒级变化时更新，减少响应式更新频率
+  if (Math.floor(now / 1000) !== Math.floor(lastUpdateTime / 1000)) {
+    currentTime.value = now;
+    lastUpdateTime = now;
+  }
   window.requestAnimationFrame(refreshTime);
 }
 refreshTime();
@@ -108,17 +117,22 @@ onMounted(async () => {
     console.log('ws connected');
     store.dispatch('watchWsMsg');
   });
-  window.addEventListener('focus', () => {
+  const handleFocus = () => {
     // ws在离开焦点后出现断连，尝试重新连接
-    // 暂定仅针对-1状态进行重连
-    if ([-1].includes(wsService.connected)) {
+    // 仅针对已关闭状态进行重连
+    if (wsService.connected === WS_CONNECTION_STATUS.CLOSED) {
       restart();
     }
-  });
+  };
+  window.addEventListener('focus', handleFocus);
   /**
    * 激活websocket服务
    */
   activeWebsocketService();
+
+  onUnmounted(() => {
+    window.removeEventListener('focus', handleFocus);
+  });
 });
 
 window.addEventListener('unhandledrejection', (event) => {

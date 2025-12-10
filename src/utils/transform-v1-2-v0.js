@@ -122,10 +122,11 @@ export default function (v1Data) {
     try {
       v0Data.PublicNote = JSON.parse(v1Data.public_note);
     } catch (e) {
-      v1Data.PublicNote = null;
+      console.warn('Failed to parse public_note for server:', v1Data.id, e);
+      v0Data.PublicNote = null;
     }
   } else {
-    v1Data.PublicNote = null;
+    v0Data.PublicNote = null;
   }
   return v0Data;
 }
