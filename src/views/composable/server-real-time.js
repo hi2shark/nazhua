@@ -339,7 +339,7 @@ export default (params) => {
           key,
           label: '连接',
           value: `${props.info.State?.TcpConnCount || 0}|${props.info.State?.UdpConnCount || 0}`,
-          show: true,
+          show: validate.isSet(props.info.State?.TcpConnCount) || validate.isSet(props.info.State?.UdpConnCount),
           data: {
             tcp: {
               value: props.info.State?.TcpConnCount || 0,

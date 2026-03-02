@@ -168,7 +168,10 @@
         </div>
       </div>
     </div>
-    <div class="server-info-group server-info--conn">
+    <div
+      v-if="!hideConns"
+      class="server-info-group server-info--conn"
+    >
       <div class="server-info-label">
         连接
       </div>
@@ -589,6 +592,11 @@ const transfer = computed(() => {
   return result;
 });
 
+const hideConns = computed(() => {
+  const tcp = props.info?.State?.TcpConnCount;
+  const udp = props.info?.State?.UdpConnCount;
+  return (tcp == null) && (udp == null);
+});
 const tcpConnCount = computed(() => props.info?.State?.TcpConnCount);
 const udpConnCount = computed(() => props.info?.State?.UdpConnCount);
 const processCount = computed(() => props.info?.State?.ProcessCount);

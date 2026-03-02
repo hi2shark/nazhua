@@ -87,7 +87,10 @@
     </div>
 
     <template v-if="monitorChartType === 'single'">
-      <div class="monitor-chart-group">
+      <div
+        class="monitor-chart-group"
+        :class="'monitor-chart-len--' + monitorChartData.cateList.length"
+      >
         <div
           v-for="(cateItem, index) in monitorChartData.cateList"
           :key="cateItem.id"
@@ -198,6 +201,7 @@ import { useStore } from 'vuex';
 import config from '@/config';
 import request from '@/utils/request';
 import validate from '@/utils/validate';
+import { isTsdbEnabled } from '@/utils/tsdb';
 
 import LineChart from '@/components/charts/line.vue';
 
@@ -215,8 +219,9 @@ const props = defineProps({
 
 const store = useStore();
 
+const userLogin = computed(() => store.state.profile?.username);
 const minute = ref(1440);
-const minutes = [{
+const baseMinutes = [{
   label: '30分钟',
   value: 30,
 }, {
@@ -235,6 +240,22 @@ const minutes = [{
   label: '24小时',
   value: 1440,
 }];
+const minutes = computed(() => {
+  if (!userLogin.value) {
+    return baseMinutes;
+  }
+  return [
+    ...baseMinutes,
+    {
+      label: '7天',
+      value: 10080,
+    },
+    {
+      label: '30天',
+      value: 43200,
+    },
+  ];
+});
 const localData = {
   peakShaving: window.localStorage.getItem('nazhua_monitor_peak_shaving'),
   refreshData: window.localStorage.getItem('nazhua_monitor_refresh_data'),
@@ -266,7 +287,7 @@ const nowServerTime = computed(() => store.state.serverTime || Date.now());
 const acceptShowTime = computed(() => (Math.floor(nowServerTime.value / 60000) - minute.value) * 60000);
 
 const minuteActiveArrowStyle = computed(() => {
-  const index = minutes.findIndex((i) => i.value === minute.value);
+  const index = minutes.value.findIndex((i) => i.value === minute.value);
   return {
     left: `calc(${index} * var(--minute-item-width))`,
   };
@@ -304,13 +325,15 @@ const monitorChartData = computed(() => {
     const cateAcceptTimeMap = new Map();
     const cateCreateTime = new Set();
 
+    const isPeriodRange = minute.value === 10080 || minute.value === 43200;
+
     // 实际数据的最早时间戳
     let earliestTimestamp = nowServerTime.value;
     created_at.forEach((time, index) => {
       if (time < earliestTimestamp) {
         earliestTimestamp = time;
       }
-      const status = time >= acceptShowTime.value;
+      const status = isPeriodRange || time >= acceptShowTime.value;
 
       // 允许显示的数据，记录到cateAcceptTime
       if (status) {
@@ -326,11 +349,10 @@ const monitorChartData = computed(() => {
       console.log(`${monitor_name} avg_delay`, JSON.parse(JSON.stringify(avg_delay)));
     }
 
-    // 允许显示的最早时间戳，用于生成显示时间范围内的数据
-    const actualStartTime = Math.max(
-      acceptShowTime.value,
-      earliestTimestamp,
-    );
+    // 允许显示的最早时间戳，用于生成显示时间范围内的数据；7d/30d 仅用数据边界
+    const actualStartTime = isPeriodRange
+      ? earliestTimestamp
+      : Math.max(acceptShowTime.value, earliestTimestamp);
 
     // 显示时间范围内的分钟数
     const allMintues = Math.floor((Date.now() - actualStartTime) / 60000);
@@ -478,8 +500,43 @@ function switchChartType() {
   window.localStorage.setItem('nazhua_monitor_chart_type', chartType.value);
 }
 
-function toggleMinute(value) {
+function getTsdbPeriod() {
+  if (minute.value === 10080) return '7d';
+  if (minute.value === 43200) return '30d';
+  return '1d';
+}
+
+async function loadMonitor() {
+  let url = (
+    config.nazhua.nezhaVersion === 'v1' ? config.nazhua.v1ApiMonitorPath : config.nazhua.apiMonitorPath
+  ).replace('{id}', props.info.ID);
+  if (config.nazhua.nezhaVersion === 'v1' && isTsdbEnabled(store)) {
+    const period = getTsdbPeriod();
+    url += url.includes('?') ? `&period=${period}` : `?period=${period}`;
+  }
+  try {
+    let res = await request({ url });
+    if (config.nazhua.nezhaVersion === 'v1' && res?.status === 404 && config.nazhua.v1ApiMonitorPathFallback) {
+      const fallbackUrl = config.nazhua.v1ApiMonitorPathFallback.replace('{id}', props.info.ID);
+      const fallbackWithPeriod = isTsdbEnabled(store)
+        ? (fallbackUrl + (fallbackUrl.includes('?') ? `&period=${getTsdbPeriod()}` : `?period=${getTsdbPeriod()}`))
+        : fallbackUrl;
+      res = await request({ url: fallbackWithPeriod });
+    }
+    const list = config.nazhua.nezhaVersion === 'v1' ? res?.data?.data : res?.data?.result;
+    if (Array.isArray(list)) {
+      monitorData.value = list;
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function toggleMinute(value) {
   minute.value = value;
+  if (config.nazhua.nezhaVersion === 'v1' && isTsdbEnabled(store)) {
+    await loadMonitor();
+  }
 }
 
 function toggleShowCate(id) {
@@ -509,21 +566,6 @@ function handleTouchMove() {
   }
 }
 
-async function loadMonitor() {
-  await request({
-    url: (
-      config.nazhua.nezhaVersion === 'v1' ? config.nazhua.v1ApiMonitorPath : config.nazhua.apiMonitorPath
-    ).replace('{id}', props.info.ID),
-  }).then((res) => {
-    const list = config.nazhua.nezhaVersion === 'v1' ? res.data?.data : res.data?.result;
-    if (Array.isArray(list)) {
-      monitorData.value = list;
-    }
-  }).catch((err) => {
-    console.error(err);
-  });
-}
-
 let loadMonitorTimer = null;
 async function setTimeLoadMonitor(force = false) {
   if (loadMonitorTimer) {
@@ -549,7 +591,9 @@ async function setTimeLoadMonitor(force = false) {
 }
 
 onMounted(() => {
-  setTimeLoadMonitor(true);
+  if (config.nazhua.nezhaVersion === 'v1' && isTsdbEnabled(store)) {
+    setTimeLoadMonitor(true);
+  }
 });
 
 onUnmounted(() => {
@@ -802,6 +846,12 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  &.monitor-chart-len--1 {
+    .monitor-chart-item {
+      width: 100%;
+    }
   }
 }
 </style>

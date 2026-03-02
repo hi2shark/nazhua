@@ -1,5 +1,8 @@
 <template>
-  <div class="conn-group">
+  <div
+    v-if="!hideConns"
+    class="conn-group"
+  >
     <div class="conn--tcp">
       {{ tcpConnCount }}
     </div>
@@ -15,6 +18,7 @@
 <script setup>
 /**
  * 连接信息
+ * 仅当接口/WS 返回了 tcp 或 udp 数据时显示
  */
 
 import {
@@ -26,6 +30,13 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+});
+
+const hideConns = computed(() => {
+  const { item } = props.realTimeData?.conns || {};
+  const tcpVal = item?.data?.tcp?.value;
+  const udpVal = item?.data?.udp?.value;
+  return (tcpVal == null) && (udpVal == null);
 });
 
 const tcpConnCount = computed(() => {

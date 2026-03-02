@@ -97,9 +97,12 @@ const props = defineProps({
 
 const router = useRouter();
 
+// eslint-disable-next-line max-len, vue/max-len
+const DEFAULT_COLUMNS_STR = 'status,name,country,system,config,duration,speeds,transfer,load,cpu,mem,disk,billing,remainingTime';
+
 const tableData = computed(() => {
-  const result = handleServerListColumn(props.serverList, config.nazhua.serverStatusColumnsTpl);
-  return result;
+  const columnTpls = config.nazhua.serverStatusColumnsTpl || DEFAULT_COLUMNS_STR;
+  return handleServerListColumn(props.serverList, columnTpls);
 });
 
 function openDetail(info) {
