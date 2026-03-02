@@ -22,7 +22,7 @@ const config = reactive({
     v1ApiMonitorPath: '/api/v1/server/{id}/service',
     v1ApiMonitorPathFallback: '/api/v1/service/{id}',
     v1WsPath: '/api/v1/ws/server',
-    v1ApiGroupPath: '/api/v1/server-group',
+    v1GroupPath: '/api/v1/server-group',
     v1ApiSettingPath: '/api/v1/setting',
     v1ApiProfilePath: '/api/v1/profile',
     // 解构载入自定义配置

@@ -16,3 +16,16 @@ export function isTsdbEnabled(store) {
   const { setting } = store.state;
   return setting?.config?.tsdb_enabled === true || setting?.tsdb_enabled === true;
 }
+
+/**
+ * 是否有 tsdb_enabled 字段（存在即可，不要求为 true）
+ * @param {import('vuex').Store} store
+ * @returns {boolean}
+ */
+export function hasTsdb(store) {
+  if (config.nazhua.nezhaVersion !== 'v1' || !store?.state?.setting) {
+    return false;
+  }
+  const { setting } = store.state;
+  return 'tsdb_enabled' in (setting?.config ?? {}) || 'tsdb_enabled' in (setting ?? {});
+}

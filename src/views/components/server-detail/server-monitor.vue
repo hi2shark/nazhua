@@ -201,7 +201,7 @@ import { useStore } from 'vuex';
 import config from '@/config';
 import request from '@/utils/request';
 import validate from '@/utils/validate';
-import { isTsdbEnabled } from '@/utils/tsdb';
+import { isTsdbEnabled, hasTsdb } from '@/utils/tsdb';
 
 import LineChart from '@/components/charts/line.vue';
 
@@ -241,7 +241,7 @@ const baseMinutes = [{
   value: 1440,
 }];
 const minutes = computed(() => {
-  if (!userLogin.value) {
+  if (!userLogin.value || !hasTsdb(store)) {
     return baseMinutes;
   }
   return [
@@ -507,22 +507,22 @@ function getTsdbPeriod() {
 }
 
 async function loadMonitor() {
-  let url = (
-    config.nazhua.nezhaVersion === 'v1' ? config.nazhua.v1ApiMonitorPath : config.nazhua.apiMonitorPath
-  ).replace('{id}', props.info.ID);
-  if (config.nazhua.nezhaVersion === 'v1' && isTsdbEnabled(store)) {
-    const period = getTsdbPeriod();
-    url += url.includes('?') ? `&period=${period}` : `?period=${period}`;
+  let url;
+  if (config.nazhua.nezhaVersion === 'v1') {
+    if (hasTsdb(store)) {
+      url = config.nazhua.v1ApiMonitorPath.replace('{id}', props.info.ID);
+      if (isTsdbEnabled(store)) {
+        const period = getTsdbPeriod();
+        url += url.includes('?') ? `&period=${period}` : `?period=${period}`;
+      }
+    } else {
+      url = config.nazhua.v1ApiMonitorPathFallback.replace('{id}', props.info.ID);
+    }
+  } else {
+    url = config.nazhua.apiMonitorPath.replace('{id}', props.info.ID);
   }
   try {
-    let res = await request({ url });
-    if (config.nazhua.nezhaVersion === 'v1' && res?.status === 404 && config.nazhua.v1ApiMonitorPathFallback) {
-      const fallbackUrl = config.nazhua.v1ApiMonitorPathFallback.replace('{id}', props.info.ID);
-      const fallbackWithPeriod = isTsdbEnabled(store)
-        ? (fallbackUrl + (fallbackUrl.includes('?') ? `&period=${getTsdbPeriod()}` : `?period=${getTsdbPeriod()}`))
-        : fallbackUrl;
-      res = await request({ url: fallbackWithPeriod });
-    }
+    const res = await request({ url });
     const list = config.nazhua.nezhaVersion === 'v1' ? res?.data?.data : res?.data?.result;
     if (Array.isArray(list)) {
       monitorData.value = list;
@@ -534,7 +534,7 @@ async function loadMonitor() {
 
 async function toggleMinute(value) {
   minute.value = value;
-  if (config.nazhua.nezhaVersion === 'v1' && isTsdbEnabled(store)) {
+  if (value === 10080 || value === 43200) {
     await loadMonitor();
   }
 }
@@ -591,9 +591,7 @@ async function setTimeLoadMonitor(force = false) {
 }
 
 onMounted(() => {
-  if (config.nazhua.nezhaVersion === 'v1' && isTsdbEnabled(store)) {
-    setTimeLoadMonitor(true);
-  }
+  setTimeLoadMonitor(true);
 });
 
 onUnmounted(() => {

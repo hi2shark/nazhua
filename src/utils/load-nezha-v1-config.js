@@ -5,7 +5,7 @@ import config from '@/config';
 import request from '@/utils/request';
 
 export const loadServerGroup = async () => request({
-  url: config.nazhua.v1GroupPath,
+  url: config.nazhua.v1GroupPath || config.nazhua.v1ApiGroupPath,
   type: 'GET',
 }).then((res) => {
   if (res.status === 200 && res.data?.success) {
