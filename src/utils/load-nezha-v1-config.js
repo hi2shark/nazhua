@@ -5,8 +5,7 @@ import config from '@/config';
 import request from '@/utils/request';
 
 export const loadServerGroup = async () => request({
-  // DELETE: v1GroupPath 兼容 v1ApiGroupPath 到v0.6.0
-  url: config.nazhua.v1GroupPath || config.nazhua.v1ApiGroupPath,
+  url: config.nazhua.v1GroupPath,
   type: 'GET',
 }).then((res) => {
   if (res.status === 200 && res.data?.success) {
