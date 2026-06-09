@@ -1,44 +1,143 @@
 # Nazhua
 
+Nazhua 是一个为 [哪吒监控](https://nezha.wiki/) 设计的纯前端展示主题，默认基于哪吒 v0 数据源构建，同时兼容哪吒 v1 数据结构。项目适合部署在静态 Web 服务或 Docker 容器中，通过反向代理读取哪吒面板数据、WebSocket 和监控接口。
+
 <div>
-  <img src="./.github/images/nazhua-main.webp" style="max-height: 500px;" alt="Nazhua桌面版"/>
-  <img src="./.github/images/nazhua-mobile.webp" style="max-height: 500px;" alt="Nazhua移动版"/>
-  <img src="./.github/images/nazhua-detail-mobile.webp" style="max-height: 500px;" alt="Nazhua详情页"/>
+  <img src="./.github/images/nazhua-main.webp" style="max-height: 500px;" alt="Nazhua 桌面版"/>
+  <img src="./.github/images/nazhua-mobile.webp" style="max-height: 500px;" alt="Nazhua 移动版"/>
+  <img src="./.github/images/nazhua-detail-mobile.webp" style="max-height: 500px;" alt="Nazhua 详情页"/>
 </div>
 
-## 📢 使用须知
+## 特性
 
-**使用前，请务必阅读本文档，对您的部署会有很大帮助**
+- 支持哪吒 v0 / v1 数据结构。
+- 支持卡片、列表、ServerStatus 风格三种首页列表模式。
+- 支持点阵世界地图、节点详情页、监控图表、服务器统计与实时数据。
+- 支持公开备注扩展：账单、套餐、位置、旗帜、购买链接、节点标语等。
+- 支持内置搜索、分组筛选、在线状态筛选、排序、列表模式切换。
+- 支持 `config.js` 运行时配置与 `style.css` 自定义样式。
+- 支持 Docker、静态 Web 服务、CDN 依赖版本等部署方式。
 
-- 基于哪吒监控(nezha.wiki)v0版本构建的前端主题，兼容v1版本数据结构
-- 考虑到国内用户访问需求，默认使用cdnjs的loli.net作为CDN引用源
-- 如需使用SarasaTermSC字体，请选择Docker镜像全量包进行部署
+## 使用前须知
 
-## 🚀 部署指南
+- Nazhua 只是前端主题，不包含哪吒 Dashboard 或 Agent。
+- 国内访问场景默认倾向使用 loli.net CDN 源；如需完整字体资源，优先使用全量 Docker 镜像。
+- v0 部署通常需要代理 `/nezha/`、`/ws`、`/api/v1/monitor/{id}`。
+- v1 部署通常需要代理 `/api` 与 `/api/v1/ws/server`。
+- H5 路由模式需要 Web 服务将普通页面路径回退到 `index.html`，但静态资源路径应保留真实 404。
 
-**推荐使用Docker Compose + Cloudflare Tunnels部署Nazhua**
+## 快速开始
 
-👉 [详细部署文档](./doc/deploy.md)
+推荐使用 Docker Compose 部署：
 
-Nazhua提供了丰富的配置选项：
-- 支持点阵地图显示/隐藏
-- 首页风格切换等多种个性化设置
+```yaml
+services:
+  nazhua:
+    image: ghcr.io/hi2shark/nazhua:latest
+    container_name: nazhua
+    ports:
+      - 80:80
+    environment:
+      - DOMAIN=_
+      - NEZHA=http://nezha-dashboard.example.com/
+    volumes:
+      # - ./config.js:/home/wwwroot/html/config.js:ro
+      # - ./style.css:/home/wwwroot/html/style.css:ro
+      # - ./favicon.ico:/home/wwwroot/html/favicon.ico:ro
+    restart: unless-stopped
+```
+
+更多部署方式见 [部署指南](./doc/deploy.md)。
+
+## 配置入口
+
+建议使用 [Nazhua 配置生成器](https://hi2shark.github.io/nazhua-generator/) 生成 `config.js` 或公开备注内容。
+
+常用配置文件：
+
+| 文件 | 用途 |
+| --- | --- |
+| `config.js` | 运行时配置，例如标题、列表模式、地图、接口路径、路由模式 |
+| `style.css` | 自定义样式，例如背景图、主题色、局部样式覆盖 |
+| `favicon.ico` | 自定义站点图标 |
 
 配置方式：
-- **V1内置版本**：使用[配置生成器](https://hi2shark.github.io/nazhua-generator/)生成配置，填入控制台自定义代码
-- **Docker部署**：手动配置`config.js`文件（包括v0版本）
 
-## 🗺️ 节点位置配置
+- Docker / 静态部署：挂载或上传 `config.js`、`style.css`。
+- v1 内置版本：使用配置生成器生成内容，填入哪吒控制台自定义代码。
+- v0 同域子目录部署：可参考 `build:nazhua` 构建脚本与部署文档。
 
-要在地图上显示节点位置，需在公开备注中指定`location`字段
+## 公开备注
 
-👉 [公开备注配置文档](./doc/public-note.md)
+Nazhua 支持 ServerStatus 公开备注字段，并扩展了地图、旗帜、购买链接等展示能力。最常用的是在公开备注中配置节点位置：
 
-## 📝 更新日志
+```json
+{
+  "customData": {
+    "location": "HKG"
+  }
+}
+```
 
-👉 [功能更新记录](./doc/update.md)
+完整字段与示例见 [公开备注配置指南](./doc/public-note.md)。
 
-## 🤝 赞助商
+## 数据来源
+
+| 数据类型 | v0 | v1 |
+| --- | --- | --- |
+| 全量配置 | 从 `/nezha/` 页面解析服务器列表与 `PublicNote` | WebSocket / API 数据转换 |
+| 实时数据 | `/ws` | `/api/v1/ws/server` |
+| 监控数据 | `/api/v1/monitor/{id}` | `/api/v1/service/{id}` |
+| 分组数据 | 服务器 `Tag` 字段 | `/api/v1/server-group` |
+| 站点配置 | 公开备注和运行时配置 | `/api/v1/setting` |
+
+## 本地开发
+
+安装依赖后启动开发服务：
+
+```bash
+npm install
+npm run dev
+```
+
+常用脚本：
+
+| 命令 | 说明 |
+| --- | --- |
+| `npm run dev` | 启动 Vite 开发服务 |
+| `npm run build` | 构建默认版本 |
+| `npm run build:cdn` | 构建 CDN 依赖版本 |
+| `npm run build:nazhua` | 构建 v0 同域 `/nazhua/` 子目录版本 |
+| `npm run lint` | 运行 ESLint |
+
+开发环境可在 `.env.development.local` 中配置代理与构建选项：
+
+```bash
+# 字体与 CDN
+# VITE_DISABLE_SARASA_TERM_SC=1
+# VITE_SARASA_TERM_SC_USE_CDN=1
+# VITE_USE_CDN=1
+# VITE_CDN_LIB_TYPE=jsdelivr # jsdelivr | cdnjs | loli
+
+# 哪吒版本
+# VITE_NEZHA_VERSION=v1 # v0 | v1
+
+# 本地代理
+# API_HOST=
+# WS_HOST=
+# PROXY_WS_HOST=
+
+# v0 专用
+# NEZHA_HOST=
+```
+
+## 文档
+
+- [部署指南](./doc/deploy.md)
+- [公开备注配置指南](./doc/public-note.md)
+- [更新日志](./doc/update.md)
+
+## 赞助商
 
 <table>
   <tr>
@@ -52,37 +151,8 @@ Nazhua提供了丰富的配置选项：
   </tr>
 </table>
 
-## 💻 开发者指南
+## 相关链接
 
-### 环境配置
-
-在`.env.development.local`中配置以下变量：
-
-```bash
-#### Sarasa Term SC字体设置
-# VITE_DISABLE_SARASA_TERM_SC=1
-# VITE_SARASA_TERM_SC_USE_CDN=1
-
-#### CDN配置
-# VITE_USE_CDN=1
-# VITE_CDN_LIB_TYPE=jsdelivr # jsdelivr | cdnjs | loli
-
-#### 哪吒版本控制
-# VITE_NEZHA_VERSION=v1 # v0 | v1
-
-#### 本地开发设置
-# PROXY_WS_HOST= # 本地开发时，可以代理WS服务的地址，启用后，自动转发至 {PROXY_WS_HOST}/proxy?wsPath={WS_HOST}
-# API_HOST= # 本地开发时，代理的API服务地址
-# WS_HOST= # 本地开发时，代理的WS服务地址
-##### 仅限v0版本
-# NEZHA_HOST= # 本地开发时，代理的哪吒主页地址
-```
-
-### 数据来源参考
-
-| 数据类型 | V0版本 | V1版本 |
-|---------|--------|--------|
-| 全量配置 | 公开备注(PublicNote)：通过正则匹配节点列表，默认访问`/nezha/` | - |
-| 实时数据 | WS接口：`/ws` | WS接口：`/api/v1/ws/server` |
-| 监控数据 | API接口：`/api/v1/monitor/${id}` | API接口：`/api/v1/service/${id}` |
-| 分组数据 | 服务器节点列表的`Tag`字段匹配 | API接口：`/api/v1/server-group` |
+- 项目仓库：[https://github.com/hi2shark/nazhua](https://github.com/hi2shark/nazhua)
+- 配置生成器：[https://hi2shark.github.io/nazhua-generator/](https://hi2shark.github.io/nazhua-generator/)
+- 哪吒监控文档：[https://nezha.wiki/](https://nezha.wiki/)

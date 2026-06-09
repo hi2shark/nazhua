@@ -144,7 +144,7 @@ function handleWorldMapWidth() {
   );
 }
 
-watch(() => info.value, (oldValue, newValue) => {
+watch(() => info.value, (newValue, oldValue) => {
   if (!oldValue && newValue && router.currentRoute.value.name === 'ServerDetail') {
     pageTitle(newValue?.Name, '节点详情');
     handleWorldMapWidth();

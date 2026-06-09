@@ -37,12 +37,35 @@ server {
     proxy_set_header X-Forwarded-Proto $scheme;
   }
 
+  location /static/ {
+    proxy_pass ${NEZHA}static/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
   location /nezha/ {
     proxy_pass ${NEZHA};
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location = /config.js {
+    root /home/wwwroot/html;
+    add_header Cache-Control "no-cache, must-revalidate";
+  }
+
+  location = /style.css {
+    root /home/wwwroot/html;
+    add_header Cache-Control "no-cache, must-revalidate";
+  }
+
+  location /assets/ {
+    root /home/wwwroot/html;
+    try_files $uri =404;
   }
 
   location / {
