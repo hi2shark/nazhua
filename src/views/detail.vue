@@ -20,6 +20,10 @@
       :key="`${info.ID}_status`"
       :info="info"
     />
+    <server-cycle-transfer
+      :key="`${info.ID}_cycle_transfer`"
+      :info="info"
+    />
     <server-info-box
       :key="`${info.ID}_info`"
       :info="info"
@@ -67,6 +71,7 @@ import WorldMap from '@/components/world-map/world-map.vue';
 import ServerName from './components/server-detail/server-name.vue';
 import ServerStatusBox from './components/server-detail/server-status-box.vue';
 import ServerInfoBox from './components/server-detail/server-info-box.vue';
+import ServerCycleTransfer from './components/server-detail/server-cycle-transfer.vue';
 import ServerMonitor from './components/server-detail/server-monitor.vue';
 
 const props = defineProps({

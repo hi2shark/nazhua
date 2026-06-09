@@ -11,13 +11,17 @@
             v-for="column in tableData.columnProps"
             :key="`th_${column.prop}`"
           >
-            <template v-if="['billing', 'remainingTime'].includes(column.prop)">
+            <template v-if="['billing', 'remainingTime', 'cycleTransfer'].includes(column.prop)">
               <server-status-th
                 v-if="tableData.showBilling && column.prop === 'billing'"
                 :column="column"
               />
               <server-status-th
                 v-if="tableData.showRemainingTime && column.prop === 'remainingTime'"
+                :column="column"
+              />
+              <server-status-th
+                v-if="tableData.showCycleTransfer && column.prop === 'cycleTransfer'"
                 :column="column"
               />
             </template>
@@ -45,13 +49,17 @@
             v-for="column in itemData.columnData"
             :key="`td_${itemData.info?.ID}_${column.prop}`"
           >
-            <template v-if="['billing', 'remainingTime'].includes(column.prop)">
+            <template v-if="['billing', 'remainingTime', 'cycleTransfer'].includes(column.prop)">
               <server-status-td
                 v-if="tableData.showBilling && column.prop === 'billing'"
                 :column="column"
               />
               <server-status-td
                 v-if="tableData.showRemainingTime && column.prop === 'remainingTime'"
+                :column="column"
+              />
+              <server-status-td
+                v-if="tableData.showCycleTransfer && column.prop === 'cycleTransfer'"
                 :column="column"
               />
             </template>
@@ -74,6 +82,7 @@
 
 import {
   computed,
+  inject,
 } from 'vue';
 import {
   useRouter,
@@ -96,13 +105,16 @@ const props = defineProps({
 });
 
 const router = useRouter();
+const listCycleTransferMap = inject('listCycleTransferMap', {
+  value: {},
+});
 
 // eslint-disable-next-line max-len, vue/max-len
-const DEFAULT_COLUMNS_STR = 'status,name,country,system,config,duration,speeds,transfer,load,cpu,mem,disk,billing,remainingTime';
+const DEFAULT_COLUMNS_STR = 'status,name,country,system,config,duration,speeds,transfer,cycleTransfer,load,cpu,mem,disk,billing,remainingTime';
 
 const tableData = computed(() => {
   const columnTpls = config.nazhua.serverStatusColumnsTpl || DEFAULT_COLUMNS_STR;
-  return handleServerListColumn(props.serverList, columnTpls);
+  return handleServerListColumn(props.serverList, columnTpls, listCycleTransferMap.value);
 });
 
 function openDetail(info) {

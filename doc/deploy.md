@@ -4,8 +4,9 @@
 > Nazhua主题是纯前端项目，可部署在静态服务器上
 > 
 > **跨域解决注重点**：
-> - **V0版本**：需解决 `/api/v1/monitor/${id}`、`/ws` 和 `/` 的跨域
+> - **V0版本**：需解决 `/api/v1/monitor/${id}`、`/ws` 和 `/` 的跨域；若启用详情页周期流量展示，还需确保服务页可通过 `nezhaPath/service` 访问
 > - **V1版本**：需解决 `/api/xxx` 和 `/api/v1/ws/server` 的跨域
+> - **V0兼容限制**：周期流量表按服务页中的服务器名称匹配当前节点；若存在重名节点，展示结果为 best-effort
 > 
 > 推荐使用 Nginx 或 Caddy 反向代理解决跨域问题
 
@@ -130,6 +131,7 @@ window.$$nazhuaConfig = {
   enableInnerSearch: true, // 启用内部搜索
   listServerItemTypeToggle: true, // 服务器列表项类型切换
   listServerItemType: 'row', // 服务器列表项类型 card/row row列表模式移动端自动切换至card
+  // serverStatusColumnsTpl: 'status,name,country,system,config,duration,speeds,transfer,cycleTransfer,load,cpu,mem,disk,billing,remainingTime', // ServerStatus列模板；自定义时如需周期流量请保留 cycleTransfer
   listServerStatusType: 'progress', // 服务器状态类型--列表
   listServerRealTimeShowLoad: true, // 列表显示服务器实时负载
   detailServerStatusType: 'progress', // 服务器状态类型--详情页
@@ -146,6 +148,7 @@ window.$$nazhuaConfig = {
   hideListItemStatusDonut: false, // 隐藏列表项的饼图
   hideListItemStat: false, // 隐藏列表项的统计信息
   hideListItemBill: false, // 隐藏列表项的账单信息
+  hideListItemCycleTransfer: false, // 隐藏首页列表周期流量摘要
   hideListItemLink: true, // 隐藏列表项的购买链接
   hideFilter: false, // 隐藏筛选
   hideTag: false, // 隐藏标签
@@ -153,14 +156,20 @@ window.$$nazhuaConfig = {
   monitorRefreshTime: 10, // 监控刷新时间间隔，单位s（秒）, 0为不刷新，为保证不频繁请求源站，最低生效值为10s
   monitorChartType: 'multi', // 监控图表类型 single/multi
   monitorChartTypeToggle: true, // 监控图表类型切换
+  listCycleTransferRefreshTime: 60, // 首页列表周期流量刷新时间，单位s（秒），0为不刷新
+  detailCycleTransferRefreshTime: 60, // 详情页周期流量刷新时间，单位s（秒），0为不刷新
+  hideDetailCycleTransfer: false, // 隐藏详情页周期流量卡片
   filterGPUKeywords: ['Virtual Display'], // 如果GPU名称中包含这些关键字，则过滤掉
   customCodeMap: {}, // 自定义的地图点信息
   nezhaVersion: 'v1', // 哪吒版本 不填写则尝试自动识别
   apiMonitorPath: '/api/v1/monitor/{id}',
   wsPath: '/ws',
   nezhaPath: '/nezha/',
+  v0ServicePath: '/nezha/service', // v0 周期流量服务页地址，不填则根据 nezhaPath 自动推导
   nezhaV0ConfigType: 'servers', // 哪吒v0数据读取类型
-  v1ApiMonitorPath: '/api/v1/service/{id}',
+  v1ApiMonitorPath: '/api/v1/server/{id}/service',
+  v1ApiMonitorPathFallback: '/api/v1/service/{id}',
+  v1ApiServicePath: '/api/v1/service', // v1 周期流量与服务反馈总览
   v1WsPath: '/api/v1/ws/server',
   v1ApiGroupPath: '/api/v1/server-group',
   v1ApiSettingPath: '/api/v1/setting',

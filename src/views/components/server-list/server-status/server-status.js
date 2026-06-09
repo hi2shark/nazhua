@@ -6,12 +6,16 @@ import {
 } from 'vue';
 
 // import * as hostUtils from '@/utils/host';
+import {
+  getCycleTransferSummaryByServer,
+} from '@/utils/cycle-transfer';
 import handleServerStatus from '@/views/composable/server-status';
 import handleServerInfo from '@/views/composable/server-info';
 import handleServerRealTime from '@/views/composable/server-real-time';
 import handleServerBillAndPlan from '@/views/composable/server-bill-and-plan';
 
 import ServerStatusProgress from '@/views/components/server/server-status-progress.vue';
+import CycleTransfer from '@/views/components/server-list/server-status/server-info/cycle-transfer.vue';
 import StatusIcon from '@/views/components/server-list/server-status/server-info/status-icon.vue';
 import SystemOS from '@/views/components/server-list/server-status/server-info/system-os.vue';
 import Country from '@/views/components/server-list/server-status/server-info/country.vue';
@@ -153,13 +157,18 @@ const COLUMN_MAP = Object.freeze({
     width: 70,
     align: 'right',
   },
+  cycleTransfer: {
+    label: '周期流量',
+    minWidth: 96,
+    align: 'center',
+  },
 });
 
 /**
  * 默认列配置
  */
 // eslint-disable-next-line max-len, vue/max-len
-const DEFAULT_COLUMNS = 'status,name,country,system,config,duration,speeds,transfer,load,cpu,mem,disk,billing,remainingTime';
+const DEFAULT_COLUMNS = 'status,name,country,system,config,duration,speeds,transfer,cycleTransfer,load,cpu,mem,disk,billing,remainingTime';
 
 /**
  * 需要实时更新的数据
@@ -203,6 +212,7 @@ export const handleServerItemData = (params) => {
     realTimeData,
     progressData,
     billAndPlan,
+    cycleTransferSummary,
   } = params || {};
   switch (column.prop) {
     case 'status':
@@ -320,6 +330,14 @@ export const handleServerItemData = (params) => {
         originalData: params,
       };
     }
+    case 'cycleTransfer':
+      return {
+        type: 'component',
+        component: h(CycleTransfer, {
+          summary: cycleTransferSummary,
+        }),
+        originalData: params,
+      };
     default: {
       if (RELD_TIME_DATA.includes(column.prop) && realTimeData[column.prop]) {
         const item = realTimeData[column.prop];
@@ -348,13 +366,15 @@ export const handleServerItemData = (params) => {
  * @param {Array} columns 列配置
  * @returns {Array} 表格数据
  */
-export const handleServerListColumn = (serverList, columnTpls = DEFAULT_COLUMNS) => {
+export const handleServerListColumn = (serverList, columnTpls = DEFAULT_COLUMNS, cycleTransferMap = {}) => {
   const columnProps = getColumnPropsConfig(columnTpls);
   const tpls = columnProps.map((column) => column.valProp || column.prop).join(',');
   const hasBilling = columnTpls.includes('billing');
   const hasRemainingTime = columnTpls.includes('remainingTime');
+  const hasCycleTransfer = columnTpls.includes('cycleTransfer');
   let showBilling = false;
   let showRemainingTime = false;
+  let showCycleTransfer = false;
   const list = serverList.map((server) => {
     // 负载\网速\流量\在线等
     const realTimeResult = handleServerRealTime({
@@ -412,6 +432,10 @@ export const handleServerListColumn = (serverList, columnTpls = DEFAULT_COLUMNS)
         showRemainingTime = true;
       }
     }
+    const cycleTransferSummary = getCycleTransferSummaryByServer(cycleTransferMap, server);
+    if (hasCycleTransfer && cycleTransferSummary) {
+      showCycleTransfer = true;
+    }
 
     const columnData = [];
     columnProps.forEach((columnItem) => {
@@ -423,6 +447,7 @@ export const handleServerListColumn = (serverList, columnTpls = DEFAULT_COLUMNS)
           realTimeData,
           progressData,
           billAndPlan,
+          cycleTransferSummary,
         }),
       });
     });
@@ -442,5 +467,6 @@ export const handleServerListColumn = (serverList, columnTpls = DEFAULT_COLUMNS)
     columnProps,
     showBilling,
     showRemainingTime,
+    showCycleTransfer,
   };
 };

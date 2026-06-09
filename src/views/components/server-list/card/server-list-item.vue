@@ -45,6 +45,11 @@
         :server-real-time-list-tpls="serverRealTimeListTpls"
       />
     </div>
+    <server-list-item-cycle-transfer
+      v-if="$config.nazhua.hideListItemCycleTransfer !== true"
+      :info="info"
+      @click="openDetail"
+    />
     <server-list-item-bill
       v-if="$config.nazhua.hideListItemBill !== true"
       :info="info"
@@ -69,6 +74,7 @@ import * as hostUtils from '@/utils/host';
 import handleServerInfo from '@/views/composable/server-info';
 import ServerRealTime from '@/views/components/server/server-real-time.vue';
 import ServerListItemStatus from './server-list-item-status.vue';
+import ServerListItemCycleTransfer from './server-list-item-cycle-transfer.vue';
 import ServerListItemBill from './server-list-item-bill.vue';
 
 const props = defineProps({

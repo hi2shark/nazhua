@@ -124,6 +124,10 @@ import {
 } from '@/utils/world-map';
 import uuid from '@/utils/uuid';
 import validate from '@/utils/validate';
+import {
+  getCycleTransferSummaryByServer,
+  loadCycleTransferMap,
+} from '@/utils/cycle-transfer';
 
 import WorldMap from '@/components/world-map/world-map.vue';
 import ServerOptionBox from './components/server-list/server-option-box.vue';
@@ -141,8 +145,12 @@ import {
 const store = useStore();
 const worldMapWidth = ref();
 const windowWidth = ref(window.innerWidth);
+const homeViewActive = ref(false);
 
 const listType = ref(config.nazhua.listServerItemType || 'card');
+const listCycleTransferMap = ref({});
+
+provide('listCycleTransferMap', listCycleTransferMap);
 
 const showTransition = computed(() => {
   // 强制开启
@@ -219,6 +227,25 @@ const showTag = computed(() => {
 const serverList = computed(() => store.state.serverList);
 // 服务器总数
 const serverCount = computed(() => store.state.serverCount);
+const showListCycleTransfer = computed(() => {
+  if (config.nazhua.hideListItemCycleTransfer !== true) {
+    return true;
+  }
+  return String(config.nazhua.serverStatusColumnsTpl || '')
+    .split(',')
+    .map((item) => item.trim())
+    .includes('cycleTransfer');
+});
+const listCycleTransferRefreshTime = computed(() => {
+  let value = parseInt(config.nazhua.listCycleTransferRefreshTime, 10);
+  if (Number.isNaN(value)) {
+    value = 60;
+  }
+  return Math.max(value, 0);
+});
+const serverListCycleTransferIdentity = computed(() => serverList.value
+  .map((item) => `${item.ID}:${item.Name}`)
+  .join('|'));
 // 分组标签
 const serverGroupOptions = computed(() => {
   const options = [];
@@ -293,6 +320,67 @@ const sortData = ref({
 });
 const sortOptions = computed(() => serverSortOptions());
 
+let listCycleTransferRefreshTimer = null;
+
+function clearListCycleTransferRefreshTimer() {
+  if (listCycleTransferRefreshTimer) {
+    clearTimeout(listCycleTransferRefreshTimer);
+    listCycleTransferRefreshTimer = null;
+  }
+}
+
+async function loadListCycleTransfer() {
+  if (!showListCycleTransfer.value || serverList.value.length === 0) {
+    listCycleTransferMap.value = {};
+    return;
+  }
+
+  try {
+    const result = await loadCycleTransferMap(serverList.value);
+    listCycleTransferMap.value = result || {};
+  } catch (error) {
+    listCycleTransferMap.value = {};
+    console.error('Failed to load list cycle transfer data:', error);
+  }
+}
+
+function setListCycleTransferRefreshTimer() {
+  clearListCycleTransferRefreshTimer();
+  if (!homeViewActive.value || !showListCycleTransfer.value || listCycleTransferRefreshTime.value <= 0) {
+    return;
+  }
+  listCycleTransferRefreshTimer = setTimeout(async () => {
+    await loadListCycleTransfer();
+    setListCycleTransferRefreshTimer();
+  }, listCycleTransferRefreshTime.value * 1000);
+}
+
+async function restartListCycleTransferFlow() {
+  clearListCycleTransferRefreshTimer();
+  if (!homeViewActive.value) {
+    return;
+  }
+  if (!showListCycleTransfer.value) {
+    listCycleTransferMap.value = {};
+    return;
+  }
+  await loadListCycleTransfer();
+  setListCycleTransferRefreshTimer();
+}
+
+watch([
+  showListCycleTransfer,
+  listCycleTransferRefreshTime,
+  serverListCycleTransferIdentity,
+], async () => {
+  if (homeViewActive.value) {
+    await restartListCycleTransferFlow();
+  } else if (!showListCycleTransfer.value) {
+    clearListCycleTransferRefreshTimer();
+    listCycleTransferMap.value = {};
+  }
+});
+
 const filterServerList = computed(() => {
   const fields = {};
   const locationMap = {};
@@ -330,6 +418,9 @@ const filterServerList = computed(() => {
       if (validate.isSet(customData?.orderLink) && config.nazhua.hideListItemLink !== true) {
         fields.orderLink = true;
       }
+    }
+    if (config.nazhua.hideListItemCycleTransfer !== true && getCycleTransferSummaryByServer(listCycleTransferMap.value, i)) {
+      fields.cycleTransfer = true;
     }
 
     // 位置
@@ -425,6 +516,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  homeViewActive.value = false;
+  clearListCycleTransferRefreshTimer();
   window.removeEventListener('resize', handleResize);
 });
 
@@ -433,9 +526,11 @@ const scrollPosition = ref(0);
 onDeactivated(() => {
   // 保存滚动位置
   scrollPosition.value = document.documentElement.scrollTop || document.body.scrollTop;
+  homeViewActive.value = false;
+  clearListCycleTransferRefreshTimer();
 });
 
-onActivated(() => {
+onActivated(async () => {
   // 如果有保存的位置，则恢复到该位置
   if (scrollPosition.value > 0) {
     nextTick(() => {
@@ -445,6 +540,8 @@ onActivated(() => {
       });
     });
   }
+  homeViewActive.value = true;
+  await restartListCycleTransferFlow();
 });
 </script>
 
