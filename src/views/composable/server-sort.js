@@ -69,60 +69,105 @@ export const serverSortOptions = () => [{
   value: 'Host.DiskTotal',
 }];
 
+const sortCollator = new Intl.Collator(undefined, {
+  numeric: true,
+  sensitivity: 'base',
+});
+
+function isEmptySortValue(value) {
+  return value === undefined || value === null || value === '';
+}
+
+function getNumberValue(value) {
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) ? numberValue : null;
+}
+
+function getServerSortValue(server, sortby, currentTime) {
+  if (!sortby) {
+    return null;
+  }
+
+  const hasDot = sortby.includes('.');
+  if (!hasDot) {
+    return server?.[sortby];
+  }
+
+  const [sortby1, sortby2] = sortby.split('.');
+  if (sortby1 !== '$') {
+    switch (sortby2) {
+      case 'BootTime':
+      {
+        const bootTime = getNumberValue(server?.Host?.BootTime);
+        return bootTime === null ? null : currentTime - (bootTime * 1000);
+      }
+      default:
+        return server?.[sortby1]?.[sortby2];
+    }
+  }
+
+  switch (sortby2) {
+    case 'TotalTransfer':
+    {
+      const netInTransfer = getNumberValue(server?.State?.NetInTransfer);
+      const netOutTransfer = getNumberValue(server?.State?.NetOutTransfer);
+      if (netInTransfer === null || netOutTransfer === null) {
+        return null;
+      }
+      return netInTransfer + netOutTransfer;
+    }
+    case 'TotalConnCount':
+    {
+      const tcpConnCount = getNumberValue(server?.State?.TcpConnCount);
+      const udpConnCount = getNumberValue(server?.State?.UdpConnCount);
+      if (tcpConnCount === null || udpConnCount === null) {
+        return null;
+      }
+      return tcpConnCount + udpConnCount;
+    }
+    case 'CPU':
+    {
+      const cpu = server?.Host?.CPU;
+      if (Array.isArray(cpu) || typeof cpu === 'string') {
+        return cpu.length;
+      }
+      return getNumberValue(cpu);
+    }
+    default:
+      return null;
+  }
+}
+
+function compareServerSortValue(aValue, bValue, order) {
+  const aValueIsEmpty = isEmptySortValue(aValue);
+  const bValueIsEmpty = isEmptySortValue(bValue);
+  if (aValueIsEmpty && bValueIsEmpty) {
+    return 0;
+  }
+  if (aValueIsEmpty) {
+    return 1;
+  }
+  if (bValueIsEmpty) {
+    return -1;
+  }
+
+  const direction = order === 'desc' ? -1 : 1;
+  const aNumberValue = getNumberValue(aValue);
+  const bNumberValue = getNumberValue(bValue);
+
+  if (aNumberValue !== null && bNumberValue !== null) {
+    return (aNumberValue - bNumberValue) * direction;
+  }
+
+  return sortCollator.compare(String(aValue), String(bValue)) * direction;
+}
+
 /**
  * 服务器排序处理
  */
 export function serverSortHandler(a, b, sortby, order) {
-  let aValue;
-  let bValue;
-  const hasDot = sortby.includes('.');
-  if (!hasDot) {
-    aValue = a[sortby];
-    bValue = b[sortby];
-  } else {
-    const [sortby1, sortby2] = sortby.split('.');
-    if (sortby1 !== '$') {
-      switch (sortby2) {
-        case 'BootTime':
-        {
-          const currentTime = Date.now();
-          aValue = currentTime - a.Host.BootTime * 1000;
-          bValue = currentTime - b.Host.BootTime * 1000;
-          break;
-        }
-        default:
-        {
-          aValue = a[sortby1][sortby2];
-          bValue = b[sortby1][sortby2];
-          break;
-        }
-      }
-    } else {
-      switch (sortby2) {
-        case 'TotalTransfer':
-        {
-          aValue = a.State.NetInTransfer + a.State.NetOutTransfer;
-          bValue = b.State.NetInTransfer + b.State.NetOutTransfer;
-          break;
-        }
-        case 'TotalConnCount':
-        {
-          aValue = a.State.TcpConnCount + a.State.UdpConnCount;
-          bValue = b.State.TcpConnCount + b.State.UdpConnCount;
-          break;
-        }
-        case 'CPU':
-        {
-          aValue = a.Host.CPU.length;
-          bValue = b.Host.CPU.length;
-          break;
-        }
-        default:
-      }
-    }
-  }
-  if (order === 'desc') {
-    return bValue - aValue;
-  }
-  return aValue - bValue;
+  const currentTime = Date.now();
+  const aValue = getServerSortValue(a, sortby, currentTime);
+  const bValue = getServerSortValue(b, sortby, currentTime);
+  return compareServerSortValue(aValue, bValue, order);
 }
