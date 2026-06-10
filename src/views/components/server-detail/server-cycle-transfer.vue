@@ -15,7 +15,7 @@
           v-if="refreshInterval > 0"
           class="refresh-tip"
         >
-          {{ refreshInterval }}s 刷新
+          {{ refreshInterval }}s 自动刷新
         </span>
       </div>
     </div>
@@ -29,7 +29,6 @@
       >
         <div class="cycle-transfer-item-head">
           <div class="rule-title-group">
-            <span class="rule-id">#{{ item.ruleId }}</span>
             <span class="rule-name">{{ item.ruleName }}</span>
           </div>
           <span
@@ -76,7 +75,6 @@
         </div>
       </div>
     </div>
-
   </dot-dot-box>
 </template>
 

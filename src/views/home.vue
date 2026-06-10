@@ -419,7 +419,10 @@ const filterServerList = computed(() => {
         fields.orderLink = true;
       }
     }
-    if (config.nazhua.hideListItemCycleTransfer !== true && getCycleTransferSummaryByServer(listCycleTransferMap.value, i)) {
+    if (
+      config.nazhua.hideListItemCycleTransfer !== true
+      && getCycleTransferSummaryByServer(listCycleTransferMap.value, i)
+    ) {
       fields.cycleTransfer = true;
     }
 

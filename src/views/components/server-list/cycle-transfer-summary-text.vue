@@ -4,7 +4,6 @@
     :class="summaryClass"
   >
     <template v-if="summary">
-      <span class="status-text">{{ summary.statusLabel }}</span>
       <span
         v-if="showPercent"
         class="percent-text"
@@ -52,10 +51,6 @@ const summaryClass = computed(() => {
   max-width: 100%;
   white-space: nowrap;
 
-  .status-text {
-    font-weight: 600;
-  }
-
   .percent-text {
     color: #d6deea;
   }
@@ -65,28 +60,24 @@ const summaryClass = computed(() => {
   }
 
   &.status--fine {
-    .status-text,
     .percent-text {
       color: #79ffbc;
     }
   }
 
   &.status--warning {
-    .status-text,
     .percent-text {
       color: #ffd166;
     }
   }
 
   &.status--alert {
-    .status-text,
     .percent-text {
       color: #ff9666;
     }
   }
 
   &.status--over {
-    .status-text,
     .percent-text {
       color: #ff7b8a;
     }
