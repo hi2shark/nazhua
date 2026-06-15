@@ -15,6 +15,7 @@
  */
 import {
   inject,
+  toRef,
 } from 'vue';
 import handleServerRealTime from '@/views/composable/server-real-time';
 
@@ -29,6 +30,10 @@ const props = defineProps({
     type: String,
     default: undefined,
   },
+  transferReplace: {
+    type: Object,
+    default: undefined,
+  },
 });
 
 const currentTime = inject('currentTime', {
@@ -41,5 +46,6 @@ const {
   props,
   currentTime,
   serverRealTimeListTpls: props.serverRealTimeListTpls,
+  transferReplace: toRef(props, 'transferReplace'),
 });
 </script>

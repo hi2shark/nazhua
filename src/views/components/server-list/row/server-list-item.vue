@@ -42,10 +42,7 @@
       v-if="$config.nazhua.hideListItemStat !== true"
       :info="info"
       server-real-time-list-tpls="load,conns,speeds,transfer,duration"
-    />
-    <server-list-item-cycle-transfer
-      v-if="$config.nazhua.hideListItemCycleTransfer !== true"
-      :info="info"
+      :transfer-replace="transferReplace"
     />
     <server-list-item-bill
       v-if="$config.nazhua.hideListItemBill !== true"
@@ -61,17 +58,20 @@
 
 import {
   computed,
+  inject,
 } from 'vue';
 import {
   useRouter,
 } from 'vue-router';
 import * as hostUtils from '@/utils/host';
+import {
+  getCycleTransferSummaryByServer,
+} from '@/utils/cycle-transfer';
 
 import handleServerInfo from '@/views/composable/server-info';
 import ServerListColumn from './server-list-column.vue';
 import ServerListItemStatus from './server-list-item-status.vue';
 import ServerListItemRealTime from './server-list-item-real-time.vue';
-import ServerListItemCycleTransfer from './server-list-item-cycle-transfer.vue';
 import ServerListItemBill from './server-list-item-bill.vue';
 
 const props = defineProps({
@@ -91,6 +91,28 @@ const { cpuAndMemAndDisk } = handleServerInfo({
 });
 
 const platformSystemLabel = computed(() => hostUtils.getSystemOSLabel(props.info?.Host?.Platform, true));
+
+const listCycleTransferMap = inject('listCycleTransferMap', {
+  value: {},
+});
+const cycleTransferSummary = computed(() => getCycleTransferSummaryByServer(listCycleTransferMap.value, props.info));
+
+const transferReplace = computed(() => {
+  const summary = cycleTransferSummary.value;
+  if (!summary?.remainingDisplay || summary.remainingDisplay === '-') {
+    return null;
+  }
+  const matched = String(summary.remainingDisplay).match(/^([0-9]+(?:\.[0-9]+)?)\s*([A-Za-z]+)$/);
+  if (!matched) {
+    return null;
+  }
+  const [, value, unit] = matched;
+  return {
+    label: '剩余流量',
+    value: Number(value),
+    unit,
+  };
+});
 
 function openDetail() {
   router.push({

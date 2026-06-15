@@ -2,12 +2,16 @@
   <dot-dot-box
     v-if="showCard"
     class="server-cycle-transfer-group"
-    padding="16px 20px"
+    padding="14px 18px"
   >
     <div class="module-head-group">
       <div class="left-box">
-        <span class="module-title">
-          周期流量
+        <span class="module-title">周期流量</span>
+        <span
+          v-if="cycleTransferViewList.length > 1"
+          class="rule-count"
+        >
+          {{ cycleTransferViewList.length }} 条规则
         </span>
       </div>
       <div class="right-box">
@@ -15,6 +19,7 @@
           v-if="refreshInterval > 0"
           class="refresh-tip"
         >
+          <i class="ri-refresh-line" />
           {{ refreshInterval }}s 自动刷新
         </span>
       </div>
@@ -30,29 +35,45 @@
         <div class="cycle-transfer-item-head">
           <div class="rule-title-group">
             <span class="rule-name">{{ item.ruleName }}</span>
+            <span
+              class="rule-status"
+              :class="`status--${item.statusLevel}`"
+            >
+              {{ item.statusLabel }}
+            </span>
           </div>
           <span
-            class="rule-status"
-            :class="`status--${item.statusLevel}`"
+            v-if="item.showProgress"
+            class="remaining-percent"
           >
-            {{ item.statusLabel }}
+            剩余 {{ item.remainingPercentText }}
           </span>
         </div>
 
         <div class="cycle-transfer-meta">
-          <span class="meta-item">周期 {{ item.periodStart }} - {{ item.periodEnd }}</span>
+          <span class="meta-item">周期 {{ item.periodText }}</span>
           <span class="meta-item">下次 {{ item.nextCheckDisplay }}</span>
         </div>
 
         <div class="cycle-transfer-stats">
-          <span class="stats-item">已用 {{ item.currentUsageDisplay }}</span>
-          <span class="stats-item">剩余 {{ item.remainingDisplay }}</span>
-          <span class="stats-item">上限 {{ item.maxDisplay }}</span>
+          <span class="stats-item">
+            <span class="stats-label">已用</span>
+            <span class="stats-value">{{ item.currentUsageDisplay }}</span>
+          </span>
+          <span class="stats-item">
+            <span class="stats-label">剩余</span>
+            <span class="stats-value">{{ item.remainingDisplay }}</span>
+          </span>
+          <span class="stats-item">
+            <span class="stats-label">上限</span>
+            <span class="stats-value">{{ item.maxDisplay }}</span>
+          </span>
           <span
             v-if="item.showMin"
             class="stats-item"
           >
-            下限 {{ item.minDisplay }}
+            <span class="stats-label">下限</span>
+            <span class="stats-value">{{ item.minDisplay }}</span>
           </span>
         </div>
 
@@ -125,6 +146,7 @@ const cycleTransferViewList = computed(() => cycleTransferList.value.map((item) 
   showProgress: Number.isFinite(item.remainingPercent),
   progressWidth: Number.isFinite(item.remainingPercent) ? Math.max(Math.min(item.remainingPercent, 100), 0) : 0,
   remainingPercentText: Number.isFinite(item.remainingPercent) ? `${item.remainingPercent.toFixed(2)}%` : '-',
+  periodText: `${item.periodStart} - ${item.periodEnd}`,
   showMin: item.minDisplay && item.minDisplay !== '0B' && item.minDisplay !== '-',
 })));
 
@@ -179,47 +201,83 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 14px;
+    gap: 10px 16px;
+    margin-bottom: 12px;
+  }
+
+  .left-box,
+  .right-box {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .left-box {
+    gap: 8px;
+  }
+
+  .right-box {
+    flex-shrink: 0;
   }
 
   .module-title {
-    font-size: 16px;
-    color: #eee;
+    color: #f4f7fb;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .rule-count {
+    padding: 1px 7px;
+    border: 1px solid rgba(#8bb3ff, 0.2);
+    border-radius: 999px;
+    color: #9fbcef;
+    font-size: 12px;
+    line-height: 17px;
+    white-space: nowrap;
   }
 
   .refresh-tip {
-    color: #aeb8c2;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #9aa8b7;
     font-size: 12px;
     line-height: 1.5;
+    white-space: nowrap;
+  }
+
+  .refresh-tip i {
+    color: #89d6ff;
+    font-size: 13px;
+    line-height: 1;
   }
 
   .cycle-transfer-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
   .cycle-transfer-item {
-    padding: 12px 14px;
-    border: 1px solid rgba(#fff, 0.12);
+    padding: 10px 12px 12px;
+    border: 1px solid rgba(#fff, 0.1);
     border-radius: 8px;
-    background: rgba(#000, 0.15);
+    background: rgba(#000, 0.16);
 
     &.status--fine {
       border-color: rgba(#79ffbc, 0.18);
     }
 
     &.status--warning {
-      border-color: rgba(#ffd166, 0.18);
+      border-color: rgba(#ffd166, 0.24);
     }
 
     &.status--alert {
-      border-color: rgba(#ff9666, 0.18);
+      border-color: rgba(#ff9666, 0.26);
     }
 
     &.status--over {
-      border-color: rgba(#ff7b8a, 0.18);
+      border-color: rgba(#ff7b8a, 0.28);
     }
   }
 
@@ -230,11 +288,15 @@ onUnmounted(() => {
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 8px 14px;
+    gap: 6px 12px;
   }
 
-  .cycle-transfer-meta,
+  .cycle-transfer-meta {
+    margin-top: 7px;
+  }
+
   .cycle-transfer-stats {
+    justify-content: flex-start;
     margin-top: 8px;
   }
 
@@ -242,45 +304,64 @@ onUnmounted(() => {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     min-width: 0;
   }
 
-  .rule-id {
-    color: #8bb3ff;
-    font-size: 12px;
-  }
-
   .rule-name {
+    overflow: hidden;
     color: #f3f7fa;
     font-size: 14px;
     line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .rule-status {
-    padding: 2px 8px;
-    font-size: 12px;
-    line-height: 18px;
-    border-radius: 999px;
+    padding: 1px 7px;
     border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 17px;
+    white-space: nowrap;
   }
 
-  .meta-item,
+  .remaining-percent,
+  .meta-item {
+    color: #aeb8c2;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
   .stats-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    min-width: 0;
     color: #cdd7e1;
     font-size: 12px;
     line-height: 1.5;
   }
 
+  .stats-label {
+    color: #8e9cad;
+    white-space: nowrap;
+  }
+
+  .stats-value {
+    color: #e6edf4;
+    white-space: nowrap;
+  }
+
   .progress-group {
-    margin-top: 10px;
+    margin-top: 8px;
   }
 
   .progress-track {
-    height: 10px;
+    height: 8px;
     overflow: hidden;
-    background: rgba(#fff, 0.1);
     border-radius: 999px;
+    background: rgba(#fff, 0.1);
   }
 
   .progress-bar {
@@ -290,11 +371,13 @@ onUnmounted(() => {
   }
 
   .progress-text {
-    margin-top: 6px;
-    color: #e6edf4;
+    margin-top: 5px;
+    color: #d6deea;
     font-size: 12px;
+    line-height: 1.5;
     text-align: right;
   }
+
   .status--fine {
     &.rule-status {
       color: #79ffbc;
@@ -352,6 +435,27 @@ onUnmounted(() => {
 
     &.progress-bar {
       background: linear-gradient(90deg, #768595, #aeb8c2);
+    }
+  }
+
+  @media screen and (max-width: 720px) {
+    .module-head-group {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .cycle-transfer-item-head,
+    .cycle-transfer-meta {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .rule-name {
+      white-space: normal;
+    }
+
+    .progress-text {
+      text-align: left;
     }
   }
 }
