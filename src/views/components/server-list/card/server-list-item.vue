@@ -43,13 +43,9 @@
         v-if="$config.nazhua.hideListItemStat !== true"
         :info="info"
         :server-real-time-list-tpls="serverRealTimeListTpls"
+        :transfer-replace="transferReplace"
       />
     </div>
-    <server-list-item-cycle-transfer
-      v-if="$config.nazhua.hideListItemCycleTransfer !== true"
-      :info="info"
-      @click="openDetail"
-    />
     <server-list-item-bill
       v-if="$config.nazhua.hideListItemBill !== true"
       :info="info"
@@ -64,17 +60,20 @@
 
 import {
   computed,
+  inject,
 } from 'vue';
 import {
   useRouter,
 } from 'vue-router';
 import config from '@/config';
 import * as hostUtils from '@/utils/host';
+import {
+  getCycleTransferSummaryByServer,
+} from '@/utils/cycle-transfer';
 
 import handleServerInfo from '@/views/composable/server-info';
 import ServerRealTime from '@/views/components/server/server-real-time.vue';
 import ServerListItemStatus from './server-list-item-status.vue';
-import ServerListItemCycleTransfer from './server-list-item-cycle-transfer.vue';
 import ServerListItemBill from './server-list-item-bill.vue';
 
 const props = defineProps({
@@ -94,6 +93,28 @@ const { cpuAndMemAndDisk } = handleServerInfo({
 });
 
 const platformLogoIconClassName = computed(() => hostUtils.getPlatformLogoIconClassName(props.info?.Host?.Platform));
+
+const listCycleTransferMap = inject('listCycleTransferMap', {
+  value: {},
+});
+const cycleTransferSummary = computed(() => getCycleTransferSummaryByServer(listCycleTransferMap.value, props.info));
+
+const transferReplace = computed(() => {
+  const summary = cycleTransferSummary.value;
+  if (!summary?.remainingDisplay || summary.remainingDisplay === '-') {
+    return null;
+  }
+  const matched = String(summary.remainingDisplay).match(/^([0-9]+(?:\.[0-9]+)?)\s*([A-Za-z]+)$/);
+  if (!matched) {
+    return null;
+  }
+  const [, value, unit] = matched;
+  return {
+    label: '剩余流量',
+    value: Number(value),
+    unit,
+  };
+});
 
 const serverRealTimeListTpls = computed(() => {
   if (config.nazhua?.listServerRealTimeShowLoad || config.nazhua.listServerItemType === 'server-status') {

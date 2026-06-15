@@ -11,6 +11,7 @@ export default (params) => {
     props,
     currentTime,
     serverRealTimeListTpls = 'duration,transfer,inSpeed,outSpeed',
+    transferReplace,
   } = params || {};
   if (!props?.info) {
     return {};
@@ -227,12 +228,14 @@ export default (params) => {
           show: validate.isSet(duration.value?.value),
         };
       case 'transfer':
+      {
+        const replaced = transferReplace?.value;
         return {
           key,
-          label: `${transfer.value.statTypeLabel}流量`,
-          value: transfer.value?.value,
-          unit: transfer.value?.unit,
-          show: validate.isSet(transfer.value?.value),
+          label: replaced ? replaced.label : `${transfer.value.statTypeLabel}流量`,
+          value: replaced ? replaced.value : transfer.value?.value,
+          unit: replaced ? replaced.unit : transfer.value?.unit,
+          show: validate.isSet(replaced ? replaced.value : transfer.value?.value),
           data: {
             in: {
               value: inTransfer.value?.value,
@@ -246,6 +249,7 @@ export default (params) => {
             },
           },
         };
+      }
       case 'inTransfer':
         return {
           key,
@@ -432,6 +436,9 @@ export default (params) => {
         };
       // 在线和流量
       case 'D-A-T':
+      {
+        const replaced = transferReplace?.value;
+        const transferValue = replaced ? replaced.value : transfer.value?.value;
         return {
           key,
           label: '统计',
@@ -445,15 +452,16 @@ export default (params) => {
             },
             {
               key: 'transfer',
-              label: '流量',
-              title: `${transfer.value.statTypeLabel}流量`,
-              value: transfer.value?.value,
-              unit: transfer.value?.unit,
-              show: validate.isSet(transfer.value?.value),
+              label: replaced ? '剩余' : '流量',
+              title: replaced ? '剩余流量' : `${transfer.value.statTypeLabel}流量`,
+              value: transferValue,
+              unit: replaced ? replaced.unit : transfer.value?.unit,
+              show: validate.isSet(transferValue),
             },
           ],
-          show: validate.isSet(duration.value?.value) || validate.isSet(transfer.value?.value),
+          show: validate.isSet(duration.value?.value) || validate.isSet(transferValue),
         };
+      }
       default:
     }
     return null;
