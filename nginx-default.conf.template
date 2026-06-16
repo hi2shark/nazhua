@@ -37,20 +37,28 @@ server {
     proxy_set_header X-Forwarded-Proto $scheme;
   }
 
-  location /static/ {
-    proxy_pass ${NEZHA}static/;
+  # 仅允许首页
+  location = /nezha/ {
+    proxy_pass ${NEZHA};
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
   }
 
-  location /nezha/ {
-    proxy_pass ${NEZHA};
+  # 仅允许服务页
+  location = /nezha/service {
+    proxy_pass ${NEZHA}service;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # 其余 /nezha/ 下路径全部拒绝
+  location /nezha/ {
+    deny all;
+    return 403;
   }
 
   location = /config.js {
