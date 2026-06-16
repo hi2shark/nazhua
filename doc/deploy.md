@@ -5,7 +5,7 @@
 > 
 > **跨域解决注重点**：
 > - **V0版本**：需解决 `/api/v1/monitor/${id}`、`/ws` 和 `/` 的跨域；若启用详情页周期流量展示，还需确保服务页可通过 `nezhaPath/service` 访问
-> - **V1版本**：需解决 `/api/xxx` 和 `/api/v1/ws/server` 的跨域
+> - **V1版本**：需解决 `/api/v1/ws/server`、`/api/v1/server-group`、`/api/v1/setting`、`/api/v1/profile`、`/api/v1/server/${id}/service`、`/api/v1/service/${id}`、`/api/v1/service` 的跨域
 > - **V0兼容限制**：周期流量表按服务页中的服务器名称匹配当前节点；若存在重名节点，展示结果为 best-effort
 > 
 > 推荐使用 Nginx 或 Caddy 反向代理解决跨域问题
@@ -74,7 +74,7 @@ server {
   }
 
   # 哪吒V1的WebSocket服务
-  location /api/v1/ws/server {
+  location = /api/v1/ws/server {
     proxy_pass ${NEZHA}api/v1/ws/server;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
@@ -84,20 +84,97 @@ server {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
   }
 
-  location /api {
-    proxy_pass http://nezha-dashboard.example.com/api;
+  # 仅允许首页服务列表需要的 V1 API
+  location = /api/v1/server-group {
+    proxy_pass ${NEZHA}api/v1/server-group;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
   }
 
-  location /nezha/ {
-    proxy_pass http://nezha-dashboard.example.com/;
+  # 仅允许站点配置需要的 V1 API
+  location = /api/v1/setting {
+    proxy_pass ${NEZHA}api/v1/setting;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # 仅允许版本探测需要的 V1 API
+  location = /api/v1/profile {
+    proxy_pass ${NEZHA}api/v1/profile;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # 仅允许服务详情监控需要的 V1 API
+  location ~ ^/api/v1/server/[^/]+/service$ {
+    proxy_pass ${NEZHA}api/v1/server/$1/service;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # 仅允许服务详情监控兼容路径需要的 V1 API
+  location ~ ^/api/v1/service/[^/]+$ {
+    proxy_pass ${NEZHA}api/v1/service/$1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # 仅允许周期流量统计需要的 V1 API
+  location = /api/v1/service {
+    proxy_pass ${NEZHA}api/v1/service;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # 仅允许哪吒V0监控数据需要的 API
+  location ~ ^/api/v1/monitor/[^/]+$ {
+    proxy_pass ${NEZHA}api/v1/monitor/$1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # 其余 /api/ 下路径全部拒绝
+  location /api {
+    deny all;
+    return 403;
+  }
+
+  # 仅允许首页
+  location = /nezha/ {
+    proxy_pass ${NEZHA};
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # 仅允许服务页
+  location = /nezha/service {
+    proxy_pass ${NEZHA}service;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # 其余 /nezha/ 下路径全部拒绝
+  location /nezha/ {
+    deny all;
+    return 403;
   }
 
   location / {
