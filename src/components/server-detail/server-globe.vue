@@ -327,8 +327,8 @@ const option = computed(() => {
 <style lang="scss" scoped>
 .server-globe {
   position: relative;
-  width: 170px;
-  height: 170px;
+  width: var(--server-globe-size, 170px);
+  height: var(--server-globe-size, 170px);
   flex-shrink: 0;
 
   &__chart {
@@ -359,9 +359,6 @@ const option = computed(() => {
   }
 
   @media screen and (max-width: 500px) {
-    width: 110px;
-    height: 110px;
-
     &__label {
       display: none;
     }

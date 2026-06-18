@@ -135,13 +135,14 @@ const showGlobe = computed(() => !config.nazhua?.hideDetailServerGlobe);
   .server-main {
     min-width: 0;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 18px;
   }
 
   .server-globe-placeholder {
-    width: 170px;
-    height: 170px;
+    width: var(--server-globe-size, 170px);
+    height: var(--server-globe-size, 170px);
     flex-shrink: 0;
     border-radius: 50%;
     border: 1px solid rgba(203, 241, 245, 0.08);
@@ -154,11 +155,14 @@ const showGlobe = computed(() => !config.nazhua?.hideDetailServerGlobe);
   }
 
   .server-globe-box {
+    --server-globe-size: 170px;
     display: flex;
     align-items: center;
     justify-content: center;
     justify-self: end;
     flex-shrink: 0;
+    width: var(--server-globe-size);
+    height: var(--server-globe-size);
   }
 
   .server-flag-box {
@@ -360,8 +364,11 @@ const showGlobe = computed(() => !config.nazhua?.hideDetailServerGlobe);
     }
 
     .server-globe-placeholder {
-      width: 144px;
-      height: 144px;
+      --server-globe-size: 144px;
+    }
+
+    .server-globe-box {
+      --server-globe-size: 144px;
     }
   }
 
@@ -373,21 +380,30 @@ const showGlobe = computed(() => !config.nazhua?.hideDetailServerGlobe);
       min-height: auto;
     }
 
+    .server-main {
+      flex-direction: row;
+      align-items: center;
+      gap: 18px;
+    }
+
     .server-globe-box {
-      justify-self: end;
+      order: -1;
+      justify-self: center;
+      --server-globe-size: clamp(128px, 30vw, 156px);
     }
   }
 
   @media screen and (max-width: 500px) {
-    gap: 12px;
+    gap: 18px;
 
     .server-main {
+      flex-direction: row;
       align-items: flex-start;
       gap: 12px;
     }
 
     .server-flag-box {
-      --flag-size: 48px;
+      --flag-size: 60px;
       border-radius: 8px;
     }
 
@@ -437,8 +453,11 @@ const showGlobe = computed(() => !config.nazhua?.hideDetailServerGlobe);
     }
 
     .server-globe-placeholder {
-      width: 110px;
-      height: 110px;
+      --server-globe-size: clamp(128px, 36vw, 148px);
+    }
+
+    .server-globe-box {
+      --server-globe-size: clamp(128px, 36vw, 148px);
     }
   }
 }
