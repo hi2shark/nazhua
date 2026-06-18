@@ -68,6 +68,7 @@ import config from '@/config';
 import {
   alias2code,
   locationCode2Info,
+  locationCode2GeoInfo,
 } from '@/utils/world-map';
 import pageTitle from '@/utils/page-title';
 
@@ -102,16 +103,26 @@ const serverLocation = computed(() => {
   } else if (info?.value?.Host?.CountryCode) {
     aliasCode = info.value.Host.CountryCode.toUpperCase();
   }
-  const code = alias2code(aliasCode) || locationCode;
+  const normalizedAliasCode = typeof aliasCode === 'string' ? aliasCode.toUpperCase() : aliasCode;
+  const code = alias2code(normalizedAliasCode) || locationCode || normalizedAliasCode;
   if (!code) {
     return null;
   }
+  const locationInfo = locationCode2Info(code) || {};
+  const geoInfo = locationCode2GeoInfo(code) || locationCode2GeoInfo(normalizedAliasCode) || {};
   const {
     x,
     y,
     name,
-  } = locationCode2Info(code) || {};
-  if (typeof x !== 'number' || typeof y !== 'number') {
+    lon,
+    lat,
+  } = {
+    ...geoInfo,
+    ...locationInfo,
+  };
+  const hasMapCoord = typeof x === 'number' && typeof y === 'number';
+  const hasGeoCoord = typeof lon === 'number' && typeof lat === 'number';
+  if (!hasMapCoord && !hasGeoCoord) {
     return null;
   }
   return {
@@ -119,8 +130,8 @@ const serverLocation = computed(() => {
     name,
     x,
     y,
-    lon: (x / 1280) * 360 - 180,
-    lat: 90 - (y / 621) * 180,
+    lon: hasGeoCoord ? lon : (x / 1280) * 360 - 180,
+    lat: hasGeoCoord ? lat : 90 - (y / 621) * 180,
     countryCode: info.value?.Host?.CountryCode?.toLowerCase() || '',
   };
 });
@@ -134,15 +145,17 @@ const locations = computed(() => {
       x,
       y,
     } = serverLocation.value;
-    arr.push({
-      key: code,
-      x,
-      y,
-      code,
-      size: 4,
-      label: `${name}`,
-      servers: [info.value],
-    });
+    if (typeof x === 'number' && typeof y === 'number') {
+      arr.push({
+        key: code,
+        x,
+        y,
+        code,
+        size: 4,
+        label: `${name}`,
+        servers: [info.value],
+      });
+    }
   }
   return arr;
 });

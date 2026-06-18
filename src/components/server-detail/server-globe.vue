@@ -39,7 +39,10 @@ import {
   onDeactivated,
 } from 'vue';
 import VChart from 'vue-echarts';
-import * as echarts from 'echarts';
+import {
+  geoEquirectangular,
+  geoPath,
+} from 'd3-geo';
 import 'echarts-gl';
 
 const props = defineProps({
@@ -105,7 +108,6 @@ onMounted(async () => {
   ]);
   worldGeoJson.value = geoJson.default;
   countryNameMap.value = nameMap.default;
-  echarts.registerMap('world', worldGeoJson.value);
   loaded.value = true;
 });
 
@@ -128,11 +130,12 @@ onDeactivated(() => {
 const TEXTURE_WIDTH = 2048;
 const TEXTURE_HEIGHT = 1024;
 
-const OCEAN_COLOR = '#0b1016';
-const LAND_COLOR = '#1c2a35';
-const LAND_BORDER_COLOR = 'rgba(203, 241, 245, 0.18)';
-const HIGHLIGHT_COLOR = '#00d4ff';
+const OCEAN_COLOR = '#081f2a';
+const LAND_COLOR = '#315a6e';
+const LAND_BORDER_COLOR = 'rgba(144, 242, 255, 0.34)';
+const HIGHLIGHT_COLOR = '#00dcff';
 const ATMOSPHERE_COLOR = '#00d4ff';
+const MARKER_COLOR = '#e0fcff';
 
 /**
  * 根据国家名称从 GeoJSON 中查找对应要素
@@ -141,207 +144,135 @@ function findCountryFeature(geoJson, countryName) {
   return geoJson?.features?.find((feature) => feature.properties?.name === countryName);
 }
 
-/**
- * 计算国家要素的边界框中心点
- */
-function getCountryCenter(feature) {
-  if (!feature) return null;
-
-  let minLon = Infinity;
-  let maxLon = -Infinity;
-  let minLat = Infinity;
-  let maxLat = -Infinity;
-
-  function processCoord(coord) {
-    const [lon, lat] = coord;
-    minLon = Math.min(minLon, lon);
-    maxLon = Math.max(maxLon, lon);
-    minLat = Math.min(minLat, lat);
-    maxLat = Math.max(maxLat, lat);
-  }
-
-  function processGeometry(geometry) {
-    const { type, coordinates } = geometry;
-    if (type === 'Polygon') {
-      coordinates.forEach((ring) => ring.forEach(processCoord));
-    } else if (type === 'MultiPolygon') {
-      coordinates.forEach((polygon) => polygon.forEach((ring) => ring.forEach(processCoord)));
-    }
-  }
-
-  processGeometry(feature.geometry);
-
-  return [
-    (minLon + maxLon) / 2,
-    (minLat + maxLat) / 2,
-  ];
-}
-
-const targetCenter = computed(() => {
+const targetCountryFeature = computed(() => {
   if (!ready.value || !worldGeoJson.value || !targetCountryName.value) {
     return null;
   }
-  const feature = findCountryFeature(worldGeoJson.value, targetCountryName.value);
-  return getCountryCenter(feature);
+  return findCountryFeature(worldGeoJson.value, targetCountryName.value);
+});
+
+const targetCoord = computed(() => {
+  if (!ready.value) {
+    return null;
+  }
+
+  return [
+    props.location.lon,
+    props.location.lat,
+  ];
 });
 
 /**
  * 在 canvas 上绘制单个国家要素（使用等距圆柱投影）
  */
-function drawFeatureOnCanvas(ctx, feature, color) {
+function drawFeatureOnCanvas(ctx, path, feature, color, options = {}) {
   if (!feature) return;
 
-  const { width, height } = ctx.canvas;
-
-  function project(coord) {
-    const [lon, lat] = coord;
-    return [
-      ((lon + 180) / 360) * width,
-      ((90 - lat) / 180) * height,
-    ];
-  }
-
-  function drawPolygon(polygon) {
-    polygon.forEach((ring) => {
-      ring.forEach((coord, i) => {
-        const [x, y] = project(coord);
-        if (i === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
-      });
-    });
-  }
-
+  const {
+    strokeColor = '',
+    lineWidth = 0,
+  } = options;
   ctx.beginPath();
-  const { type, coordinates } = feature.geometry;
-  if (type === 'Polygon') {
-    drawPolygon(coordinates);
-  } else if (type === 'MultiPolygon') {
-    coordinates.forEach(drawPolygon);
-  }
+  path(feature);
   ctx.fillStyle = color;
-  ctx.fill();
+  ctx.fill('evenodd');
+
+  if (strokeColor && lineWidth > 0) {
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = lineWidth;
+    ctx.stroke();
+  }
 }
 
-function createBaseMapChart() {
+function drawLocationMarkerOnCanvas(ctx, projection, location) {
+  if (!location || typeof location.lon !== 'number' || typeof location.lat !== 'number') {
+    return;
+  }
+
+  const point = projection([location.lon, location.lat]);
+  if (!point) return;
+
+  const [x, y] = point;
+
+  ctx.beginPath();
+  ctx.arc(x, y, 14, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(0, 220, 255, 0.2)';
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(x, y, 6, 0, Math.PI * 2);
+  ctx.fillStyle = MARKER_COLOR;
+  ctx.shadowColor = HIGHLIGHT_COLOR;
+  ctx.shadowBlur = 18;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+function createGlobeTexture(geoJson, highlightFeature, location) {
   const canvas = document.createElement('canvas');
   canvas.width = TEXTURE_WIDTH;
   canvas.height = TEXTURE_HEIGHT;
 
-  const mapChart = echarts.init(canvas, null, {
-    width: TEXTURE_WIDTH,
-    height: TEXTURE_HEIGHT,
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = OCEAN_COLOR;
+  ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+
+  const projection = geoEquirectangular()
+    .scale(TEXTURE_WIDTH / (2 * Math.PI))
+    .translate([TEXTURE_WIDTH / 2, TEXTURE_HEIGHT / 2])
+    .precision(0.1);
+  const path = geoPath(projection, ctx);
+
+  geoJson?.features?.forEach((feature) => {
+    drawFeatureOnCanvas(ctx, path, feature, LAND_COLOR, {
+      strokeColor: LAND_BORDER_COLOR,
+      lineWidth: 1,
+    });
   });
 
-  mapChart.setOption({
-    backgroundColor: OCEAN_COLOR,
-    animation: false,
-    series: [{
-      type: 'map',
-      map: 'world',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      boundingCoords: [[-180, 90], [180, -90]],
-      silent: true,
-      itemStyle: {
-        areaColor: LAND_COLOR,
-        borderColor: LAND_BORDER_COLOR,
-        borderWidth: 1,
-      },
-      emphasis: {
-        disabled: true,
-      },
-      select: {
-        disabled: true,
-      },
-    }],
-  }, {
-    notMerge: true,
-    lazyUpdate: false,
-  });
+  if (highlightFeature) {
+    drawFeatureOnCanvas(ctx, path, highlightFeature, HIGHLIGHT_COLOR, {
+      strokeColor: 'rgba(224, 252, 255, 0.72)',
+      lineWidth: 1.5,
+    });
+  }
 
-  return mapChart;
+  drawLocationMarkerOnCanvas(ctx, projection, location);
+
+  return canvas;
 }
 
 const globeTextureCanvas = ref(null);
-let currentMapChart = null;
 
-async function updateGlobeTexture() {
-  if (currentMapChart) {
-    currentMapChart.dispose();
-    currentMapChart = null;
-  }
+function updateGlobeTexture() {
   globeTextureCanvas.value = null;
 
-  if (!ready.value || !targetCountryName.value) {
+  if (!ready.value) {
     return;
   }
 
   const geoJson = worldGeoJson.value;
-  const countryName = targetCountryName.value;
-  const feature = findCountryFeature(geoJson, countryName);
 
-  currentMapChart = createBaseMapChart();
-
-  // 等待地图渲染完成
-  await new Promise((resolve) => {
-    let resolved = false;
-    const done = () => {
-      if (resolved) return;
-      resolved = true;
-      resolve();
-    };
-    currentMapChart.on('finished', done);
-    setTimeout(done, 500);
-  });
-
-  await new Promise((resolve) => {
-    requestAnimationFrame(resolve);
-  });
-
-  // 把 ECharts 渲染好的底图复制到新的 canvas，再手动绘制高亮国家
-  const sourceCanvas = currentMapChart.getDom();
-  const targetCanvas = document.createElement('canvas');
-  targetCanvas.width = TEXTURE_WIDTH;
-  targetCanvas.height = TEXTURE_HEIGHT;
-
-  const ctx = targetCanvas.getContext('2d');
-  ctx.drawImage(sourceCanvas, 0, 0);
-
-  if (feature) {
-    drawFeatureOnCanvas(ctx, feature, HIGHLIGHT_COLOR);
-  }
-
-  currentMapChart.dispose();
-  currentMapChart = null;
-
-  globeTextureCanvas.value = targetCanvas;
+  globeTextureCanvas.value = createGlobeTexture(geoJson, targetCountryFeature.value, props.location);
 }
 
 watch(() => [
   ready.value,
   targetCountryName.value,
+  props.location?.lon,
+  props.location?.lat,
 ], updateGlobeTexture, {
   immediate: true,
 });
 
-onUnmounted(() => {
-  if (currentMapChart) {
-    currentMapChart.dispose();
-    currentMapChart = null;
-  }
-});
-
 const option = computed(() => {
-  if (!ready.value || !globeTextureCanvas.value || !targetCenter.value) {
+  if (!ready.value || !globeTextureCanvas.value || !targetCoord.value) {
     return null;
   }
 
-  const [targetLon, targetLat] = targetCenter.value;
+  const [targetLon, targetLat] = targetCoord.value;
 
   return {
     backgroundColor: 'transparent',
@@ -351,10 +282,10 @@ const option = computed(() => {
       environment: 'none',
       light: {
         ambient: {
-          intensity: 0.5,
+          intensity: 0.82,
         },
         main: {
-          intensity: 1.4,
+          intensity: 1.18,
           shadow: true,
           alpha: 25,
           beta: 20,
@@ -376,7 +307,7 @@ const option = computed(() => {
         SSAO: {
           enable: true,
           radius: 4,
-          intensity: 1.2,
+          intensity: 0.68,
           quality: 'medium',
         },
       },
@@ -384,7 +315,7 @@ const option = computed(() => {
         show: true,
         color: ATMOSPHERE_COLOR,
         glowPower: 80,
-        innerGlowPower: 2.4,
+        innerGlowPower: 2.2,
         offset: 0,
       },
     },
@@ -403,6 +334,7 @@ const option = computed(() => {
   &__chart {
     width: 100%;
     height: 100%;
+    filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.28));
   }
 
   &__label {

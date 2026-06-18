@@ -2,6 +2,7 @@ import config from '@/config';
 import CODE_MAPS, {
   countryCodeMapping,
   aliasMapping,
+  regionGeoPresets,
 } from '@/data/code-maps';
 
 export const ALIAS_CODE = {
@@ -22,6 +23,20 @@ export const locationCode2Info = (code) => {
     info = maps[aliasCode];
   }
   return info;
+};
+
+export const locationCode2GeoInfo = (code) => {
+  const maps = {
+    ...CODE_MAPS,
+    ...(config.nazhua.customCodeMap || {}),
+  };
+  const normalizedCode = typeof code === 'string' ? code.toUpperCase() : code;
+  const aliasCode = aliasMapping[normalizedCode];
+
+  return maps[code]
+    || maps[normalizedCode]
+    || maps[aliasCode]
+    || regionGeoPresets[normalizedCode];
 };
 
 export const count2size = (count) => {
