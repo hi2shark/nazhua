@@ -43,7 +43,6 @@ import {
   watch,
 } from 'vue';
 import config from '@/config';
-import validate from '@/utils/validate';
 
 import WorldMapPoint from './world-map-point.vue';
 import {
@@ -70,43 +69,49 @@ const props = defineProps({
 const lightBackground = computed(() => config.nazhua.lightBackground);
 const boxPadding = computed(() => (lightBackground.value ? 20 : 0));
 
+function toValidNumber(val) {
+  if (val === null || val === undefined || val === '') {
+    return null;
+  }
+  const num = Number(val);
+  return Number.isFinite(num) ? num : null;
+}
+
 // 计算地图大小 保持1280:621的比例 保证地图不变形
 const computedSize = computed(() => {
-  // 考虑内边距，从总宽高中减去padding
-  const adjustedWidth = Number(props.width) - (boxPadding.value * 2);
-  const adjustedHeight = Number(props.height) - (boxPadding.value * 2);
+  const numericWidth = toValidNumber(props.width);
+  const numericHeight = toValidNumber(props.height);
 
-  if (!validate.isEmpty(props.width) && !validate.isEmpty(props.height)) {
+  // 同时提供宽高时按原始尺寸渲染
+  if (numericWidth !== null && numericHeight !== null) {
     return {
       width: 1280,
       height: 621,
     };
   }
 
-  if (!validate.isEmpty(props.width) && validate.isEmpty(props.height)) {
+  // 仅提供宽度时按比例计算高度
+  if (numericWidth !== null) {
+    const adjustedWidth = numericWidth - (boxPadding.value * 2);
     return {
       width: adjustedWidth,
       height: Math.ceil((621 / 1280) * adjustedWidth),
     };
   }
 
-  if (validate.isEmpty(props.width) && !validate.isEmpty(props.height)) {
+  // 仅提供高度时按比例计算宽度
+  if (numericHeight !== null) {
+    const adjustedHeight = numericHeight - (boxPadding.value * 2);
     return {
       width: Math.ceil((1280 / 621) * adjustedHeight),
       height: adjustedHeight,
     };
   }
 
-  if (adjustedWidth / adjustedHeight > 1280 / 621) {
-    return {
-      width: Math.ceil(adjustedHeight * (1280 / 621)),
-      height: adjustedHeight,
-    };
-  }
-
+  // 兜底默认尺寸，避免 NaN
   return {
-    width: adjustedWidth,
-    height: Math.ceil(adjustedWidth * (621 / 1280)),
+    width: 1280,
+    height: 621,
   };
 });
 

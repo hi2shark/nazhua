@@ -31,6 +31,7 @@ const config = reactive({
     hideListItemCycleTransfer: false,
     detailCycleTransferRefreshTime: 60,
     hideDetailCycleTransfer: false,
+    hideDetailServerGlobe: false,
     // 解构载入自定义配置
     ...(window.$$nazhuaConfig || {}),
   },

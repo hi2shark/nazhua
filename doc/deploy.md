@@ -236,6 +236,7 @@ window.$$nazhuaConfig = {
   listCycleTransferRefreshTime: 60, // 首页列表周期流量刷新时间，单位s（秒），0为不刷新
   detailCycleTransferRefreshTime: 60, // 详情页周期流量刷新时间，单位s（秒），0为不刷新
   hideDetailCycleTransfer: false, // 隐藏详情页周期流量卡片
+  hideDetailServerGlobe: false, // 隐藏详情页节点信息卡片内的地球仪
   filterGPUKeywords: ['Virtual Display'], // 如果GPU名称中包含这些关键字，则过滤掉
   customCodeMap: {}, // 自定义的地图点信息
   nezhaVersion: 'v1', // 哪吒版本 不填写则尝试自动识别

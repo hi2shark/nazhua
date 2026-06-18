@@ -509,6 +509,8 @@ function handleResize() {
   const serverListContainer = document.querySelector('.server-list-container');
   if (serverListContainer) {
     worldMapWidth.value = serverListContainer.clientWidth - 40;
+  } else {
+    worldMapWidth.value = Math.max(window.innerWidth - 40, 300);
   }
   windowWidth.value = window.innerWidth;
 }

@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue';
 import babel from 'vite-plugin-babel';
 import eslintPlugin from 'vite-plugin-eslint';
 import svgLoader from 'vite-svg-loader';
-import packageJson from './package';
+import packageJson from './package.json';
 
 let proxy;
 if (process.env.NODE_ENV === 'development') {
@@ -95,7 +95,13 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
+            if (id.includes('echarts-gl')) {
+              return 'globe-gl';
+            }
             return 'vendor';
+          }
+          if (id.includes('src/data/world.geo.json') || id.includes('src/data/country-name-map')) {
+            return 'world-geo';
           }
           if (id.includes('.svg')) {
             return 'svg';

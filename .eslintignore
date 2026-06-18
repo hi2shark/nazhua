@@ -1,3 +1,6 @@
 build/*.js
 public
 dist
+src/data/world.geo.json
+src/data/country-name-map.js
+scripts

@@ -19,8 +19,6 @@
         <span class="server-name">
           {{ info.Name }}
         </span>
-      </div>
-      <div class="right-box">
         <div
           v-if="cpuAndMemAndDisk"
           class="cpu-mem-group"
@@ -169,11 +167,12 @@ function openDetail() {
       height: var(--list-item-head-height, 50px);
     }
 
-    .left-box,
-    .right-box {
+    .left-box {
+      flex: 1;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      min-width: 0;
       cursor: default;
     }
 
@@ -186,21 +185,35 @@ function openDetail() {
     }
 
     .server-name {
+      flex: 0 1 auto;
+      min-width: 0;
       height: 30px;
       line-height: 32px;
       font-size: 14px;
       font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .cpu-mem-group {
+      flex-shrink: 0;
       display: flex;
       align-items: center;
       gap: 4px;
+      padding: 0 8px;
+      height: 24px;
+      line-height: 24px;
+      border-radius: 4px;
+      background: rgba(#000, 0.35);
+      border: 1px solid rgba(#fff, 0.08);
+      color: #8fdfff;
     }
 
     .core-mem {
-      height: 30px;
-      line-height: 32px;
+      height: 24px;
+      line-height: 24px;
+      font-size: 12px;
       font-weight: bold;
     }
   }

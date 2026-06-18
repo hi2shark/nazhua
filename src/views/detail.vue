@@ -1,6 +1,7 @@
 <template>
   <div
     v-if="info"
+    ref="detailContainerRef"
     class="detail-container"
     :class="{
       'server--offline': info?.online !== 1,
@@ -15,6 +16,7 @@
     <server-name
       :key="`${info.ID}_name`"
       :info="info"
+      :location="serverLocation"
     />
     <server-status-box
       :key="`${info.ID}_status`"
@@ -51,6 +53,8 @@ import {
   computed,
   onMounted,
   onUnmounted,
+  onActivated,
+  nextTick,
   watch,
 } from 'vue';
 import {
@@ -84,12 +88,12 @@ const props = defineProps({
 const store = useStore();
 const router = useRouter();
 
+const detailContainerRef = ref(null);
 const worldMapWidth = ref(900);
 const info = computed(() => store.state?.serverList?.find?.((i) => +i.ID === +props.serverId));
 const dataInit = computed(() => store.state.init);
 
-const locations = computed(() => {
-  const arr = [];
+const serverLocation = computed(() => {
   let aliasCode;
   let locationCode;
   if (info?.value?.PublicNote?.customData?.location) {
@@ -99,12 +103,37 @@ const locations = computed(() => {
     aliasCode = info.value.Host.CountryCode.toUpperCase();
   }
   const code = alias2code(aliasCode) || locationCode;
-  if (code) {
+  if (!code) {
+    return null;
+  }
+  const {
+    x,
+    y,
+    name,
+  } = locationCode2Info(code) || {};
+  if (typeof x !== 'number' || typeof y !== 'number') {
+    return null;
+  }
+  return {
+    code,
+    name,
+    x,
+    y,
+    lon: (x / 1280) * 360 - 180,
+    lat: 90 - (y / 621) * 180,
+    countryCode: info.value?.Host?.CountryCode?.toLowerCase() || '',
+  };
+});
+
+const locations = computed(() => {
+  const arr = [];
+  if (serverLocation.value) {
     const {
+      code,
+      name,
       x,
       y,
-      name,
-    } = locationCode2Info(code) || {};
+    } = serverLocation.value;
     arr.push({
       key: code,
       x,
@@ -139,9 +168,14 @@ const worldMapPosition = computed(() => {
 });
 
 function handleWorldMapWidth() {
+  const containerWidth = detailContainerRef.value?.offsetWidth;
+  if (!containerWidth) {
+    return;
+  }
+  const availableWidth = containerWidth - 40;
   worldMapWidth.value = Math.max(
     Math.min(
-      document.querySelector('.detail-container')?.offsetWidth - 40,
+      availableWidth,
       window.innerWidth - 40,
       900,
     ),
@@ -149,9 +183,30 @@ function handleWorldMapWidth() {
   );
 }
 
-watch(() => info.value, (newValue, oldValue) => {
+let resizeObserver = null;
+function observeContainerSize() {
+  if (resizeObserver || !detailContainerRef.value) {
+    return;
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(() => {
+      handleWorldMapWidth();
+    });
+    resizeObserver.observe(detailContainerRef.value);
+  }
+}
+
+function unobserveContainerSize() {
+  if (resizeObserver) {
+    resizeObserver.disconnect();
+    resizeObserver = null;
+  }
+}
+
+watch(() => info.value, async (newValue, oldValue) => {
   if (!oldValue && newValue && router.currentRoute.value.name === 'ServerDetail') {
     pageTitle(newValue?.Name, '节点详情');
+    await nextTick();
     handleWorldMapWidth();
   }
 });
@@ -167,12 +222,20 @@ watch(() => dataInit.value, () => {
 onMounted(() => {
   if (info.value) {
     pageTitle(info.value?.Name, '节点详情');
-    handleWorldMapWidth();
   }
+  handleWorldMapWidth();
+  observeContainerSize();
   window.addEventListener('resize', handleWorldMapWidth);
 });
 
+onActivated(() => {
+  nextTick(() => {
+    handleWorldMapWidth();
+  });
+});
+
 onUnmounted(() => {
+  unobserveContainerSize();
   window.removeEventListener('resize', handleWorldMapWidth);
 });
 </script>

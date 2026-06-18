@@ -93,6 +93,7 @@ module.exports = {
       ignorePackages: true,
       pattern: {
         vue: 'always',
+        json: 'always',
       },
     }],
   },
