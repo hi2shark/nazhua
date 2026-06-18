@@ -57,7 +57,7 @@ server {
   }
 
   # 仅允许服务详情监控需要的 V1 API
-  location ~ ^/api/v1/server/[^/]+/service$ {
+  location ~ ^/api/v1/server/([^/]+)/service$ {
     proxy_pass ${NEZHA}api/v1/server/$1/service;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
@@ -66,7 +66,7 @@ server {
   }
 
   # 仅允许服务详情监控兼容路径需要的 V1 API
-  location ~ ^/api/v1/service/[^/]+$ {
+  location ~ ^/api/v1/service/([^/]+)$ {
     proxy_pass ${NEZHA}api/v1/service/$1;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
@@ -84,7 +84,7 @@ server {
   }
 
   # 仅允许哪吒V0监控数据需要的 API
-  location ~ ^/api/v1/monitor/[^/]+$ {
+  location ~ ^/api/v1/monitor/([^/]+)$ {
     proxy_pass ${NEZHA}api/v1/monitor/$1;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
