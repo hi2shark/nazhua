@@ -68,9 +68,9 @@ const loaded = ref(false);
 const hasLocation = computed(() => props.location
   && typeof props.location.lon === 'number'
   && typeof props.location.lat === 'number');
-const locationName = computed(() => props.location?.name || '');
 const targetCountryCode = computed(() => props.location?.countryCode?.toLowerCase() || '');
 const targetCountryName = computed(() => countryNameMap.value?.[targetCountryCode.value] || '');
+const locationName = computed(() => targetCountryName.value || props.location?.name || '');
 const ready = computed(() => loaded.value && hasLocation.value);
 
 let resizeObserver = null;
@@ -132,6 +132,7 @@ const OCEAN_COLOR = '#0b1016';
 const LAND_COLOR = '#1c2a35';
 const LAND_BORDER_COLOR = 'rgba(203, 241, 245, 0.18)';
 const HIGHLIGHT_COLOR = '#00d4ff';
+const ATMOSPHERE_COLOR = '#00d4ff';
 
 /**
  * 根据国家名称从 GeoJSON 中查找对应要素
@@ -378,6 +379,13 @@ const option = computed(() => {
           intensity: 1.2,
           quality: 'medium',
         },
+      },
+      atmosphere: {
+        show: true,
+        color: ATMOSPHERE_COLOR,
+        glowPower: 5,
+        innerGlowPower: 2,
+        offset: 4,
       },
     },
     series: [],
