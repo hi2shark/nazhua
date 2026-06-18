@@ -383,9 +383,9 @@ const option = computed(() => {
       atmosphere: {
         show: true,
         color: ATMOSPHERE_COLOR,
-        glowPower: 5,
-        innerGlowPower: 2,
-        offset: 4,
+        glowPower: 80,
+        innerGlowPower: 2.4,
+        offset: 0,
       },
     },
     series: [],
