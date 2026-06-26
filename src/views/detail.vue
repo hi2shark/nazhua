@@ -22,6 +22,10 @@
       :key="`${info.ID}_status`"
       :info="info"
     />
+    <server-resource-history
+      :key="`${info.ID}_resource_history`"
+      :info="info"
+    />
     <server-cycle-transfer
       :key="`${info.ID}_cycle_transfer`"
       :info="info"
@@ -75,6 +79,7 @@ import pageTitle from '@/utils/page-title';
 import WorldMap from '@/components/world-map/world-map.vue';
 import ServerName from './components/server-detail/server-name.vue';
 import ServerStatusBox from './components/server-detail/server-status-box.vue';
+import ServerResourceHistory from './components/server-detail/server-resource-history.vue';
 import ServerInfoBox from './components/server-detail/server-info-box.vue';
 import ServerCycleTransfer from './components/server-detail/server-cycle-transfer.vue';
 import ServerMonitor from './components/server-detail/server-monitor.vue';

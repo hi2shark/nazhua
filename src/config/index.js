@@ -22,6 +22,7 @@ const config = reactive({
     nezhaV0ConfigType: 'servers',
     v1ApiMonitorPath: '/api/v1/server/{id}/service',
     v1ApiMonitorPathFallback: '/api/v1/service/{id}',
+    v1ApiMetricsPath: '/api/v1/server/{id}/metrics',
     v1ApiServicePath: '/api/v1/service',
     v1WsPath: '/api/v1/ws/server',
     v1GroupPath: '/api/v1/server-group',
