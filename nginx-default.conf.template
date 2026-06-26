@@ -65,6 +65,15 @@ server {
     proxy_set_header X-Forwarded-Proto $scheme;
   }
 
+  # 仅允许服务详情资源历史需要的 V1 API
+  location ~ ^/api/v1/server/([^/]+)/metrics$ {
+    proxy_pass ${NEZHA}api/v1/server/$1/metrics;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
   # 仅允许服务详情监控兼容路径需要的 V1 API
   location ~ ^/api/v1/service/([^/]+)$ {
     proxy_pass ${NEZHA}api/v1/service/$1;
